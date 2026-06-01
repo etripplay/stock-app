@@ -585,7 +585,8 @@ setInterval(tick,1000); tick();
 function isTW(c){ return /^\d/.test(c.trim()); }
 function setMarket(us){
   document.body.classList.toggle('us', us);
-  document.getElementById('mkt-badge').textContent = us ? '🇺🇸 美股｜綠漲紅跌' : '🇹🇼 台股｜紅漲綠跌';
+  const badge = document.getElementById('mkt-badge');
+  if (badge) badge.textContent = us ? '🇺🇸 美股｜綠漲紅跌' : '🇹🇼 台股｜紅漲綠跌';
 }
 // 顏色永遠用固定色，不受 CSS var 影響（watchlist 需要各自顏色）
 function twColor(pct){ return pct>0?'#d0021b':pct<0?'#007a3d':'#1a1a1a'; }
