@@ -44,38 +44,20 @@ export async function onRequest(context) {
     }
   } catch (_) {}
 
-  // ── 2. TWSE 失敗，fallback 到 Yahoo Finance ──
+  // ── 2. TWSE 失敗，逐一呼叫 /api/quote/[stock]（已有 Yahoo fallback）──
   try {
-    const symbols  = list.map(s => `${s}.TW`).join(',');
-    const yahooUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChange,regularMarketChangePercent,shortName`;
-    const res      = await fetch(yahooUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-      signal: AbortSignal.timeout(6000),
-    });
-    const data   = await res.json();
-    const quotes = data?.quoteResponse?.result || [];
-
-    if (quotes.length > 0) {
-      // 取中文名稱對照表
-      let nameMap = {};
-      try {
-        const baseUrl  = new URL(context.request.url).origin;
-        const listRes  = await fetch(`${baseUrl}/api/twse-list`, { signal: AbortSignal.timeout(4000) });
-        const listData = await listRes.json();
-        for (const s of (listData.data || [])) nameMap[s.c] = s.n;
-      } catch (_) {}
-
-      const results = quotes.map(q => {
-        const code = q.symbol.replace('.TW', '');
-        return {
-          code,
-          name:      nameMap[code] || q.shortName || code,
-          price:     Math.round((q.regularMarketPrice || 0) * 100) / 100,
-          change:    Math.round((q.regularMarketChange || 0) * 100) / 100,
-          changePct: Math.round((q.regularMarketChangePercent || 0) * 100) / 100,
-        };
-      });
-
+    const baseUrl = new URL(context.request.url).origin;
+    const settled = await Promise.allSettled(
+      list.map(code => fetch(`${baseUrl}/api/quote/${code}`, { signal: AbortSignal.timeout(8000) }).then(r => r.json()))
+    );
+    const results = [];
+    for (const r of settled) {
+      if (r.status === 'fulfilled' && r.value?.ok) {
+        const q = r.value;
+        results.push({ code: q.code, name: q.name, price: q.price, change: q.change, changePct: q.changePct });
+      }
+    }
+    if (results.length > 0) {
       return Response.json({ ok: true, data: results }, { headers: corsHeaders });
     }
   } catch (_) {}
