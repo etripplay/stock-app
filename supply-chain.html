@@ -6,464 +6,1152 @@
 <title>產業供應鏈地圖</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+/* ── CSS Variables — mirrors index.html ───────────────── */
 :root {
-  --bg:#f4f2ed; --card:#fff; --card2:#faf9f6; --bd:#e2ddd5;
-  --text:#1a1a1a; --dim:#6b6460; --navy:#1e3a5f;
+  --bg:      #F5F3EE;
+  --card:    #FFFFFF;
+  --card2:   #F9F7F2;
+  --bd:      #DDD8CF;
+  --text:    #1A1A18;
+  --dim:     #6B6460;
+  --navy:    #1A3A58;
+  --navy2:   #1F4D78;
+  --accent:  #D45F25;
+  --accent2: #B34E1A;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.10);
 }
-@media(prefers-color-scheme: dark){ :root { --sys-dark:1; } }
+@media(prefers-color-scheme:dark){:root{--sys-dark:1;}}
 [data-theme="dark"] {
-  --bg:#111210; --card:#1c1c1a; --card2:#242422; --bd:#333330;
-  --text:#e8e6e0; --dim:#888580; --navy:#1a3454;
+  --bg:      #111210;
+  --card:    #1C1C1A;
+  --card2:   #242422;
+  --bd:      #333330;
+  --text:    #E8E6E0;
+  --dim:     #888580;
+  --navy:    #163248;
+  --navy2:   #1D4060;
+  --accent:  #E8713A;
+  --accent2: #C85C28;
 }
-* { box-sizing:border-box; margin:0; padding:0; }
-body { background:var(--bg); color:var(--text); font-family:'Noto Sans TC',sans-serif; min-height:100vh; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
 
-.hdr { background:var(--navy); color:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-.hdr-title { font-size:18px; font-weight:700; }
-.hdr-sub   { font-size:12px; color:#8eabc8; margin-top:2px; }
-.back-btn  { font-size:13px; color:#8eabc8; text-decoration:none; display:flex; align-items:center; gap:4px; }
-.back-btn:hover { color:#fff; }
+/* ── Header ─────────────────────────────────────────── */
+.hdr{
+  flex-shrink:0;
+  background:linear-gradient(135deg,#0D1F35 0%,#1A3A58 55%,#0F2A40 100%);
+  color:#fff;padding:12px 16px;
+  border-bottom:2px solid var(--accent);
+  box-shadow:0 4px 24px rgba(0,0,0,.25);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.hdr-title{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.hdr-title span{display:inline-block;width:4px;height:20px;background:var(--accent);border-radius:2px;}
+.hdr-sub{font-size:11px;color:#8eabc8;margin-top:2px;}
+.back-btn{font-size:12px;color:#8eabc8;text-decoration:none;border:1px solid rgba(255,255,255,.2);padding:5px 10px;border-radius:8px;white-space:nowrap;transition:.15s;}
+.back-btn:hover{color:#fff;border-color:rgba(255,255,255,.5);}
 
-.tabs-bar { background:var(--card); border-bottom:1px solid var(--bd); padding:0 16px; display:flex; gap:4px; overflow-x:auto; }
-.chain-tab { padding:12px 16px; font-size:14px; font-family:'Noto Sans TC',sans-serif; border:none; background:transparent; color:var(--dim); cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; transition:.15s; }
-.chain-tab.on { color:var(--navy); border-bottom-color:var(--navy); font-weight:700; }
+/* ── Tab bar ─────────────────────────────────────────── */
+.tabs-bar{
+  flex-shrink:0;background:var(--card);border-bottom:1px solid var(--bd);
+  padding:0 14px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;
+}
+.tabs-bar::-webkit-scrollbar{display:none;}
+.chain-tab{
+  flex-shrink:0;padding:11px 14px;font-size:13px;font-family:inherit;
+  border:none;background:transparent;
+  color:var(--dim);cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;
+}
+.chain-tab:hover{color:var(--text);}
+.chain-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
 
-.W { max-width:1200px; margin:0 auto; padding:16px; }
+/* ── Filter bar ─────────────────────────────────────── */
+#filters{
+  flex-shrink:0;display:flex;gap:5px;padding:6px 14px;
+  overflow-x:auto;scrollbar-width:none;background:var(--card2);
+  border-bottom:1px solid var(--bd);
+}
+#filters::-webkit-scrollbar{display:none;}
+#filters.hidden{display:none;}
+.ftab{
+  flex-shrink:0;font-size:10px;padding:3px 10px;border-radius:20px;
+  border:0.5px solid var(--bd);background:var(--card);color:var(--dim);
+  cursor:pointer;transition:all .15s;white-space:nowrap;user-select:none;
+  font-family:inherit;
+}
+.ftab.active{background:var(--text);color:var(--bg);border-color:var(--text);}
+.ftab.nvda-f.active{background:#3BAD8D;border-color:#3BAD8D;color:#fff;}
+.ftab.amd-f.active{background:#E07030;border-color:#E07030;color:#fff;}
 
-.legend-bar { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; padding:10px 14px; background:var(--card); border:1px solid var(--bd); border-radius:10px; font-size:12px; }
-.leg { display:flex; align-items:center; gap:5px; color:var(--dim); }
-.leg-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-.leg-line-solid { width:20px; height:2px; }
-.leg-line-dash  { width:20px; height:2px; background:repeating-linear-gradient(to right,#888 0,#888 4px,transparent 4px,transparent 7px); }
+/* ── Load bar ────────────────────────────────────────── */
+#loadbar{flex-shrink:0;height:2px;background:var(--bd);}
+#loadprog{height:100%;width:0%;background:var(--accent);transition:width .25s;}
 
-.chain-wrap { background:var(--card); border:1px solid var(--bd); border-radius:14px; overflow:auto; padding:4px; }
-.chain-svg  { display:block; min-width:520px; }
+/* ── Hint bar ────────────────────────────────────────── */
+#hintbar{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:3px 14px 2px;font-size:10px;color:var(--dim);background:var(--card2);
+  border-bottom:1px solid var(--bd);
+}
 
-.node-card { cursor:pointer; transition:opacity .15s; }
-.node-card:hover { opacity:.75; }
+/* ── Canvas ─────────────────────────────────────────── */
+#canvas-wrap{
+  flex:1;position:relative;overflow:hidden;cursor:grab;background:var(--bg);
+}
+#canvas-wrap.grabbing{cursor:grabbing;}
+#canvas-wrap canvas{display:block;width:100%;height:100%;background:transparent;}
 
-.info-panel { background:var(--card); border:1px solid var(--bd); border-radius:14px; padding:16px; margin-top:12px; display:none; }
-.info-panel.visible { display:block; animation:fadeIn .25s ease; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-.info-name { font-size:18px; font-weight:700; margin-bottom:4px; }
-.info-code { font-size:13px; color:var(--dim); margin-bottom:10px; }
-.info-desc { font-size:14px; line-height:1.8; color:var(--text); margin-bottom:12px; }
-.info-role { display:inline-block; font-size:12px; padding:3px 10px; border-radius:20px; background:#f0ede5; color:var(--dim); margin-bottom:10px; }
-.query-btn { display:inline-block; padding:9px 20px; background:var(--navy); color:#fff; border:none; border-radius:10px; font-size:14px; font-weight:700; font-family:'Noto Sans TC',sans-serif; cursor:pointer; text-decoration:none; transition:.15s; }
-.query-btn:hover { background:#2a4f7a; }
+/* ── Zoom controls ───────────────────────────────────── */
+#zoom-ctrl{position:absolute;bottom:48px;right:14px;display:flex;flex-direction:column;gap:4px;z-index:10;}
+.zbtn{
+  width:30px;height:30px;border-radius:8px;border:1px solid var(--bd);
+  background:var(--card);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-sm);color:var(--dim);transition:background .1s;font-family:inherit;
+}
+.zbtn:hover{background:var(--card2);}
 
-@media(max-width:480px){ .hdr-title{font-size:16px} }
+/* ── Theme toggle ────────────────────────────────────── */
+#theme-btn{
+  position:absolute;bottom:14px;right:14px;z-index:10;
+  width:30px;height:30px;border-radius:8px;border:1px solid var(--bd);
+  background:var(--card);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-sm);transition:background .1s;
+}
+#theme-btn:hover{background:var(--card2);}
+
+/* ── Tooltip ─────────────────────────────────────────── */
+#tip{
+  display:none;position:fixed;z-index:200;width:240px;
+  background:var(--card);border:1px solid var(--bd);border-radius:14px;
+  padding:14px;box-shadow:var(--shadow-md);pointer-events:none;
+}
+#tip.show{display:block;}
+#tip-close{position:absolute;top:8px;right:10px;background:none;border:none;font-size:15px;color:var(--dim);cursor:pointer;pointer-events:all;padding:2px 5px;}
+.t-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.t-sub{font-size:11px;color:var(--dim);margin-bottom:7px;}
+.t-badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px;}
+.bdg{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;}
+.b-cat{background:var(--card2);color:var(--dim);border:0.5px solid var(--bd);}
+.b-nvda{background:rgba(59,173,141,.15);color:#1a6b50;border:0.5px solid rgba(59,173,141,.4);}
+[data-theme="dark"] .b-nvda{background:rgba(59,173,141,.2);color:#7dd4b0;border-color:rgba(59,173,141,.4);}
+.b-amd{background:rgba(224,112,48,.1);color:#b04000;border:0.5px solid rgba(224,112,48,.3);}
+[data-theme="dark"] .b-amd{background:rgba(224,112,48,.2);color:#f0a870;border-color:rgba(224,112,48,.4);}
+.t-price{font-size:22px;font-weight:700;color:var(--text);}
+.t-chg{font-size:12px;font-weight:600;margin-bottom:7px;}
+.t-role{font-size:10.5px;color:var(--dim);background:var(--card2);border-radius:6px;padding:5px 8px;margin-bottom:7px;line-height:1.6;display:none;}
+.t-src{font-size:9px;color:var(--dim);opacity:.7;text-align:right;margin-bottom:7px;}
+.t-btn{
+  width:100%;padding:7px 0;background:var(--navy);border:none;border-radius:8px;
+  color:#fff;font-size:11px;cursor:pointer;font-family:inherit;pointer-events:all;
+  transition:.15s;
+}
+.t-btn:hover{background:var(--navy2);}
+
+/* ── Mobile sheet ────────────────────────────────────── */
+#sheet{
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:300;
+  background:var(--card);border-radius:16px 16px 0 0;
+  box-shadow:0 -4px 24px rgba(0,0,0,.2);
+  padding:0 16px 20px;max-height:65vh;overflow-y:auto;
+  transform:translateY(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+#sheet.open{transform:translateY(0);}
+#sh-handle{width:32px;height:4px;border-radius:2px;background:var(--bd);margin:10px auto 10px;}
+#sh-close{position:absolute;top:10px;right:14px;background:none;border:none;font-size:18px;color:var(--dim);cursor:pointer;}
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;}
+#overlay.show{display:block;}
+
+/* ── Legend ─────────────────────────────────────────── */
+#legend{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;flex-wrap:wrap;gap:4px 10px;padding:4px 14px 5px;
+  font-size:9.5px;color:var(--dim);
+  border-top:1px solid var(--bd);background:var(--card);z-index:50;
+}
+.li{display:flex;align-items:center;gap:3px;}
+.ls{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 </style>
 </head>
 <body>
 
+<!-- Header -->
 <div class="hdr">
   <div>
-    <div class="hdr-title">🗺 產業供應鏈地圖</div>
+    <div class="hdr-title"><span></span>產業供應鏈地圖</div>
     <div class="hdr-sub">點擊節點查看詳細說明，再跳轉查詢股票</div>
   </div>
   <a class="back-btn" href="/">← 回股票看板</a>
 </div>
 
+<!-- Tabs -->
 <div class="tabs-bar">
-  <button class="chain-tab on" onclick="showChain('semicon',this)">半導體 AI 供應鏈</button>
-  <button class="chain-tab" onclick="showChain('ev',this)">電動車供應鏈</button>
-  <button class="chain-tab" onclick="showChain('cloud',this)">雲端 AI 供應鏈</button>
+  <button class="chain-tab on"  data-chain="ai"      onclick="switchTab('ai',this)">🤖 AI 供應鏈</button>
+  <button class="chain-tab"     data-chain="semicon" onclick="switchTab('semicon',this)">💾 半導體 AI</button>
+  <button class="chain-tab"     data-chain="ev"      onclick="switchTab('ev',this)">⚡ 電動車</button>
+  <button class="chain-tab"     data-chain="cloud"   onclick="switchTab('cloud',this)">☁️ 雲端 AI</button>
 </div>
 
-<div class="W">
+<!-- Filter bar -->
+<div id="filters"></div>
 
-  <div class="legend-bar">
-    <div class="leg"><div class="leg-dot" style="background:#E1F5EE;border:1px solid #5DCAA5"></div>上游材料／設備</div>
-    <div class="leg"><div class="leg-dot" style="background:#EEEDFE;border:1px solid #534AB7"></div>IC設計</div>
-    <div class="leg"><div class="leg-dot" style="background:#FAECE7;border:1px solid #D85A30"></div>晶圓代工</div>
-    <div class="leg"><div class="leg-dot" style="background:#FAEEDA;border:1px solid #EF9F27"></div>封裝／組裝</div>
-    <div class="leg"><div class="leg-dot" style="background:#F1EFE8;border:1px solid #888780"></div>系統整合</div>
-    <div class="leg"><div class="leg-dot" style="background:#E6F1FB;border:1px solid #378ADD"></div>終端客戶</div>
-    <div class="leg"><div class="leg-line-dash"></div>委託代工</div>
+<!-- Load bar -->
+<div id="loadbar"><div id="loadprog"></div></div>
+
+<!-- Hint -->
+<div id="hintbar">
+  <span>🖱 拖曳平移・滾輪縮放・點擊節點查看資訊</span>
+  <span id="loadmsg">載入股價中…</span>
+</div>
+
+<!-- Canvas -->
+<div id="canvas-wrap">
+  <canvas id="c"></canvas>
+  <div id="zoom-ctrl">
+    <button class="zbtn" id="z-in">＋</button>
+    <button class="zbtn" id="z-rst">⌂</button>
+    <button class="zbtn" id="z-out">－</button>
   </div>
+  <button id="theme-btn" title="切換深色/淺色模式">🌙</button>
+  <div id="legend"></div>
+</div>
 
-  <div class="chain-wrap">
-    <svg id="chain-svg" class="chain-svg" width="100%" viewBox="0 0 760 820"></svg>
-  </div>
+<!-- Desktop tooltip -->
+<div id="tip">
+  <button id="tip-close">×</button>
+  <div class="t-name" id="t-name"></div>
+  <div class="t-sub"  id="t-sub"></div>
+  <div class="t-badges" id="t-badges"></div>
+  <div class="t-price" id="t-price"></div>
+  <div class="t-chg"   id="t-chg"></div>
+  <div class="t-role"  id="t-role"></div>
+  <div class="t-src"   id="t-src"></div>
+  <button class="t-btn" id="t-btn">查詢這支股票 →</button>
+</div>
 
-  <div class="info-panel" id="info-panel">
-    <div class="info-role" id="info-role"></div>
-    <div class="info-name" id="info-name"></div>
-    <div class="info-code" id="info-code"></div>
-    <div class="info-desc" id="info-desc"></div>
-    <a class="query-btn" id="info-btn" href="#">查詢這支股票 →</a>
-  </div>
-
+<!-- Mobile overlay / sheet -->
+<div id="overlay"></div>
+<div id="sheet">
+  <div id="sh-handle"></div>
+  <button id="sh-close">×</button>
+  <div class="t-name" id="s-name"></div>
+  <div class="t-sub"  id="s-sub"></div>
+  <div class="t-badges" id="s-badges"></div>
+  <div class="t-price" id="s-price"></div>
+  <div class="t-chg"   id="s-chg"></div>
+  <div class="t-role"  id="s-role"></div>
+  <div class="t-src"   id="s-src"></div>
+  <button class="t-btn" id="s-btn">查詢這支股票 →</button>
 </div>
 
 <script>
-// ── 供應鏈資料 ─────────────────────────────────────────────────
-const CHAINS = {
+// ══════════════════════════════════════════════════════════
+//  CATEGORIES
+// ══════════════════════════════════════════════════════════
+const CATS = {
+  downstream:   { label:'下游應用',    color:'#4A9EE0' },
+  gpu:          { label:'GPU/AI晶片', color:'#3BAD8D' },
+  chip:         { label:'晶片設計',   color:'#E0813A' },
+  pkg:          { label:'封裝・製程', color:'#8B6ECC' },
+  abf:          { label:'ABF載板',    color:'#2E86AB' },
+  pcb:          { label:'PCB/載板',   color:'#B0876E' },
+  odm:          { label:'ODM伺服器',  color:'#5B9E6E' },
+  chassis:      { label:'機殼/機構',  color:'#C08030' },
+  mlcc:         { label:'被動元件',   color:'#D45C5C' },
+  thermal:      { label:'散熱/電源',  color:'#7A9E52' },
+  mem:          { label:'記憶體',     color:'#8B8B8B' },
+  equip:        { label:'材料/設備',  color:'#5DCAA5' },
+  ic_design:    { label:'IC設計',     color:'#8B6ECC' },
+  foundry:      { label:'晶圓代工',   color:'#D45F25' },
+  packaging:    { label:'封裝測試',   color:'#C08030' },
+  assembly:     { label:'組裝整合',   color:'#7A9E52' },
+  systems:      { label:'系統整合',   color:'#8B8B8B' },
+  cloud_client: { label:'雲端客戶',   color:'#4A9EE0' },
+  raw_mat:      { label:'原物料',     color:'#5DCAA5' },
+  battery:      { label:'電池',       color:'#8B6ECC' },
+  ev_parts:     { label:'電動零組件', color:'#E0813A' },
+  ev_brand:     { label:'整車品牌',   color:'#D45F25' },
+  charging:     { label:'充電服務',   color:'#2E86AB' },
+  autodrv:      { label:'自駕技術',   color:'#C08030' },
+  mobility:     { label:'出行平台',   color:'#4A9EE0' },
+  hw_infra:     { label:'AI硬體',     color:'#3BAD8D' },
+  cloud_plat:   { label:'雲端平台',   color:'#D45F25' },
+  ai_model:     { label:'AI模型',     color:'#8B6ECC' },
+  saas:         { label:'SaaS應用',   color:'#5B9E6E' },
+  enterprise:   { label:'企業用戶',   color:'#4A9EE0' },
+};
 
-  semicon: {
-    title: '半導體 AI 供應鏈',
-    tiers: [
-      { label:'上游 — 材料 ／ 設備', y:40 },
-      { label:'中游 — IC設計 ／ 晶圓代工', y:220 },
-      { label:'下游 — 封裝 ／ 記憶體', y:400 },
-      { label:'終端 — 系統整合', y:560 },
-      { label:'客戶 — 雲端 ／ 品牌', y:720 },
-    ],
-    nodes: [
-      // 上游
-      { id:'asml',   x:30,  y:58, w:120, label:'ASML',      sub:'微影設備 🇳🇱',       color:'teal',   code:'ASML',  role:'上游設備', desc:'全球唯一 EUV 微影設備製造商，沒有 ASML 就沒有先進晶片。台積電、三星、Intel 都要靠它。' },
-      { id:'shin',   x:165, y:58, w:120, label:'信越化學',   sub:'矽晶圓 ADR 🇯🇵',     color:'teal',   code:'SHECY', role:'上游材料', desc:'全球最大矽晶圓供應商，台積電主要原料來源之一。（美股 ADR：SHECY）' },
-      { id:'gobj',   x:300, y:58, w:130, label:'環球晶',     sub:'矽晶圓 6488 🇹🇼',    color:'teal',   code:'6488',  role:'上游材料', desc:'台灣最大矽晶圓廠，全球第三大，是台積電和三星的重要供應商。' },
-      { id:'amat',   x:445, y:58, w:110, label:'AMAT',       sub:'沉積設備 🇺🇸',       color:'teal',   code:'AMAT',  role:'上游設備', desc:'Applied Materials，全球最大半導體設備公司，提供薄膜沉積、蝕刻等設備。' },
-      { id:'kla',    x:570, y:58, w:100, label:'KLA',        sub:'量測設備 🇺🇸',       color:'teal',   code:'KLAC',  role:'上游設備', desc:'全球量測與檢測設備龍頭，確保晶片製造品質。' },
-      { id:'lrcx',   x:685, y:58, w:100, label:'Lam Research',sub:'蝕刻設備 🇺🇸',      color:'teal',   code:'LRCX',  role:'上游設備', desc:'全球最大蝕刻和薄膜沉積設備廠，先進製程不可或缺。' },
-      // 中游
-      { id:'nvda',   x:30,  y:238, w:150, label:'NVIDIA',   sub:'GPU/AI設計 🇺🇸',     color:'purple', code:'NVDA',  role:'IC設計',   desc:'全球最重要的 AI 晶片設計公司，H100/B200 GPU 是 AI 訓練核心。委託台積電代工。' },
-      { id:'tsmc',   x:200, y:238, w:160, label:'台積電',    sub:'晶圓代工 2330 🇹🇼',  color:'coral',  code:'2330',  role:'晶圓代工', desc:'全球最大晶圓代工廠，掌握最先進 3nm/2nm 製程。NVIDIA、Apple、AMD 全靠台積電生產晶片。' },
-      { id:'mtk',    x:375, y:238, w:130, label:'聯發科',    sub:'IC設計 2454 🇹🇼',   color:'purple', code:'2454',  role:'IC設計',   desc:'全球最大手機 IC 設計公司，Dimensity 晶片委託台積電代工。' },
-      { id:'umc',    x:520, y:238, w:120, label:'聯電',      sub:'晶圓代工 2303 🇹🇼', color:'gray',   code:'2303',  role:'晶圓代工', desc:'台灣第二大晶圓代工廠，主攻成熟製程，全球前三大代工廠。' },
-      { id:'psmc',   x:655, y:238, w:130, label:'力積電',    sub:'晶圓代工 6770 🇹🇼', color:'gray',   code:'6770',  role:'晶圓代工', desc:'台灣第三大晶圓代工廠，主攻 DRAM 和特殊製程，2021 年上市。' },
-      // 下游
-      { id:'asmpt',  x:30,  y:418, w:120, label:'日月光',   sub:'封裝 3711 🇹🇼',      color:'amber',  code:'3711',  role:'封裝測試', desc:'全球最大封裝測試廠，提供 CoWoS 先進封裝服務，是台積電封裝合作夥伴。' },
-      { id:'hynix',  x:165, y:418, w:130, label:'SK Hynix', sub:'HBM記憶體 🇰🇷',      color:'blue',   code:'HXSCL', role:'記憶體',   desc:'全球 HBM 第一，NVIDIA H100 內的 HBM 幾乎全來自 SK Hynix。（美股 ADR）' },
-      { id:'hon',    x:310, y:418, w:110, label:'鴻海',      sub:'代工組裝 2317 🇹🇼',  color:'amber',  code:'2317',  role:'系統組裝', desc:'全球最大電子代工廠，iPhone、AI 伺服器組裝，積極布局 AI 伺服器市場。' },
-      { id:'quanta', x:435, y:418, w:110, label:'廣達',      sub:'AI伺服器 2382 🇹🇼',  color:'amber',  code:'2382',  role:'系統組裝', desc:'全球最大 AI 伺服器廠，Google、Meta 的資料中心伺服器主要供應商。' },
-      { id:'wiwynn', x:560, y:418, w:130, label:'緯穎',      sub:'雲端伺服器 6669 🇹🇼',color:'amber',  code:'6669',  role:'系統組裝', desc:'緯創子公司，Meta 和 Microsoft 雲端伺服器主要供應商，AI 伺服器高成長。' },
-      { id:'pegatron',x:705,y:418, w:110, label:'和碩',      sub:'代工組裝 4938 🇹🇼',  color:'amber',  code:'4938',  role:'系統組裝', desc:'台灣第二大電子代工廠，蘋果 iPhone 重要代工夥伴。' },
-      // 終端
-      { id:'dell',   x:30,  y:578, w:120, label:'Dell',      sub:'AI伺服器 🇺🇸',       color:'gray',   code:'DELL',  role:'系統整合', desc:'全球最大伺服器廠商，AI 伺服器需求帶動業績大幅成長。' },
-      { id:'apple',  x:165, y:578, w:110, label:'Apple',     sub:'自研晶片 🇺🇸',       color:'gray',   code:'AAPL',  role:'終端品牌', desc:'A/M 系列晶片全由台積電生產，是台積電最大客戶之一。' },
-      { id:'qcom',   x:290, y:578, w:120, label:'Qualcomm',  sub:'手機晶片 🇺🇸',       color:'gray',   code:'QCOM',  role:'IC設計',   desc:'全球最大手機基頻晶片廠，Snapdragon 系列委託台積電代工。' },
-      { id:'avgo',   x:425, y:578, w:120, label:'Broadcom',  sub:'AI網路晶片 🇺🇸',     color:'gray',   code:'AVGO',  role:'IC設計',   desc:'AI 交換器晶片需求暴增，替 Google、Meta 設計自研 AI 晶片。' },
-      { id:'arm',    x:560, y:578, w:110, label:'ARM',       sub:'IP授權 🇬🇧',         color:'gray',   code:'ARM',   role:'IP授權',   desc:'幾乎所有手機晶片和 AI 晶片都使用 ARM 架構，按晶片顆數收授權費。' },
-      // 客戶
-      { id:'msft',   x:30,  y:738, w:120, label:'Microsoft', sub:'Azure AI 🇺🇸',       color:'blue',   code:'MSFT',  role:'雲端客戶', desc:'最大 NVIDIA 客戶之一，Azure 雲端大量部署 H100，也是 OpenAI 最大投資方。' },
-      { id:'goog',   x:165, y:738, w:110, label:'Google',    sub:'GCP/TPU 🇺🇸',        color:'blue',   code:'GOOGL', role:'雲端客戶', desc:'自研 TPU 委託台積電生產，同時也是 NVIDIA GPU 大客戶。' },
-      { id:'meta',   x:290, y:738, w:100, label:'Meta',      sub:'AI訓練 🇺🇸',         color:'blue',   code:'META',  role:'雲端客戶', desc:'全球最大 NVIDIA GPU 採購商之一，大量用於 AI 訓練。' },
-      { id:'amzn',   x:405, y:738, w:110, label:'Amazon',    sub:'AWS 🇺🇸',            color:'blue',   code:'AMZN',  role:'雲端客戶', desc:'AWS 是全球最大雲端服務，自研 Trainium 晶片委託台積電生產。' },
-      { id:'tsla',   x:530, y:738, w:100, label:'Tesla',     sub:'自動駕駛 🇺🇸',       color:'blue',   code:'TSLA',  role:'終端客戶', desc:'Dojo AI 訓練晶片委託台積電生產，同時是 NVIDIA GPU 大客戶。' },
-    ],
-    edges: [
-      { from:'asml',  to:'tsmc',    dash:false },
-      { from:'shin',  to:'tsmc',    dash:false },
-      { from:'gobj',  to:'tsmc',    dash:false },
-      { from:'amat',  to:'tsmc',    dash:false },
-      { from:'kla',   to:'tsmc',    dash:false },
-      { from:'lrcx',  to:'tsmc',    dash:false },
-      { from:'nvda',  to:'tsmc',    dash:true  },
-      { from:'mtk',   to:'tsmc',    dash:true  },
-      { from:'tsmc',  to:'asmpt',   dash:false },
-      { from:'tsmc',  to:'hynix',   dash:true  },
-      { from:'nvda',  to:'quanta',  dash:false },
-      { from:'nvda',  to:'hon',     dash:false },
-      { from:'tsmc',  to:'hon',     dash:false },
-      { from:'tsmc',  to:'wiwynn',  dash:false },
-      { from:'asmpt', to:'dell',    dash:false },
-      { from:'quanta',to:'msft',    dash:false },
-      { from:'quanta',to:'goog',    dash:false },
-      { from:'wiwynn',to:'msft',    dash:false },
-      { from:'hon',   to:'apple',   dash:false },
-      { from:'pegatron',to:'apple', dash:false },
-      { from:'avgo',  to:'goog',    dash:false },
-      { from:'arm',   to:'qcom',    dash:false },
-    ],
-  },
-
-  ev: {
-    title: '電動車供應鏈',
-    tiers: [
-      { label:'上游 — 原物料', y:40 },
-      { label:'中游 — 電池 ／ 零組件', y:220 },
-      { label:'整車 — 電動車品牌', y:400 },
-      { label:'下游 — 充電 ／ 軟體', y:560 },
-      { label:'終端 — 出行平台', y:700 },
-    ],
-    nodes: [
-      // 上游
-      { id:'alb',    x:30,  y:58, w:130, label:'Albemarle', sub:'鋰礦 🇺🇸',           color:'teal',   code:'ALB',   role:'原物料',   desc:'全球最大鋰礦公司，電池原料鋰的主要供應商，電動車需求直接影響股價。' },
-      { id:'mp',     x:175, y:58, w:140, label:'MP Materials',sub:'稀土 🇺🇸',         color:'teal',   code:'MP',    role:'原物料',   desc:'美國唯一大型稀土礦山，永磁材料是電動馬達的關鍵原料，受惠美國製造回流。' },
-      { id:'vale',   x:330, y:58, w:100, label:'Vale',       sub:'鎳礦 🇧🇷',           color:'teal',   code:'VALE',  role:'原物料',   desc:'全球最大鎳礦公司，高鎳電池是目前主流，是電池廠重要原料來源。' },
-      { id:'livent', x:445, y:58, w:120, label:'Arcadium',   sub:'鋰化工 🇺🇸',         color:'teal',   code:'ALTM',  role:'原物料',   desc:'全球前三大鋰化工廠，提供電池級氫氧化鋰，已被力拓收購，代號 ALTM。' },
-      { id:'piedmont',x:580,y:58, w:130, label:'Piedmont',   sub:'美國鋰礦 🇺🇸',       color:'teal',   code:'PLL',   role:'原物料',   desc:'美國本土鋰礦開發商，Tesla 長期供應合約，受惠美國電動車在地化政策。' },
-      // 中游
-      { id:'pana',   x:30,  y:238, w:130, label:'Panasonic', sub:'電池 ADR 🇯🇵',       color:'purple', code:'PCRFY', role:'電池製造', desc:'Tesla 最重要電池合作夥伴，在內華達 Gigafactory 合資生產，美股 ADR：PCRFY。' },
-      { id:'on',     x:175, y:238, w:120, label:'onsemi',    sub:'功率半導體 🇺🇸',      color:'purple', code:'ON',    role:'零組件',   desc:'車用功率半導體龍頭，電動車逆變器關鍵元件，Ford、GM、Tesla 主要供應商。' },
-      { id:'borg',   x:310, y:238, w:130, label:'BorgWarner',sub:'電動傳動 🇺🇸',       color:'purple', code:'BWA',   role:'零組件',   desc:'全球最大電動傳動系統供應商，正從傳統變速箱轉型電驅動系統。' },
-      { id:'dana',   x:455, y:238, w:120, label:'Dana Inc.', sub:'電驅動系統 🇺🇸',     color:'purple', code:'DAN',   role:'零組件',   desc:'電動車驅動橋和電動傳動系統供應商，供貨 Ford、Jeep 電動車型。' },
-      { id:'aptv2',  x:590, y:238, w:120, label:'Aptiv',     sub:'車用電子 🇮🇪',       color:'purple', code:'APTV',  role:'零組件',   desc:'全球最大汽車電子架構供應商，車內線束和自動駕駛電子系統。' },
-      // 整車
-      { id:'tsla2',  x:30,  y:418, w:120, label:'Tesla',     sub:'電動車 🇺🇸',         color:'coral',  code:'TSLA',  role:'整車品牌', desc:'全球最有品牌價值的電動車，自動駕駛 FSD 是最大差異化，Gigafactory 遍布全球。' },
-      { id:'gm',     x:165, y:418, w:100, label:'GM',        sub:'電動車 🇺🇸',         color:'coral',  code:'GM',    role:'整車品牌', desc:'美國傳統車廠轉型電動車，Silverado EV 和 Blazer EV 是主力車型。' },
-      { id:'ford',   x:280, y:418, w:100, label:'Ford',      sub:'電動車 🇺🇸',         color:'coral',  code:'F',     role:'整車品牌', desc:'F-150 Lightning 電動皮卡是美國最暢銷電動皮卡，Mustang Mach-E 也受好評。' },
-      { id:'rivn',   x:395, y:418, w:110, label:'Rivian',    sub:'電動皮卡 🇺🇸',       color:'coral',  code:'RIVN',  role:'整車品牌', desc:'Amazon 持股，專注電動皮卡 R1T 和商用配送車，Amazon 訂購 10 萬輛。' },
-      { id:'lcid',   x:520, y:418, w:110, label:'Lucid',     sub:'電動豪車 🇺🇸',       color:'coral',  code:'LCID',  role:'整車品牌', desc:'高端電動車，Lucid Air 是全球續航最長的電動車，沙烏地主權基金持股。' },
-      { id:'vwagy',  x:645, y:418, w:130, label:'Volkswagen',sub:'電動車 ADR 🇩🇪',     color:'coral',  code:'VWAGY', role:'整車品牌', desc:'歐洲最大車廠，ID 系列電動車在全球熱銷，電動化投資規模全球最大之一。（ADR）' },
-      // 下游
-      { id:'chpt',   x:30,  y:578, w:130, label:'ChargePoint',sub:'充電樁 🇺🇸',        color:'gray',   code:'CHPT',  role:'充電服務', desc:'北美最大電動車充電網路，充電樁超過 25 萬個，企業和公共充電場站領導者。' },
-      { id:'blnk',   x:175, y:578, w:110, label:'Blink',     sub:'充電樁 🇺🇸',         color:'gray',   code:'BLNK',  role:'充電服務', desc:'美國快速成長的充電樁公司，住宅和商業充電解決方案，受政府補貼支持。' },
-      { id:'mbly',   x:300, y:578, w:120, label:'Mobileye',  sub:'自駕晶片 🇮🇱',       color:'gray',   code:'MBLY',  role:'自駕技術', desc:'全球最大自動駕駛技術供應商，ADAS 系統裝備超過 1 億輛車，Intel 持股 88%。' },
-      { id:'tsla3',  x:435, y:578, w:120, label:'Tesla FSD', sub:'自駕軟體 🇺🇸',       color:'gray',   code:'TSLA',  role:'自駕軟體', desc:'特斯拉完全自動駕駛軟體，訂閱制每月 99 美元，未來 Robotaxi 最大競爭力。' },
-      { id:'vlto',   x:570, y:578, w:120, label:'Volta',     sub:'廣告充電 🇺🇸',       color:'gray',   code:'EVGO',  role:'充電服務', desc:'EVgo 是美國最大快充網路之一，與 GM 合作，在全美主要城市布建直流快充。' },
-      // 終端
-      { id:'uber',   x:30,  y:718, w:110, label:'Uber',      sub:'叫車平台 🇺🇸',       color:'blue',   code:'UBER',  role:'出行平台', desc:'自動駕駛普及後最大受益者，已與 Waymo 合作，Robotaxi 時代的最大平台。' },
-      { id:'lyft',   x:155, y:718, w:100, label:'Lyft',      sub:'叫車平台 🇺🇸',       color:'blue',   code:'LYFT',  role:'出行平台', desc:'美國第二大叫車平台，與 Mobileye 合作自動駕駛，股價相對低估。' },
-      { id:'waymo',  x:270, y:718, w:120, label:'Waymo',     sub:'自駕叫車 🇺🇸',       color:'blue',   code:'GOOGL', role:'出行平台', desc:'Google 旗下，全球最先進自動駕駛公司，舊金山已商業化運營，間接投資 GOOGL。' },
-      { id:'fleet2', x:405, y:718, w:130, label:'Hertz/Fleet',sub:'車隊電動化 🇺🇸',    color:'blue',   code:'HTZ',   role:'車隊採購', desc:'全球最大租車公司之一，大量採購 Tesla 和其他電動車做為車隊電動化轉型。' },
-      { id:'amzn2',  x:550, y:718, w:110, label:'Amazon',    sub:'電動物流 🇺🇸',       color:'blue',   code:'AMZN',  role:'企業客戶', desc:'訂購 Rivian 10 萬輛電動配送車，目標 2030 年車隊完全電動化。' },
-    ],
-    edges: [
-      { from:'alb',    to:'pana',   dash:false },
-      { from:'vale',   to:'pana',   dash:false },
-      { from:'mp',     to:'on',     dash:false },
-      { from:'livent', to:'pana',   dash:false },
-      { from:'pana',   to:'tsla2',  dash:false },
-      { from:'on',     to:'tsla2',  dash:false },
-      { from:'on',     to:'gm',     dash:false },
-      { from:'on',     to:'ford',   dash:false },
-      { from:'borg',   to:'ford',   dash:false },
-      { from:'borg',   to:'gm',     dash:false },
-      { from:'aptv2',  to:'tsla2',  dash:false },
-      { from:'aptv2',  to:'vwagy',  dash:false },
-      { from:'mbly',   to:'ford',   dash:false },
-      { from:'mbly',   to:'vwagy',  dash:false },
-      { from:'tsla2',  to:'uber',   dash:false },
-      { from:'tsla2',  to:'fleet2', dash:false },
-      { from:'rivn',   to:'amzn2',  dash:false },
-      { from:'chpt',   to:'tsla2',  dash:false },
-      { from:'chpt',   to:'rivn',   dash:false },
-      { from:'tsla3',  to:'uber',   dash:true  },
-      { from:'waymo',  to:'uber',   dash:false },
-      { from:'ford',   to:'lyft',   dash:false },
-      { from:'gm',     to:'uber',   dash:false },
-    ],
-  },
-
-  cloud: {
-    title: '雲端 AI 供應鏈',
-    tiers: [
-      { label:'基礎設施 — 硬體 ／ 台灣製造', y:40 },
-      { label:'雲端平台 — IaaS', y:220 },
-      { label:'AI 模型 — 大語言模型', y:400 },
-      { label:'AI 應用 — SaaS', y:560 },
-      { label:'終端 — 企業用戶', y:700 },
-    ],
-    nodes: [
-      // 硬體
-      { id:'nvda2',   x:30,  y:58, w:140, label:'NVIDIA',     sub:'GPU H100/B200 🇺🇸', color:'purple', code:'NVDA',  role:'AI硬體',    desc:'H100/B200 是 AI 訓練最重要的 GPU，全球 AI 公司都在搶購，領先優勢至少保持 2-3 年。' },
-      { id:'amd2',    x:185, y:58, w:110, label:'AMD',         sub:'MI300X GPU 🇺🇸',    color:'purple', code:'AMD',   role:'AI硬體',    desc:'MI300X 是 H100 的主要競爭對手，微軟、Meta 已開始大量採購。' },
-      { id:'avgo2',   x:310, y:58, w:120, label:'Broadcom',    sub:'AI網路晶片 🇺🇸',    color:'purple', code:'AVGO',  role:'網路設備',  desc:'AI 資料中心網路交換器晶片龍頭，也替 Google、Apple 設計自研 AI 晶片。' },
-      { id:'smci',    x:445, y:58, w:130, label:'Super Micro', sub:'AI伺服器 🇺🇸',      color:'teal',   code:'SMCI',  role:'伺服器製造',desc:'NVIDIA GPU 伺服器主要組裝夥伴，AI 伺服器市佔快速成長，台灣供應鏈深度合作。' },
-      { id:'quanta2', x:590, y:58, w:110, label:'廣達',         sub:'AI伺服器 2382 🇹🇼', color:'teal',   code:'2382',  role:'伺服器製造',desc:'Google、Meta 資料中心伺服器主要供應商，AI 資本支出暴增直接受益。' },
-      { id:'wiwynn2', x:715, y:58, w:110, label:'緯穎',         sub:'雲端伺服器 6669 🇹🇼',color:'teal',  code:'6669',  role:'伺服器製造',desc:'Meta、Microsoft 雲端伺服器主要供應商，ODM 出貨量全球前三。' },
-      // 雲端平台
-      { id:'aws',     x:30,  y:238, w:120, label:'AWS',        sub:'Amazon雲端 🇺🇸',    color:'coral',  code:'AMZN',  role:'雲端平台',  desc:'全球最大雲端服務，市佔約 33%，自研 Trainium 晶片用於 AI 訓練。' },
-      { id:'azure',   x:165, y:238, w:110, label:'Azure',      sub:'微軟雲端 🇺🇸',      color:'coral',  code:'MSFT',  role:'雲端平台',  desc:'全球第二大雲端，OpenAI 獨家合作夥伴，Azure OpenAI Service 企業需求爆發。' },
-      { id:'gcp',     x:290, y:238, w:110, label:'GCP',        sub:'Google雲端 🇺🇸',    color:'coral',  code:'GOOGL', role:'雲端平台',  desc:'全球第三大雲端，TPU 自研 AI 晶片，Gemini 整合進 Google Workspace。' },
-      { id:'ora',     x:415, y:238, w:120, label:'Oracle',     sub:'企業雲端 🇺🇸',      color:'coral',  code:'ORCL',  role:'雲端平台',  desc:'企業資料庫龍頭轉型雲端，成為 OpenAI 和 Meta 最新資料中心合作夥伴。' },
-      { id:'coreweave',x:550,y:238, w:140, label:'CoreWeave',  sub:'GPU雲端 🇺🇸',       color:'coral',  code:'CRWV',  role:'雲端平台',  desc:'專注 GPU 算力的雲端公司，NVIDIA 持股，2024 年上市，AI 算力需求爆發受益。' },
-      // AI 模型
-      { id:'oai',     x:30,  y:418, w:120, label:'OpenAI',     sub:'GPT / Sora 🇺🇸',    color:'purple', code:'MSFT',  role:'AI模型',   desc:'ChatGPT 開發商，GPT-4o 是最廣泛使用的 AI，未上市可間接投資微軟。' },
-      { id:'goo2',    x:165, y:418, w:130, label:'Google DeepMind',sub:'Gemini 🇺🇸',    color:'purple', code:'GOOGL', role:'AI模型',   desc:'Gemini 是 GPT-4 主要競爭對手，整合進 Google 所有產品和服務。' },
-      { id:'meta2',   x:310, y:418, w:120, label:'Meta AI',    sub:'Llama 開源 🇺🇸',    color:'purple', code:'META',  role:'AI模型',   desc:'Llama 開源模型全球下載量最大，大幅降低 AI 應用門檻，帶動整個生態。' },
-      { id:'msft2ai', x:445, y:418, w:120, label:'Microsoft',  sub:'Copilot 🇺🇸',       color:'purple', code:'MSFT',  role:'AI模型',   desc:'GitHub Copilot 讓開發者效率提升 55%，Copilot 365 是最快成長的企業 AI 產品。' },
-      { id:'amzn2ai', x:580, y:418, w:120, label:'Amazon',     sub:'Bedrock / Q 🇺🇸',   color:'purple', code:'AMZN',  role:'AI模型',   desc:'Amazon Bedrock 提供多家 AI 模型存取，Amazon Q 是企業 AI 助理，AWS 生態護城河深。' },
-      // AI 應用
-      { id:'sf',      x:30,  y:578, w:120, label:'Salesforce', sub:'AI CRM 🇺🇸',        color:'gray',   code:'CRM',   role:'AI應用',   desc:'全球最大 CRM，Einstein AI 整合銷售、服務、行銷，AI Agent 是最新成長引擎。' },
-      { id:'snow',    x:165, y:578, w:120, label:'Snowflake',  sub:'AI資料倉儲 🇺🇸',    color:'gray',   code:'SNOW',  role:'AI應用',   desc:'雲端資料倉儲龍頭，AI 時代企業資料管理需求大增，是 AI 落地的關鍵基礎設施。' },
-      { id:'pltr',    x:300, y:578, w:110, label:'Palantir',   sub:'AI決策 🇺🇸',        color:'gray',   code:'PLTR',  role:'AI應用',   desc:'政府和企業 AI 決策平台，AIP 是目前最快成長業務，美國政府最大 AI 合約商。' },
-      { id:'svc',     x:425, y:578, w:120, label:'ServiceNow', sub:'企業AI 🇺🇸',        color:'gray',   code:'NOW',   role:'AI應用',   desc:'企業流程自動化龍頭，AI 整合進 IT、HR、客服，升級黏性極高。' },
-      { id:'c3ai',    x:560, y:578, w:100, label:'C3.ai',      sub:'企業AI 🇺🇸',        color:'gray',   code:'AI',    role:'AI應用',   desc:'專注企業 AI 應用的純 AI 公司，美國政府、能源、金融業客戶，市值相對小有彈性。' },
-      // 終端
-      { id:'ent1',    x:30,  y:718, w:130, label:'金融業',     sub:'AI風控 / 量化 🇺🇸',  color:'blue',   code:'JPM',   role:'企業客戶', desc:'金融業是 AI 最大企業用戶，JPMorgan AI 交易系統每年省下數億美元人工成本。' },
-      { id:'ent2',    x:175, y:718, w:130, label:'醫療健康',   sub:'AI診斷 / 新藥 🇺🇸',  color:'blue',   code:'ISRG',  role:'企業客戶', desc:'AI 用於影像診斷、新藥研發，Intuitive Surgical 的機器人手術是 AI 在醫療最成功案例。' },
-      { id:'ent3',    x:320, y:718, w:130, label:'台灣製造業', sub:'AI品管 / 預測 🇹🇼',  color:'blue',   code:'2382',  role:'企業客戶', desc:'台灣製造業正大量導入 AI 視覺檢測和預測性維護，廣達、台積電是台灣 AI 製造最佳案例。' },
-      { id:'ent4',    x:465, y:718, w:120, label:'零售電商',   sub:'個人化推薦 🇺🇸',     color:'blue',   code:'AMZN',  role:'企業客戶', desc:'Amazon AI 推薦系統貢獻超過 35% 銷售額，Shopify AI 工具幫助中小企業快速上線。' },
-    ],
-    edges: [
-      { from:'nvda2',   to:'aws',     dash:false },
-      { from:'nvda2',   to:'azure',   dash:false },
-      { from:'nvda2',   to:'gcp',     dash:false },
-      { from:'nvda2',   to:'coreweave',dash:false},
-      { from:'amd2',    to:'azure',   dash:false },
-      { from:'amd2',    to:'aws',     dash:false },
-      { from:'avgo2',   to:'gcp',     dash:false },
-      { from:'smci',    to:'coreweave',dash:false},
-      { from:'smci',    to:'aws',     dash:false },
-      { from:'quanta2', to:'gcp',     dash:false },
-      { from:'quanta2', to:'azure',   dash:false },
-      { from:'wiwynn2', to:'aws',     dash:false },
-      { from:'aws',     to:'amzn2ai', dash:false },
-      { from:'azure',   to:'oai',     dash:false },
-      { from:'azure',   to:'msft2ai', dash:false },
-      { from:'gcp',     to:'goo2',    dash:false },
-      { from:'coreweave',to:'meta2',  dash:false },
-      { from:'oai',     to:'sf',      dash:false },
-      { from:'goo2',    to:'snow',    dash:false },
-      { from:'meta2',   to:'sf',      dash:true  },
-      { from:'msft2ai', to:'svc',     dash:false },
-      { from:'sf',      to:'ent1',    dash:false },
-      { from:'pltr',    to:'ent1',    dash:false },
-      { from:'pltr',    to:'ent2',    dash:false },
-      { from:'snow',    to:'ent3',    dash:false },
-      { from:'svc',     to:'ent4',    dash:false },
-      { from:'c3ai',    to:'ent1',    dash:false },
-    ],
+// ══════════════════════════════════════════════════════════
+//  CHAIN: AI 供應鏈 (42家)
+// ══════════════════════════════════════════════════════════
+const AI_CHAIN = {
+  filters:[
+    {id:'all',  label:'全部'},
+    {id:'nvda', label:'🟢 NVDA 供應鏈', cls:'nvda-f'},
+    {id:'amd',  label:'🟠 AMD 供應鏈',  cls:'amd-f'},
+    {id:'pkg',  label:'封裝/製程'},
+    {id:'abf',  label:'🔵 ABF載板'},
+    {id:'odm',  label:'ODM伺服器'},
+    {id:'tw',   label:'台股'},
+  ],
+  tiers:[
+    {y1:0,   y2:200,  label:'下游應用層',   col:'rgba(74,158,224,0.04)'},
+    {y1:200, y2:380,  label:'中游運算層',   col:'rgba(59,173,141,0.04)'},
+    {y1:380, y2:545,  label:'晶圓・封裝層', col:'rgba(139,110,204,0.045)'},
+    {y1:545, y2:725,  label:'零組件層',     col:'rgba(176,135,110,0.04)'},
+    {y1:725, y2:888,  label:'NVDA ODM層',  col:'rgba(59,173,141,0.045)'},
+    {y1:888, y2:1050, label:'AMD 供應層',   col:'rgba(224,113,48,0.045)'},
+  ],
+  legendCats:['downstream','gpu','chip','pkg','abf','pcb','odm','chassis','mlcc','thermal','mem'],
+  nodes:[
+    {id:'msft',    name:'Microsoft', t:'MSFT',   mkt:'US',cat:'downstream',x:160,y:120,r:36},
+    {id:'googl',   name:'Google',    t:'GOOGL',  mkt:'US',cat:'downstream',x:420,y:100,r:36},
+    {id:'amzn',    name:'Amazon',    t:'AMZN',   mkt:'US',cat:'downstream',x:680,y:100,r:36},
+    {id:'meta',    name:'Meta',      t:'META',   mkt:'US',cat:'downstream',x:940,y:120,r:36},
+    {id:'tsla',    name:'Tesla',     t:'TSLA',   mkt:'US',cat:'downstream',x:1180,y:120,r:30},
+    {id:'tpu',     name:'Google TPU',t:'GOOGL',  mkt:'US',cat:'gpu',       x:80, y:290,r:26},
+    {id:'nvda',    name:'Nvidia',    t:'NVDA',   mkt:'US',cat:'gpu',       x:300,y:290,r:46,nvda:true},
+    {id:'amd',     name:'AMD',       t:'AMD',    mkt:'US',cat:'chip',      x:600,y:290,r:40,amd:true},
+    {id:'intc',    name:'Intel',     t:'INTC',   mkt:'US',cat:'chip',      x:880,y:290,r:34},
+    {id:'arm',     name:'ARM',       t:'ARM',    mkt:'US',cat:'chip',      x:1100,y:290,r:28},
+    {id:'mtek',    name:'聯發科',    t:'2454',   mkt:'TW',cat:'chip',      x:1340,y:290,r:32},
+    {id:'skhy',    name:'SK海力士',  t:'000660', mkt:'KR',cat:'mem',       x:80, y:470,r:30},
+    {id:'tsmc',    name:'台積電',    t:'2330',   mkt:'TW',cat:'chip',      x:320,y:470,r:46,nvda:true},
+    {id:'ase',     name:'日月光',    t:'3711',   mkt:'TW',cat:'pkg',       x:600,y:460,r:34,amd:true,nvda:true},
+    {id:'spil',    name:'矽品精密',  t:'2325',   mkt:'TW',cat:'pkg',       x:800,y:475,r:28,amd:true},
+    {id:'ptc',     name:'力成科技',  t:'6239',   mkt:'TW',cat:'pkg',       x:980,y:460,r:28,amd:true},
+    {id:'micron',  name:'Micron',    t:'MU',     mkt:'US',cat:'mem',       x:1180,y:460,r:28,nvda:true},
+    {id:'nova',    name:'聯詠',      t:'3034',   mkt:'TW',cat:'chip',      x:1360,y:470,r:26},
+    {id:'mura',    name:'Murata',    t:'6981',   mkt:'JP',cat:'mlcc',      x:1560,y:465,r:24},
+    {id:'unim',    name:'欣興電子',  t:'3037',   mkt:'TW',cat:'abf',       x:80, y:630,r:30,amd:true,nvda:true},
+    {id:'nanya',   name:'南亞電路板',t:'8046',   mkt:'TW',cat:'abf',       x:240,y:630,r:28,amd:true,nvda:true},
+    {id:'jsk',     name:'景碩科技',  t:'3189',   mkt:'TW',cat:'abf',       x:395,y:630,r:26,amd:true,nvda:true},
+    {id:'zhen',    name:'臻鼎科技',  t:'4958',   mkt:'TW',cat:'abf',       x:545,y:630,r:25,nvda:true},
+    {id:'yaohua',  name:'耀華電子',  t:'2367',   mkt:'TW',cat:'abf',       x:690,y:640,r:22},
+    {id:'zhichao', name:'志超科技',  t:'8213',   mkt:'TW',cat:'abf',       x:820,y:630,r:20},
+    {id:'jdt',     name:'健鼎',      t:'3044',   mkt:'TW',cat:'pcb',       x:950,y:640,r:22},
+    {id:'ttm',     name:'TTM Tech',  t:'TTMI',   mkt:'US',cat:'pcb',       x:1080,y:630,r:22},
+    {id:'delta',   name:'台達電',    t:'2308',   mkt:'TW',cat:'thermal',   x:1220,y:625,r:30,nvda:true},
+    {id:'avc',     name:'奇鋐',      t:'3017',   mkt:'TW',cat:'thermal',   x:1380,y:640,r:25,nvda:true},
+    {id:'ygy',     name:'國巨',      t:'2327',   mkt:'TW',cat:'mlcc',      x:1520,y:625,r:28},
+    {id:'wlc',     name:'華新科',    t:'2492',   mkt:'TW',cat:'mlcc',      x:1670,y:640,r:22},
+    {id:'foxconn', name:'鴻海',      t:'2317',   mkt:'TW',cat:'odm',       x:100,y:810,r:34,nvda:true},
+    {id:'quanta',  name:'廣達',      t:'2382',   mkt:'TW',cat:'odm',       x:280,y:810,r:30,nvda:true},
+    {id:'wiwynn',  name:'緯穎科技',  t:'6669',   mkt:'TW',cat:'odm',       x:450,y:810,r:28,nvda:true,amd:true},
+    {id:'wistron', name:'緯創資通',  t:'3231',   mkt:'TW',cat:'odm',       x:620,y:810,r:26,nvda:true,amd:true},
+    {id:'inv',     name:'英業達',    t:'2356',   mkt:'TW',cat:'odm',       x:780,y:810,r:26,nvda:true,amd:true},
+    {id:'compal',  name:'仁寶',      t:'2324',   mkt:'TW',cat:'odm',       x:940,y:810,r:24,nvda:true},
+    {id:'pegatron',name:'和碩',      t:'4938',   mkt:'TW',cat:'odm',       x:1090,y:810,r:24,nvda:true},
+    {id:'gigabyte',name:'技嘉',      t:'2376',   mkt:'TW',cat:'odm',       x:1240,y:810,r:22,nvda:true},
+    {id:'sanmina', name:'Sanmina',   t:'SANM',   mkt:'US',cat:'odm',       x:280,y:960,r:26,amd:true},
+    {id:'aic',     name:'營邦企業',  t:'3693',   mkt:'TW',cat:'chassis',   x:520,y:960,r:28,amd:true},
+    {id:'amkr',    name:'Amkor',     t:'AMKR',   mkt:'US',cat:'pkg',       x:780,y:960,r:26},
+  ],
+  nvdaEdges:[
+    ['nvda','tsmc'],['nvda','skhy'],['nvda','micron'],
+    ['nvda','unim'],['nvda','nanya'],['nvda','jsk'],['nvda','zhen'],
+    ['nvda','delta'],['nvda','avc'],['nvda','ase'],
+    ['nvda','foxconn'],['nvda','quanta'],['nvda','wiwynn'],
+    ['nvda','wistron'],['nvda','inv'],['nvda','compal'],
+    ['nvda','pegatron'],['nvda','gigabyte'],
+  ],
+  amdEdges:[
+    ['amd','tsmc'],['amd','ase'],['amd','spil'],['amd','ptc'],
+    ['amd','unim'],['amd','nanya'],['amd','jsk'],
+    ['amd','wiwynn'],['amd','wistron'],['amd','inv'],['amd','sanmina'],['amd','aic'],
+  ],
+  supEdges:[
+    ['msft','nvda'],['msft','amd'],['msft','tsmc'],['msft','arm'],
+    ['googl','nvda'],['googl','tpu'],['googl','tsmc'],['googl','arm'],
+    ['amzn','nvda'],['amzn','tsmc'],
+    ['meta','nvda'],['meta','tsmc'],
+    ['tsla','nvda'],['tsla','arm'],
+    ['intc','tsmc'],['intc','skhy'],
+    ['arm','tsmc'],['tpu','tsmc'],
+    ['tsmc','skhy'],['tsmc','ygy'],['tsmc','unim'],['tsmc','ase'],
+    ['mtek','tsmc'],['nova','tsmc'],
+    ['ase','wiwynn'],['ase','wistron'],['ase','inv'],
+  ],
+  peerEdges:[
+    ['msft','googl'],['googl','amzn'],['amzn','meta'],['meta','tsla'],
+    ['nvda','amd'],['amd','intc'],['intc','arm'],
+    ['tsmc','mtek'],['mtek','nova'],
+    ['unim','nanya'],['nanya','jsk'],['jsk','zhen'],['zhen','yaohua'],['yaohua','zhichao'],['zhichao','jdt'],['jdt','ttm'],
+    ['ygy','wlc'],['ygy','mura'],
+    ['delta','avc'],['ase','spil'],['spil','ptc'],
+    ['foxconn','quanta'],['wiwynn','wistron'],['wistron','inv'],
+    ['compal','pegatron'],['pegatron','gigabyte'],
+    ['ase','amkr'],['skhy','tsmc'],['skhy','micron'],
+  ],
+  edges:[],
+  roles:{
+    nvda:'GB200/GB300 NVL72 AI機架・Blackwell/Rubin GPU・2026全面量產',
+    amd:'Helios 機架級AI平台・MI450X GPU・第6代EPYC・2026 H2部署・$100億投資台灣',
+    tsmc:'GPU/ASIC晶圓代工・CoWoS先進封裝・N3/N2製程・NVDA預訂逾50% CoWoS產能',
+    ase:'NVDA CoWoS封裝協力・AMD EFB 2.5D橋接封裝・先進封測爆發年',
+    spil:'AMD Helios EFB先進封裝・與日月光協力量產',
+    ptc:'AMD Helios 面板級EFB互連技術・業界首款2.5D面板級驗證',
+    skhy:'HBM3/HBM3E 主要供應商・NVDA AI晶片核心記憶體',
+    micron:'HBM3E 第三大供應商・與SK海力士競爭NVDA訂單',
+    unim:'ABF載板龍頭・CoWoS核心基板・NVDA/AMD Helios雙供應・AI伺服器比重達70%',
+    nanya:'ABF載板・NVDA/AMD Helios核心載板・南亞塑膠旗下',
+    jsk:'ABF載板・NVDA/AMD Helios核心載板・景碩科技',
+    zhen:'ABF載板・NVDA重要供應商・BT/ABF高密度載板',
+    delta:'AI伺服器高瓦數電源・散熱模組・NVDA GB系列核心供應商',
+    avc:'AI伺服器液冷散熱熱管模組・NVDA供應鏈',
+    foxconn:'GB200 NVL72/VR200最大組裝商・GPU模組・交換器板・機櫃系統',
+    quanta:'GB200/VR200機架組裝・雲達科技母公司・超算客戶',
+    wiwynn:'NVDA GB系列・AMD Helios機架ODM・緯穎科技6669',
+    wistron:'NVDA GB系列・AMD Helios ODM・H100/B100 GPU基板主要製造商',
+    inv:'NVDA GB系列・AMD Helios ODM・AI伺服器出貨量增',
+    compal:'NVDA AI伺服器L10組裝與測試・仁寶電腦',
+    pegatron:'NVDA GB200 NVL36機櫃組裝・積極切入企業級AI市場',
+    gigabyte:'NVDA長期核心夥伴・AI伺服器品牌・產品線最廣',
+    sanmina:'AMD Helios機架系統美國EMS大廠組裝',
+    aic:'AMD Helios機架機殼整合供應・運算托盤機構設計',
   },
 };
 
-// ── 顏色 ──────────────────────────────────────────────────────
-function getColors() {
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  return dark ? {
-    teal:   { fill:'#0d2e22', stroke:'#1d6b4a', text:'#7dd4b0' },
-    purple: { fill:'#1a1730', stroke:'#6b63c8', text:'#b0aaf0' },
-    coral:  { fill:'#2a1208', stroke:'#b04020', text:'#e8907a' },
-    amber:  { fill:'#261a04', stroke:'#c07010', text:'#e8b060' },
-    gray:   { fill:'#1e1e1c', stroke:'#555550', text:'#b0aea8' },
-    blue:   { fill:'#0a1e32', stroke:'#2060a0', text:'#80b8e8' },
-  } : {
-    teal:   { fill:'#E1F5EE', stroke:'#5DCAA5', text:'#085041' },
-    purple: { fill:'#EEEDFE', stroke:'#534AB7', text:'#26215C' },
-    coral:  { fill:'#FAECE7', stroke:'#D85A30', text:'#4A1B0C' },
-    amber:  { fill:'#FAEEDA', stroke:'#EF9F27', text:'#412402' },
-    gray:   { fill:'#F1EFE8', stroke:'#888780', text:'#2C2C2A' },
-    blue:   { fill:'#E6F1FB', stroke:'#378ADD', text:'#042C53' },
+// ══════════════════════════════════════════════════════════
+//  CHAIN: 半導體 AI
+// ══════════════════════════════════════════════════════════
+const SEMICON_CHAIN = {
+  filters:[
+    {id:'all',       label:'全部'},
+    {id:'equip',     label:'材料/設備'},
+    {id:'ic_design', label:'IC設計'},
+    {id:'foundry',   label:'晶圓代工'},
+    {id:'packaging', label:'封裝測試'},
+    {id:'assembly',  label:'組裝整合'},
+    {id:'cloud_client',label:'雲端客戶'},
+  ],
+  tiers:[
+    {y1:0,   y2:195, label:'上游 — 材料・設備',      col:'rgba(93,202,165,0.05)'},
+    {y1:195, y2:390, label:'中游 — IC設計・晶圓代工', col:'rgba(139,110,204,0.045)'},
+    {y1:390, y2:575, label:'下游 — 封裝・記憶體・組裝',col:'rgba(192,128,48,0.05)'},
+    {y1:575, y2:755, label:'終端 — 系統整合',         col:'rgba(139,139,139,0.04)'},
+    {y1:755, y2:950, label:'客戶 — 雲端・品牌',        col:'rgba(74,158,224,0.05)'},
+  ],
+  legendCats:['equip','ic_design','foundry','packaging','assembly','mem','systems','cloud_client'],
+  nodes:[
+    {id:'asml',       name:'ASML',      t:'ASML',  mkt:'EU',cat:'equip',       x:140,y:100,r:30, desc:'全球唯一 EUV 微影設備製造商，無 ASML 就無先進晶片，台積電、三星、Intel 都要靠它。'},
+    {id:'shin',       name:'信越化學',  t:'SHECY', mkt:'JP',cat:'equip',       x:340,y:100,r:26, desc:'全球最大矽晶圓供應商，台積電主要原料來源之一。（美股 ADR：SHECY）'},
+    {id:'gobj',       name:'環球晶',    t:'6488',  mkt:'TW',cat:'equip',       x:530,y:100,r:26, desc:'台灣最大矽晶圓廠，全球第三大，是台積電和三星的重要供應商。'},
+    {id:'amat',       name:'AMAT',      t:'AMAT',  mkt:'US',cat:'equip',       x:720,y:100,r:28, desc:'Applied Materials，全球最大半導體設備公司，提供薄膜沉積、蝕刻等設備。'},
+    {id:'klac',       name:'KLA',       t:'KLAC',  mkt:'US',cat:'equip',       x:910,y:100,r:26, desc:'全球量測與檢測設備龍頭，確保晶片製造品質。'},
+    {id:'lrcx',       name:'Lam Research',t:'LRCX',mkt:'US',cat:'equip',       x:1100,y:100,r:26,desc:'全球最大蝕刻和薄膜沉積設備廠，先進製程不可或缺。'},
+    {id:'nvda_sc',    name:'NVIDIA',    t:'NVDA',  mkt:'US',cat:'ic_design',   x:160,y:295,r:40, desc:'全球最重要的 AI 晶片設計公司，H100/B200 GPU 是 AI 訓練核心。委託台積電代工。'},
+    {id:'tsmc_sc',    name:'台積電',    t:'2330',  mkt:'TW',cat:'foundry',     x:420,y:295,r:44, desc:'全球最大晶圓代工廠，掌握最先進 3nm/2nm 製程。NVIDIA、Apple、AMD 全靠台積電生產晶片。'},
+    {id:'mtk_sc',     name:'聯發科',    t:'2454',  mkt:'TW',cat:'ic_design',   x:680,y:295,r:30, desc:'全球最大手機 IC 設計公司，Dimensity 晶片委託台積電代工。'},
+    {id:'umc_sc',     name:'聯電',      t:'2303',  mkt:'TW',cat:'foundry',     x:910,y:295,r:28, desc:'台灣第二大晶圓代工廠，主攻成熟製程，全球前三大代工廠。'},
+    {id:'psmc_sc',    name:'力積電',    t:'6770',  mkt:'TW',cat:'foundry',     x:1100,y:295,r:26,desc:'台灣第三大晶圓代工廠，主攻 DRAM 和特殊製程，2021 年上市。'},
+    {id:'asmpt_sc',   name:'日月光',    t:'3711',  mkt:'TW',cat:'packaging',   x:140,y:475,r:30, desc:'全球最大封裝測試廠，提供 CoWoS 先進封裝服務，是台積電封裝合作夥伴。'},
+    {id:'hynix_sc',   name:'SK Hynix',  t:'HXSCL', mkt:'KR',cat:'mem',         x:340,y:475,r:32, desc:'全球 HBM 第一，NVIDIA H100 內的 HBM 幾乎全來自 SK Hynix。'},
+    {id:'hon_sc',     name:'鴻海',      t:'2317',  mkt:'TW',cat:'assembly',    x:540,y:475,r:34, desc:'全球最大電子代工廠，iPhone、AI 伺服器組裝，積極布局 AI 伺服器市場。'},
+    {id:'quanta_sc',  name:'廣達',      t:'2382',  mkt:'TW',cat:'assembly',    x:740,y:475,r:28, desc:'全球最大 AI 伺服器廠，Google、Meta 的資料中心伺服器主要供應商。'},
+    {id:'wiwynn_sc',  name:'緯穎',      t:'6669',  mkt:'TW',cat:'assembly',    x:930,y:475,r:26, desc:'緯創子公司，Meta 和 Microsoft 雲端伺服器主要供應商，AI 伺服器高成長。'},
+    {id:'pegatron_sc',name:'和碩',      t:'4938',  mkt:'TW',cat:'assembly',    x:1110,y:475,r:24,desc:'台灣第二大電子代工廠，蘋果 iPhone 重要代工夥伴。'},
+    {id:'dell_sc',    name:'Dell',      t:'DELL',  mkt:'US',cat:'systems',     x:180,y:655,r:26, desc:'全球最大伺服器廠商，AI 伺服器需求帶動業績大幅成長。'},
+    {id:'apple_sc',   name:'Apple',     t:'AAPL',  mkt:'US',cat:'systems',     x:400,y:655,r:34, desc:'A/M 系列晶片全由台積電生產，是台積電最大客戶之一。'},
+    {id:'qcom_sc',    name:'Qualcomm',  t:'QCOM',  mkt:'US',cat:'ic_design',   x:620,y:655,r:28, desc:'全球最大手機基頻晶片廠，Snapdragon 系列委託台積電代工。'},
+    {id:'avgo_sc',    name:'Broadcom',  t:'AVGO',  mkt:'US',cat:'ic_design',   x:840,y:655,r:30, desc:'AI 交換器晶片需求暴增，替 Google、Meta 設計自研 AI 晶片。'},
+    {id:'arm_sc',     name:'ARM',       t:'ARM',   mkt:'US',cat:'ic_design',   x:1040,y:655,r:26,desc:'幾乎所有手機晶片和 AI 晶片都使用 ARM 架構，按晶片顆數收授權費。'},
+    {id:'msft_sc',    name:'Microsoft', t:'MSFT',  mkt:'US',cat:'cloud_client',x:160,y:840,r:34, desc:'最大 NVIDIA 客戶之一，Azure 雲端大量部署 H100，也是 OpenAI 最大投資方。'},
+    {id:'goog_sc',    name:'Google',    t:'GOOGL', mkt:'US',cat:'cloud_client',x:380,y:840,r:32, desc:'自研 TPU 委託台積電生產，同時也是 NVIDIA GPU 大客戶。'},
+    {id:'meta_sc',    name:'Meta',      t:'META',  mkt:'US',cat:'cloud_client',x:590,y:840,r:30, desc:'全球最大 NVIDIA GPU 採購商之一，大量用於 AI 訓練。'},
+    {id:'amzn_sc',    name:'Amazon',    t:'AMZN',  mkt:'US',cat:'cloud_client',x:800,y:840,r:32, desc:'AWS 是全球最大雲端服務，自研 Trainium 晶片委託台積電生產。'},
+    {id:'tsla_sc',    name:'Tesla',     t:'TSLA',  mkt:'US',cat:'cloud_client',x:1000,y:840,r:26,desc:'Dojo AI 訓練晶片委託台積電生產，同時是 NVIDIA GPU 大客戶。'},
+  ],
+  edges:[
+    {a:'asml',       b:'tsmc_sc',    dash:false},
+    {a:'shin',       b:'tsmc_sc',    dash:false},
+    {a:'gobj',       b:'tsmc_sc',    dash:false},
+    {a:'amat',       b:'tsmc_sc',    dash:false},
+    {a:'klac',       b:'tsmc_sc',    dash:false},
+    {a:'lrcx',       b:'tsmc_sc',    dash:false},
+    {a:'nvda_sc',    b:'tsmc_sc',    dash:true},
+    {a:'mtk_sc',     b:'tsmc_sc',    dash:true},
+    {a:'tsmc_sc',    b:'asmpt_sc',   dash:false},
+    {a:'tsmc_sc',    b:'hynix_sc',   dash:true},
+    {a:'nvda_sc',    b:'quanta_sc',  dash:false},
+    {a:'nvda_sc',    b:'hon_sc',     dash:false},
+    {a:'tsmc_sc',    b:'hon_sc',     dash:false},
+    {a:'tsmc_sc',    b:'wiwynn_sc',  dash:false},
+    {a:'asmpt_sc',   b:'dell_sc',    dash:false},
+    {a:'quanta_sc',  b:'msft_sc',    dash:false},
+    {a:'quanta_sc',  b:'goog_sc',    dash:false},
+    {a:'wiwynn_sc',  b:'msft_sc',    dash:false},
+    {a:'hon_sc',     b:'apple_sc',   dash:false},
+    {a:'pegatron_sc',b:'apple_sc',   dash:false},
+    {a:'avgo_sc',    b:'goog_sc',    dash:false},
+    {a:'arm_sc',     b:'qcom_sc',    dash:false},
+    {a:'qcom_sc',    b:'apple_sc',   dash:false},
+  ],
+  nvdaEdges:[['nvda_sc','tsmc_sc'],['nvda_sc','asmpt_sc'],['nvda_sc','hynix_sc'],['nvda_sc','quanta_sc'],['nvda_sc','hon_sc'],['nvda_sc','wiwynn_sc']],
+  amdEdges:[],supEdges:[],peerEdges:[],roles:{},
+};
+
+// ══════════════════════════════════════════════════════════
+//  CHAIN: 電動車
+// ══════════════════════════════════════════════════════════
+const EV_CHAIN = {
+  filters:[
+    {id:'all',     label:'全部'},
+    {id:'raw_mat', label:'原物料'},
+    {id:'battery', label:'電池'},
+    {id:'ev_parts',label:'零組件'},
+    {id:'ev_brand',label:'整車品牌'},
+    {id:'charging',label:'充電服務'},
+    {id:'mobility',label:'出行平台'},
+  ],
+  tiers:[
+    {y1:0,   y2:195, label:'上游 — 原物料',         col:'rgba(93,202,165,0.05)'},
+    {y1:195, y2:390, label:'中游 — 電池・零組件',    col:'rgba(139,110,204,0.045)'},
+    {y1:390, y2:575, label:'整車 — 電動車品牌',      col:'rgba(212,95,37,0.045)'},
+    {y1:575, y2:755, label:'下游 — 充電・自駕軟體',  col:'rgba(46,134,171,0.05)'},
+    {y1:755, y2:950, label:'終端 — 出行平台・企業',  col:'rgba(74,158,224,0.05)'},
+  ],
+  legendCats:['raw_mat','battery','ev_parts','ev_brand','charging','autodrv','mobility'],
+  nodes:[
+    {id:'alb',     name:'Albemarle',  t:'ALB',  mkt:'US',cat:'raw_mat', x:160,y:100,r:26,desc:'全球最大鋰礦公司，電池原料鋰的主要供應商，電動車需求直接影響股價。'},
+    {id:'mp',      name:'MP Materials',t:'MP',  mkt:'US',cat:'raw_mat', x:360,y:100,r:24,desc:'美國唯一大型稀土礦山，永磁材料是電動馬達的關鍵原料，受惠美國製造回流。'},
+    {id:'vale',    name:'Vale',       t:'VALE', mkt:'US',cat:'raw_mat', x:550,y:100,r:26,desc:'全球最大鎳礦公司，高鎳電池是目前主流，是電池廠重要原料來源。'},
+    {id:'altm',    name:'Arcadium',   t:'ALTM', mkt:'US',cat:'raw_mat', x:740,y:100,r:24,desc:'全球前三大鋰化工廠，提供電池級氫氧化鋰，已被力拓收購。'},
+    {id:'pll',     name:'Piedmont',   t:'PLL',  mkt:'US',cat:'raw_mat', x:920,y:100,r:22,desc:'美國本土鋰礦開發商，Tesla 長期供應合約，受惠美國電動車在地化政策。'},
+    {id:'pana',    name:'Panasonic',  t:'PCRFY',mkt:'JP',cat:'battery', x:180,y:295,r:30,desc:'Tesla 最重要電池合作夥伴，在內華達 Gigafactory 合資生產，美股 ADR：PCRFY。'},
+    {id:'on',      name:'onsemi',     t:'ON',   mkt:'US',cat:'ev_parts',x:400,y:295,r:28,desc:'車用功率半導體龍頭，電動車逆變器關鍵元件，Ford、GM、Tesla 主要供應商。'},
+    {id:'bwa',     name:'BorgWarner', t:'BWA',  mkt:'US',cat:'ev_parts',x:620,y:295,r:26,desc:'全球最大電動傳動系統供應商，正從傳統變速箱轉型電驅動系統。'},
+    {id:'dan',     name:'Dana Inc.',  t:'DAN',  mkt:'US',cat:'ev_parts',x:820,y:295,r:24,desc:'電動車驅動橋和電動傳動系統供應商，供貨 Ford、Jeep 電動車型。'},
+    {id:'aptv',    name:'Aptiv',      t:'APTV', mkt:'US',cat:'ev_parts',x:1010,y:295,r:26,desc:'全球最大汽車電子架構供應商，車內線束和自動駕駛電子系統。'},
+    {id:'tsla_ev', name:'Tesla',      t:'TSLA', mkt:'US',cat:'ev_brand',x:160,y:483,r:38,desc:'全球最有品牌價值的電動車，自動駕駛 FSD 是最大差異化，Gigafactory 遍布全球。'},
+    {id:'gm_ev',   name:'GM',         t:'GM',   mkt:'US',cat:'ev_brand',x:380,y:483,r:28,desc:'美國傳統車廠轉型電動車，Silverado EV 和 Blazer EV 是主力車型。'},
+    {id:'ford_ev', name:'Ford',       t:'F',    mkt:'US',cat:'ev_brand',x:580,y:483,r:30,desc:'F-150 Lightning 電動皮卡是美國最暢銷電動皮卡，Mustang Mach-E 也受好評。'},
+    {id:'rivn',    name:'Rivian',     t:'RIVN', mkt:'US',cat:'ev_brand',x:780,y:483,r:26,desc:'Amazon 持股，專注電動皮卡 R1T 和商用配送車，Amazon 訂購 10 萬輛。'},
+    {id:'lcid',    name:'Lucid',      t:'LCID', mkt:'US',cat:'ev_brand',x:970,y:483,r:24,desc:'高端電動車，Lucid Air 是全球續航最長的電動車，沙烏地主權基金持股。'},
+    {id:'vwagy',   name:'Volkswagen', t:'VWAGY',mkt:'DE',cat:'ev_brand',x:1150,y:483,r:26,desc:'歐洲最大車廠，ID 系列電動車在全球熱銷，電動化投資規模全球最大之一。'},
+    {id:'chpt',    name:'ChargePoint',t:'CHPT', mkt:'US',cat:'charging',x:200,y:663,r:24,desc:'北美最大電動車充電網路，充電樁超過 25 萬個，企業和公共充電場站領導者。'},
+    {id:'blnk',    name:'Blink',      t:'BLNK', mkt:'US',cat:'charging',x:410,y:663,r:22,desc:'美國快速成長的充電樁公司，住宅和商業充電解決方案，受政府補貼支持。'},
+    {id:'mbly',    name:'Mobileye',   t:'MBLY', mkt:'US',cat:'autodrv', x:610,y:663,r:26,desc:'全球最大自動駕駛技術供應商，ADAS 系統裝備超過 1 億輛車，Intel 持股 88%。'},
+    {id:'evgo',    name:'EVgo',       t:'EVGO', mkt:'US',cat:'charging',x:820,y:663,r:22,desc:'美國最大快充網路之一，與 GM 合作，在全美主要城市布建直流快充。'},
+    {id:'uber',    name:'Uber',       t:'UBER', mkt:'US',cat:'mobility',x:180,y:845,r:30,desc:'自動駕駛普及後最大受益者，已與 Waymo 合作，Robotaxi 時代的最大平台。'},
+    {id:'lyft',    name:'Lyft',       t:'LYFT', mkt:'US',cat:'mobility',x:390,y:845,r:24,desc:'美國第二大叫車平台，與 Mobileye 合作自動駕駛，股價相對低估。'},
+    {id:'waymo',   name:'Waymo',      t:'GOOGL',mkt:'US',cat:'mobility',x:590,y:845,r:26,desc:'Google 旗下，全球最先進自動駕駛公司，舊金山已商業化運營，間接投資 GOOGL。'},
+    {id:'htz',     name:'Hertz',      t:'HTZ',  mkt:'US',cat:'mobility',x:800,y:845,r:22,desc:'全球最大租車公司之一，大量採購 Tesla 和其他電動車做為車隊電動化轉型。'},
+    {id:'amzn_ev', name:'Amazon',     t:'AMZN', mkt:'US',cat:'mobility',x:1000,y:845,r:28,desc:'訂購 Rivian 10 萬輛電動配送車，目標 2030 年車隊完全電動化。'},
+  ],
+  edges:[
+    {a:'alb',     b:'pana',    dash:false},
+    {a:'vale',    b:'pana',    dash:false},
+    {a:'altm',    b:'pana',    dash:false},
+    {a:'mp',      b:'on',      dash:false},
+    {a:'pana',    b:'tsla_ev', dash:false},
+    {a:'on',      b:'tsla_ev', dash:false},
+    {a:'on',      b:'gm_ev',   dash:false},
+    {a:'on',      b:'ford_ev', dash:false},
+    {a:'bwa',     b:'ford_ev', dash:false},
+    {a:'bwa',     b:'gm_ev',   dash:false},
+    {a:'aptv',    b:'tsla_ev', dash:false},
+    {a:'aptv',    b:'vwagy',   dash:false},
+    {a:'mbly',    b:'ford_ev', dash:false},
+    {a:'mbly',    b:'vwagy',   dash:false},
+    {a:'tsla_ev', b:'uber',    dash:false},
+    {a:'tsla_ev', b:'htz',     dash:false},
+    {a:'rivn',    b:'amzn_ev', dash:false},
+    {a:'chpt',    b:'tsla_ev', dash:false},
+    {a:'chpt',    b:'rivn',    dash:false},
+    {a:'waymo',   b:'uber',    dash:false},
+    {a:'ford_ev', b:'lyft',    dash:false},
+    {a:'gm_ev',   b:'uber',    dash:false},
+    {a:'pll',     b:'tsla_ev', dash:true},
+    {a:'mbly',    b:'uber',    dash:true},
+  ],
+  nvdaEdges:[],amdEdges:[],supEdges:[],peerEdges:[],roles:{},
+};
+
+// ══════════════════════════════════════════════════════════
+//  CHAIN: 雲端 AI
+// ══════════════════════════════════════════════════════════
+const CLOUD_CHAIN = {
+  filters:[
+    {id:'all',        label:'全部'},
+    {id:'hw_infra',   label:'AI硬體'},
+    {id:'cloud_plat', label:'雲端平台'},
+    {id:'ai_model',   label:'AI模型'},
+    {id:'saas',       label:'SaaS應用'},
+    {id:'enterprise', label:'企業用戶'},
+  ],
+  tiers:[
+    {y1:0,   y2:195, label:'基礎設施 — 硬體・台灣製造', col:'rgba(59,173,141,0.05)'},
+    {y1:195, y2:390, label:'雲端平台 — IaaS',            col:'rgba(212,95,37,0.045)'},
+    {y1:390, y2:575, label:'AI 模型 — 大語言模型',        col:'rgba(139,110,204,0.05)'},
+    {y1:575, y2:755, label:'AI 應用 — SaaS',             col:'rgba(91,158,110,0.04)'},
+    {y1:755, y2:950, label:'終端 — 企業用戶',             col:'rgba(74,158,224,0.05)'},
+  ],
+  legendCats:['hw_infra','cloud_plat','ai_model','saas','enterprise'],
+  nodes:[
+    {id:'nvda_cl',   name:'NVIDIA',      t:'NVDA',  mkt:'US',cat:'hw_infra',  x:160,y:100,r:38, desc:'H100/B200 是 AI 訓練最重要的 GPU，全球 AI 公司都在搶購，領先優勢至少保持 2-3 年。'},
+    {id:'amd_cl',    name:'AMD',         t:'AMD',   mkt:'US',cat:'hw_infra',  x:390,y:100,r:32, desc:'MI300X 是 H100 的主要競爭對手，微軟、Meta 已開始大量採購。'},
+    {id:'avgo_cl',   name:'Broadcom',    t:'AVGO',  mkt:'US',cat:'hw_infra',  x:600,y:100,r:28, desc:'AI 資料中心網路交換器晶片龍頭，也替 Google、Apple 設計自研 AI 晶片。'},
+    {id:'smci',      name:'Super Micro', t:'SMCI',  mkt:'US',cat:'hw_infra',  x:800,y:100,r:26, desc:'NVIDIA GPU 伺服器主要組裝夥伴，AI 伺服器市佔快速成長，台灣供應鏈深度合作。'},
+    {id:'quanta_cl', name:'廣達',        t:'2382',  mkt:'TW',cat:'hw_infra',  x:990,y:100,r:28, desc:'Google、Meta 資料中心伺服器主要供應商，AI 資本支出暴增直接受益。'},
+    {id:'wiwynn_cl', name:'緯穎',        t:'6669',  mkt:'TW',cat:'hw_infra',  x:1175,y:100,r:26,desc:'Meta、Microsoft 雲端伺服器主要供應商，ODM 出貨量全球前三。'},
+    {id:'aws',       name:'AWS',         t:'AMZN',  mkt:'US',cat:'cloud_plat',x:200,y:295,r:34, desc:'全球最大雲端服務，市佔約 33%，自研 Trainium 晶片用於 AI 訓練。'},
+    {id:'azure',     name:'Azure',       t:'MSFT',  mkt:'US',cat:'cloud_plat',x:440,y:295,r:34, desc:'全球第二大雲端，OpenAI 獨家合作夥伴，Azure OpenAI Service 企業需求爆發。'},
+    {id:'gcp',       name:'GCP',         t:'GOOGL', mkt:'US',cat:'cloud_plat',x:680,y:295,r:30, desc:'全球第三大雲端，TPU 自研 AI 晶片，Gemini 整合進 Google Workspace。'},
+    {id:'ora',       name:'Oracle',      t:'ORCL',  mkt:'US',cat:'cloud_plat',x:900,y:295,r:26, desc:'企業資料庫龍頭轉型雲端，成為 OpenAI 和 Meta 最新資料中心合作夥伴。'},
+    {id:'crwv',      name:'CoreWeave',   t:'CRWV',  mkt:'US',cat:'cloud_plat',x:1090,y:295,r:24,desc:'專注 GPU 算力的雲端公司，NVIDIA 持股，2024 年上市，AI 算力需求爆發受益。'},
+    {id:'oai',       name:'OpenAI',      t:'MSFT',  mkt:'US',cat:'ai_model',  x:180,y:478,r:30, desc:'ChatGPT 開發商，GPT-4o 是最廣泛使用的 AI，未上市可間接投資微軟。'},
+    {id:'deepmind',  name:'DeepMind',    t:'GOOGL', mkt:'US',cat:'ai_model',  x:400,y:478,r:28, desc:'Gemini 是 GPT-4 主要競爭對手，整合進 Google 所有產品和服務。'},
+    {id:'meta_cl',   name:'Meta AI',     t:'META',  mkt:'US',cat:'ai_model',  x:620,y:478,r:28, desc:'Llama 開源模型全球下載量最大，大幅降低 AI 應用門檻，帶動整個生態。'},
+    {id:'msft_cl',   name:'Microsoft',   t:'MSFT',  mkt:'US',cat:'ai_model',  x:840,y:478,r:28, desc:'GitHub Copilot 讓開發者效率提升 55%，Copilot 365 是最快成長的企業 AI 產品。'},
+    {id:'amzn_cl',   name:'Amazon',      t:'AMZN',  mkt:'US',cat:'ai_model',  x:1060,y:478,r:26,desc:'Amazon Bedrock 提供多家 AI 模型存取，Amazon Q 是企業 AI 助理。'},
+    {id:'crm',       name:'Salesforce',  t:'CRM',   mkt:'US',cat:'saas',      x:200,y:655,r:26, desc:'全球最大 CRM，Einstein AI 整合銷售、服務、行銷，AI Agent 是最新成長引擎。'},
+    {id:'snow',      name:'Snowflake',   t:'SNOW',  mkt:'US',cat:'saas',      x:420,y:655,r:26, desc:'雲端資料倉儲龍頭，AI 時代企業資料管理需求大增，是 AI 落地的關鍵基礎設施。'},
+    {id:'pltr',      name:'Palantir',    t:'PLTR',  mkt:'US',cat:'saas',      x:640,y:655,r:28, desc:'政府和企業 AI 決策平台，AIP 是目前最快成長業務，美國政府最大 AI 合約商。'},
+    {id:'now',       name:'ServiceNow',  t:'NOW',   mkt:'US',cat:'saas',      x:860,y:655,r:26, desc:'企業流程自動化龍頭，AI 整合進 IT、HR、客服，升級黏性極高。'},
+    {id:'c3ai',      name:'C3.ai',       t:'AI',    mkt:'US',cat:'saas',      x:1060,y:655,r:22,desc:'專注企業 AI 應用的純 AI 公司，美國政府、能源、金融業客戶。'},
+    {id:'jpm',       name:'金融業',      t:'JPM',   mkt:'US',cat:'enterprise',x:200,y:845,r:26, desc:'金融業是 AI 最大企業用戶，JPMorgan AI 交易系統每年省下數億美元人工成本。'},
+    {id:'isrg',      name:'醫療健康',    t:'ISRG',  mkt:'US',cat:'enterprise',x:450,y:845,r:26, desc:'AI 用於影像診斷、新藥研發，Intuitive Surgical 的機器人手術是 AI 在醫療最成功案例。'},
+    {id:'mfg',       name:'台灣製造業',  t:'2382',  mkt:'TW',cat:'enterprise',x:700,y:845,r:26, desc:'台灣製造業正大量導入 AI 視覺檢測和預測性維護。'},
+    {id:'retail',    name:'零售電商',    t:'AMZN',  mkt:'US',cat:'enterprise',x:940,y:845,r:26, desc:'Amazon AI 推薦系統貢獻超過 35% 銷售額，Shopify AI 工具幫助中小企業快速上線。'},
+  ],
+  edges:[
+    {a:'nvda_cl',  b:'aws',      dash:false},
+    {a:'nvda_cl',  b:'azure',    dash:false},
+    {a:'nvda_cl',  b:'gcp',      dash:false},
+    {a:'nvda_cl',  b:'crwv',     dash:false},
+    {a:'amd_cl',   b:'azure',    dash:false},
+    {a:'amd_cl',   b:'aws',      dash:false},
+    {a:'avgo_cl',  b:'gcp',      dash:false},
+    {a:'smci',     b:'crwv',     dash:false},
+    {a:'smci',     b:'aws',      dash:false},
+    {a:'quanta_cl',b:'gcp',      dash:false},
+    {a:'quanta_cl',b:'azure',    dash:false},
+    {a:'wiwynn_cl',b:'aws',      dash:false},
+    {a:'aws',      b:'amzn_cl',  dash:false},
+    {a:'azure',    b:'oai',      dash:false},
+    {a:'azure',    b:'msft_cl',  dash:false},
+    {a:'gcp',      b:'deepmind', dash:false},
+    {a:'crwv',     b:'meta_cl',  dash:false},
+    {a:'oai',      b:'crm',      dash:false},
+    {a:'deepmind', b:'snow',     dash:false},
+    {a:'msft_cl',  b:'now',      dash:false},
+    {a:'crm',      b:'jpm',      dash:false},
+    {a:'pltr',     b:'jpm',      dash:false},
+    {a:'pltr',     b:'isrg',     dash:false},
+    {a:'snow',     b:'mfg',      dash:false},
+    {a:'now',      b:'retail',   dash:false},
+    {a:'c3ai',     b:'jpm',      dash:false},
+    {a:'amzn_cl',  b:'retail',   dash:false},
+  ],
+  nvdaEdges:[['nvda_cl','aws'],['nvda_cl','azure'],['nvda_cl','gcp'],['nvda_cl','crwv']],
+  amdEdges:[['amd_cl','aws'],['amd_cl','azure']],
+  supEdges:[],peerEdges:[],roles:{},
+};
+
+const CHAIN_MAP = { ai:AI_CHAIN, semicon:SEMICON_CHAIN, ev:EV_CHAIN, cloud:CLOUD_CHAIN };
+
+// ══════════════════════════════════════════════════════════
+//  YAHOO SYMBOL MAP
+// ══════════════════════════════════════════════════════════
+const YAHOO_SYM = {
+  msft:'MSFT',googl:'GOOGL',amzn:'AMZN',meta:'META',tsla:'TSLA',
+  nvda:'NVDA',amd:'AMD',intc:'INTC',arm:'ARM',tpu:'GOOGL',
+  mtek:'2454.TW',tsmc:'2330.TW',ase:'3711.TW',spil:'2325.TW',ptc:'6239.TW',
+  skhy:'000660.KS',micron:'MU',nova:'3034.TW',mura:'6981.T',
+  unim:'3037.TW',nanya:'8046.TW',jsk:'3189.TW',zhen:'4958.TW',
+  yaohua:'2367.TW',zhichao:'8213.TW',jdt:'3044.TW',ttm:'TTMI',
+  delta:'2308.TW',avc:'3017.TW',ygy:'2327.TW',wlc:'2492.TW',
+  foxconn:'2317.TW',quanta:'2382.TW',wiwynn:'6669.TW',wistron:'3231.TW',
+  inv:'2356.TW',compal:'2324.TW',pegatron:'4938.TW',gigabyte:'2376.TW',
+  sanmina:'SANM',aic:'3693.TW',amkr:'AMKR',
+  asml:'ASML',shin:'SHECY',gobj:'6488.TW',amat:'AMAT',klac:'KLAC',lrcx:'LRCX',
+  nvda_sc:'NVDA',tsmc_sc:'2330.TW',mtk_sc:'2454.TW',umc_sc:'2303.TW',psmc_sc:'6770.TW',
+  asmpt_sc:'3711.TW',hynix_sc:'HXSCL',hon_sc:'2317.TW',quanta_sc:'2382.TW',
+  wiwynn_sc:'6669.TW',pegatron_sc:'4938.TW',
+  dell_sc:'DELL',apple_sc:'AAPL',qcom_sc:'QCOM',avgo_sc:'AVGO',arm_sc:'ARM',
+  msft_sc:'MSFT',goog_sc:'GOOGL',meta_sc:'META',amzn_sc:'AMZN',tsla_sc:'TSLA',
+  alb:'ALB',mp:'MP',vale:'VALE',altm:'ALTM',pll:'PLL',
+  pana:'PCRFY',on:'ON',bwa:'BWA',dan:'DAN',aptv:'APTV',
+  tsla_ev:'TSLA',gm_ev:'GM',ford_ev:'F',rivn:'RIVN',lcid:'LCID',vwagy:'VWAGY',
+  chpt:'CHPT',blnk:'BLNK',mbly:'MBLY',evgo:'EVGO',
+  uber:'UBER',lyft:'LYFT',waymo:'GOOGL',htz:'HTZ',amzn_ev:'AMZN',
+  nvda_cl:'NVDA',amd_cl:'AMD',avgo_cl:'AVGO',smci:'SMCI',quanta_cl:'2382.TW',wiwynn_cl:'6669.TW',
+  aws:'AMZN',azure:'MSFT',gcp:'GOOGL',ora:'ORCL',crwv:'CRWV',
+  oai:'MSFT',deepmind:'GOOGL',meta_cl:'META',msft_cl:'MSFT',amzn_cl:'AMZN',
+  crm:'CRM',snow:'SNOW',pltr:'PLTR',now:'NOW',c3ai:'AI',
+  jpm:'JPM',isrg:'ISRG',mfg:'2382.TW',retail:'AMZN',
+};
+
+// ══════════════════════════════════════════════════════════
+//  PRICE FETCH
+// ══════════════════════════════════════════════════════════
+const priceData = {};
+const PROXIES = [
+  s=>`https://corsproxy.io/?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=1d&range=5d`)}`,
+  s=>`https://api.allorigins.win/raw?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=1d&range=5d`)}`,
+];
+async function fetchPrice(sym) {
+  for (const b of PROXIES) {
+    try {
+      const r = await fetch(b(sym),{signal:AbortSignal.timeout(8000)});
+      if(!r.ok)continue;
+      const j=await r.json();
+      const m=j?.chart?.result?.[0]?.meta; if(!m)continue;
+      const price=m.regularMarketPrice,prev=m.previousClose||m.chartPreviousClose;
+      if(!price)continue;
+      return{price,prev,diff:price-prev,pct:(price-prev)/prev*100,cur:m.currency||'',state:m.marketState};
+    }catch{}
+  }
+  return null;
+}
+function fmtP(p,c){
+  if(!p)return'—';
+  const s=c==='TWD'?'NT$':c==='USD'?'$':c==='KRW'?'₩':c==='JPY'?'¥':'';
+  const v=(c==='KRW'||c==='JPY')?Math.round(p).toLocaleString():p.toFixed(2);
+  return s+v;
+}
+
+const prog=document.getElementById('loadprog');
+const loadmsgEl=document.getElementById('loadmsg');
+
+async function loadPrices(nodes){
+  const seen=new Set();
+  const queue=nodes.filter(n=>{const s=YAHOO_SYM[n.id];if(!s||seen.has(s))return false;seen.add(s);return true;});
+  for(let i=0;i<queue.length;i++){
+    const n=queue[i],sym=YAHOO_SYM[n.id];
+    const d=await fetchPrice(sym);
+    nodes.filter(x=>YAHOO_SYM[x.id]===sym).forEach(x=>priceData[x.id]=d);
+    if(selected&&YAHOO_SYM[selected.id]===sym)showTip(selected);
+    prog.style.width=Math.round((i+1)/queue.length*100)+'%';
+    loadmsgEl.textContent=`股價 ${i+1}/${queue.length}`;
+    if(i<queue.length-1)await new Promise(r=>setTimeout(r,100));
+  }
+  const ok=Object.values(priceData).filter(v=>v).length;
+  loadmsgEl.textContent=ok>0?`✓ 已載入 ${ok} 檔`:'⚠ 無法載入';
+  prog.style.background=ok>0?'#3BAD8D':'#D45C5C';
+  setTimeout(()=>{document.getElementById('loadbar').style.display='none';},3000);
+  render();
+}
+
+// ══════════════════════════════════════════════════════════
+//  CANVAS ENGINE
+// ══════════════════════════════════════════════════════════
+const wrap=document.getElementById('canvas-wrap');
+const cv=document.getElementById('c');
+const ctx=cv.getContext('2d');
+let tx=0,ty=0,scale=1;
+const MIN_S=0.25,MAX_S=4;
+let selected=null;
+let activeChainKey='ai';
+let activeChain=AI_CHAIN;
+let activeFilter='all';
+let nodeMap={};
+const npos={};
+
+function buildNodeMap(nodes){nodeMap={};nodes.forEach(n=>nodeMap[n.id]=n);}
+function resetPositions(nodes){nodes.forEach(n=>npos[n.id]={x:n.x,y:n.y,r:n.r});}
+
+function fitToView(){
+  const cw=wrap.clientWidth,ch=wrap.clientHeight;
+  const nodes=activeChain.nodes;
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  nodes.forEach(n=>{minX=Math.min(minX,n.x-n.r);maxX=Math.max(maxX,n.x+n.r);minY=Math.min(minY,n.y-n.r);maxY=Math.max(maxY,n.y+n.r);});
+  const pad=50;const pw=maxX-minX+pad*2,ph=maxY-minY+pad*2;
+  scale=Math.min(cw/pw,ch/ph);
+  tx=(cw-pw*scale)/2-minX*scale+pad*scale;
+  ty=(ch-ph*scale)/2-minY*scale+pad*scale;
+  render();
+}
+function toWorld(cx,cy){return{x:(cx-tx)/scale,y:(cy-ty)/scale};}
+
+function filterSet(){
+  const f=activeFilter;
+  if(f==='all')return null;
+  if(activeChain===AI_CHAIN){
+    if(f==='nvda')return new Set(activeChain.nodes.filter(n=>n.nvda||n.id==='nvda').map(n=>n.id));
+    if(f==='amd') return new Set(activeChain.nodes.filter(n=>n.amd||n.id==='amd').map(n=>n.id));
+    if(f==='pkg') return new Set(activeChain.nodes.filter(n=>n.cat==='pkg').map(n=>n.id));
+    if(f==='abf') return new Set(activeChain.nodes.filter(n=>n.cat==='abf').map(n=>n.id));
+    if(f==='odm') return new Set(activeChain.nodes.filter(n=>n.cat==='odm').map(n=>n.id));
+    if(f==='tw')  return new Set(activeChain.nodes.filter(n=>n.mkt==='TW').map(n=>n.id));
+  }
+  return new Set(activeChain.nodes.filter(n=>n.cat===f).map(n=>n.id));
+}
+
+function buildConnected(n){
+  const s=new Set([n.id]);
+  const chain=activeChain;
+  const all=[
+    ...(chain.nvdaEdges||[]).map(([a,b])=>({a,b})),
+    ...(chain.amdEdges||[]).map(([a,b])=>({a,b})),
+    ...(chain.supEdges||[]).map(([a,b])=>({a,b})),
+    ...(chain.peerEdges||[]).map(([a,b])=>({a,b})),
+    ...(chain.edges||[]),
+  ];
+  all.forEach(e=>{const ea=e.a||e[0],eb=e.b||e[1];if(ea===n.id)s.add(eb);if(eb===n.id)s.add(ea);});
+  return s;
+}
+
+function isDark(){return document.documentElement.getAttribute('data-theme')==='dark';}
+function bgColor(){return isDark()?'#111210':'#F5F3EE';}
+function edgeBaseColor(){return isDark()?'#3a3a38':'#C8C4BB';}
+
+function render(){
+  const dpr=window.devicePixelRatio||1;
+  const cw=wrap.clientWidth,ch=wrap.clientHeight;
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle=bgColor();
+  ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  const chain=activeChain,dark=isDark();
+
+  // Tier bands
+  chain.tiers.forEach(t=>{
+    const sy1=t.y1*scale+ty,sy2=t.y2*scale+ty;
+    if(sy2<0||sy1>ch)return;
+    const dY1=Math.max(0,sy1),dY2=Math.min(ch,sy2);
+    ctx.fillStyle=t.col;ctx.fillRect(0,dY1,cw,dY2-dY1);
+    if(sy2>0&&sy2<ch){
+      ctx.strokeStyle=dark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
+      ctx.lineWidth=0.5;ctx.setLineDash([5,9]);
+      ctx.beginPath();ctx.moveTo(0,sy2);ctx.lineTo(cw,sy2);ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    const labelY=Math.max(sy1+14,14);
+    if(labelY<sy2-2){
+      ctx.fillStyle=dark?'rgba(255,255,255,0.18)':'rgba(0,0,0,0.2)';
+      ctx.font='500 11px "Noto Sans TC",sans-serif';
+      ctx.textAlign='left';ctx.fillText(t.label,10,labelY);
+    }
+  });
+
+  ctx.save();ctx.translate(tx,ty);ctx.scale(scale,scale);
+
+  const fSet=filterSet();
+  const aSet=selected?buildConnected(selected):null;
+  const nodeAlpha=id=>{const vis=!fSet||fSet.has(id);if(!vis)return 0.07;if(aSet)return aSet.has(id)?1:0.12;return 1;};
+  const edgeAlpha=(a,b,base)=>{const va=!fSet||fSet.has(a),vb=!fSet||fSet.has(b);if(!va||!vb)return 0;if(aSet)return(aSet.has(a)&&aSet.has(b))?base:base*0.07;return base;};
+  const ec=edgeBaseColor();
+
+  const drawLine=(ax,ay,bx,by,col,lw,dash,alpha)=>{
+    if(alpha<=0)return;
+    ctx.globalAlpha=alpha;ctx.strokeStyle=col;ctx.lineWidth=lw;
+    ctx.setLineDash(dash||[]);ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
+    ctx.setLineDash([]);ctx.globalAlpha=1;
   };
-}
 
-// ── 計算節點中心 ────────────────────────────────────────────────
-function nodeCenter(n) {
-  return { cx: n.x + n.w / 2, cy: n.y + 26 };
-}
-
-// ── 算箭頭端點（從一個矩形邊緣到另一個） ──────────────────────
-function edgePoints(from, to) {
-  const fc = nodeCenter(from), tc = nodeCenter(to);
-  const dx = tc.cx - fc.cx, dy = tc.cy - fc.cy;
-  // 出發點：下邊中心
-  const sx = fc.cx, sy = from.y + 52;
-  // 終點：上邊中心
-  const ex = tc.cx, ey = to.y;
-  return { sx, sy, ex, ey };
-}
-
-// ── 繪製供應鏈 ─────────────────────────────────────────────────
-let currentChain = 'semicon';
-
-function renderChain(chainKey) {
-  currentChain = chainKey;
-  const chain = CHAINS[chainKey];
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const COLORS  = getColors();
-  const svg   = document.getElementById('chain-svg');
-  const nodeMap = {};
-  chain.nodes.forEach(n => nodeMap[n.id] = n);
-
-  // 計算最大 y（決定 viewBox 高度）
-  const maxY = Math.max(...chain.nodes.map(n => n.y + 52)) + 40;
-  const maxX = Math.max(...chain.nodes.map(n => n.x + n.w)) + 20;
-  svg.setAttribute('viewBox', `0 0 ${Math.max(maxX, 760)} ${maxY}`);
-
-  let html = `<defs>
-    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </marker>
-  </defs>`;
-
-  // 層級標題
-  chain.tiers.forEach(t => {
-    html += `<text x="16" y="${t.y + 14}" font-size="10" font-weight="500" fill="#888" font-family="sans-serif" letter-spacing=".5">${t.label}</text>`;
+  (chain.nvdaEdges||[]).forEach(([a,b])=>{
+    const na=npos[a],nb=npos[b];if(!na||!nb)return;
+    const hi=aSet&&aSet.has(a)&&aSet.has(b);
+    drawLine(na.x,na.y,nb.x,nb.y,'#3BAD8D',hi?2.5:1,[],edgeAlpha(a,b,hi?0.85:0.3));
+  });
+  (chain.amdEdges||[]).forEach(([a,b])=>{
+    const na=npos[a],nb=npos[b];if(!na||!nb)return;
+    const hi=aSet&&aSet.has(a)&&aSet.has(b);
+    drawLine(na.x,na.y,nb.x,nb.y,'#E07030',hi?2.2:1,[6,4],edgeAlpha(a,b,hi?0.8:0.35));
+  });
+  (chain.supEdges||[]).forEach(([a,b])=>{
+    const na=npos[a],nb=npos[b];if(!na||!nb)return;
+    const hi=aSet&&aSet.has(a)&&aSet.has(b);
+    const col=hi?(CATS[nodeMap[a]?.cat]?.color||ec):ec;
+    drawLine(na.x,na.y,nb.x,nb.y,col,hi?2:0.7,[],edgeAlpha(a,b,1));
+  });
+  const dpeer=new Set();
+  (chain.peerEdges||[]).forEach(([a,b])=>{
+    const k=[a,b].sort().join('|');if(dpeer.has(k))return;dpeer.add(k);
+    const na=npos[a],nb=npos[b];if(!na||!nb)return;
+    const hi=aSet&&aSet.has(a)&&aSet.has(b);
+    const col=hi?(CATS[nodeMap[a]?.cat]?.color||ec):ec;
+    drawLine(na.x,na.y,nb.x,nb.y,col,hi?1.2:0.4,[3,3],edgeAlpha(a,b,1));
+  });
+  (chain.edges||[]).forEach(e=>{
+    const na=npos[e.a],nb=npos[e.b];if(!na||!nb)return;
+    const hi=aSet&&aSet.has(e.a)&&aSet.has(e.b);
+    const col=hi?(CATS[nodeMap[e.a]?.cat]?.color||ec):ec;
+    const alpha=edgeAlpha(e.a,e.b,1);if(alpha<=0)return;
+    ctx.globalAlpha=alpha;ctx.strokeStyle=col;ctx.lineWidth=hi?2:0.8;
+    ctx.setLineDash(e.dash?[5,3]:[]);
+    ctx.beginPath();ctx.moveTo(na.x,na.y);ctx.lineTo(nb.x,nb.y);ctx.stroke();
+    ctx.setLineDash([]);ctx.globalAlpha=1;
   });
 
-  // 連接線
-  const edgeColor = isDark ? '#444440' : '#C8C4BB';
-  chain.edges.forEach(e => {
-    const from = nodeMap[e.from], to = nodeMap[e.to];
-    if (!from || !to) return;
-    const { sx, sy, ex, ey } = edgePoints(from, to);
-    const midY = (sy + ey) / 2;
-    const d    = `M${sx} ${sy} C${sx} ${midY} ${ex} ${midY} ${ex} ${ey}`;
-    html += `<path d="${d}" fill="none" stroke="${edgeColor}" stroke-width=".8"${e.dash ? ' stroke-dasharray="5,3"' : ''} marker-end="url(#arr)"/>`;
-  });
+  chain.nodes.forEach(n=>{
+    const p=npos[n.id];if(!p)return;
+    const alpha=nodeAlpha(n.id);
+    ctx.globalAlpha=alpha;
+    const col=CATS[n.cat]?.color||'#888';
+    const isSel=selected&&selected.id===n.id;
+    const r=p.r;
 
-  // 節點
-  chain.nodes.forEach(n => {
-    const c = COLORS[n.color] || COLORS.gray;
-    html += `
-      <g class="node-card" onclick="showInfo('${n.id}','${chainKey}')">
-        <rect x="${n.x}" y="${n.y}" width="${n.w}" height="52" rx="8"
-          fill="${c.fill}" stroke="${c.stroke}" stroke-width=".8"/>
-        <text x="${n.x + n.w/2}" y="${n.y + 18}" text-anchor="middle"
-          font-size="13" font-weight="500" fill="${c.text}" font-family="sans-serif">${n.label}</text>
-        <text x="${n.x + n.w/2}" y="${n.y + 36}" text-anchor="middle"
-          font-size="10" fill="${c.text}" font-family="sans-serif" opacity=".8">${n.sub}</text>
-      </g>`;
-  });
+    if(n.nvda||n.id==='nvda'){
+      ctx.strokeStyle='#3BAD8D';ctx.lineWidth=n.id==='nvda'?3:1.5;
+      ctx.globalAlpha=alpha*(n.id==='nvda'?0.6:0.35);
+      ctx.beginPath();ctx.arc(p.x,p.y,r+(n.id==='nvda'?10:6),0,Math.PI*2);ctx.stroke();
+    }
+    if(n.amd||n.id==='amd'){
+      ctx.strokeStyle='#E07030';ctx.lineWidth=n.id==='amd'?3:1.5;
+      ctx.globalAlpha=alpha*(n.id==='amd'?0.6:0.3);
+      ctx.beginPath();ctx.arc(p.x,p.y,r+(n.id==='amd'?10:n.nvda?12:6),0,Math.PI*2);ctx.stroke();
+    }
+    ctx.globalAlpha=alpha;
 
-  svg.innerHTML = html;
-  document.getElementById('info-panel').classList.remove('visible');
+    if(isSel){ctx.shadowColor=col;ctx.shadowBlur=20;}
+    ctx.fillStyle=col;
+    ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1;ctx.stroke();
+    ctx.shadowBlur=0;
+
+    if(isSel){ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(p.x,p.y,r+3,0,Math.PI*2);ctx.stroke();}
+
+    const fs=r>=38?13:r>=28?11:r>=22?10:9;
+    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font=`600 ${fs}px "Noto Sans TC",system-ui`;
+    ctx.fillText(n.name,p.x,p.y-(r>=22?4:3));
+    ctx.font=`400 ${fs-2}px system-ui`;
+    ctx.fillStyle='rgba(255,255,255,0.8)';
+    ctx.fillText(n.t,p.x,p.y+(r>=22?9:8));
+
+    ctx.fillStyle='rgba(0,0,0,0.35)';
+    const bw=18,bh=11,bx=p.x-bw/2,by=p.y+r-bh-1;
+    roundRect(ctx,bx,by,bw,bh,3);ctx.fill();
+    ctx.fillStyle='#fff';ctx.font='700 8px system-ui';
+    const ml=n.mkt==='TW'?'台':n.mkt==='US'?'美':n.mkt==='KR'?'韓':n.mkt==='JP'?'日':n.mkt;
+    ctx.fillText(ml,p.x,by+bh/2+0.5);
+    ctx.globalAlpha=1;
+  });
+  ctx.restore();
 }
 
-function showInfo(nodeId, chainKey) {
-  const chain = CHAINS[chainKey];
-  const n     = chain.nodes.find(x => x.id === nodeId);
-  if (!n) return;
-  document.getElementById('info-role').textContent = n.role;
-  document.getElementById('info-name').textContent = n.label;
-  document.getElementById('info-code').textContent = `代號：${n.code}`;
-  document.getElementById('info-desc').textContent = n.desc;
-  const btn = document.getElementById('info-btn');
-  btn.textContent = `查詢 ${n.label} (${n.code}) →`;
-  btn.onclick = (e) => {
-    e.preventDefault();
-    window.location.href = `/?autoq=${encodeURIComponent(n.code)}`;
-  };
-  btn.href = `/?autoq=${encodeURIComponent(n.code)}`;
-  document.getElementById('info-panel').classList.add('visible');
-  document.getElementById('info-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+function roundRect(c,x,y,w,h,r){
+  c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);
+  c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);
+  c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();
 }
 
-function showChain(key, el) {
-  document.querySelectorAll('.chain-tab').forEach(t => t.classList.remove('on'));
+function hitNode(cx,cy){
+  const{x,y}=toWorld(cx,cy);
+  const nodes=activeChain.nodes;
+  for(let i=nodes.length-1;i>=0;i--){const n=nodes[i],p=npos[n.id];if(p&&Math.hypot(x-p.x,y-p.y)<=p.r+4)return n;}
+  return null;
+}
+
+// ── PAN / ZOOM ─────────────────────────────────────
+let panning=false,panStartX=0,panStartY=0,panStartTx=0,panStartTy=0;
+let didDrag=false,mouseCX=0,mouseCY=0;
+let velX=0,velY=0,lastMoveTime=0,inertiaRaf=null;
+
+function stopInertia(){if(inertiaRaf){cancelAnimationFrame(inertiaRaf);inertiaRaf=null;}}
+function startInertia(){
+  stopInertia();const friction=0.88;
+  function step(){if(Math.hypot(velX,velY)<0.3){velX=0;velY=0;return;}tx+=velX;ty+=velY;velX*=friction;velY*=friction;render();inertiaRaf=requestAnimationFrame(step);}
+  inertiaRaf=requestAnimationFrame(step);
+}
+
+wrap.addEventListener('mousedown',e=>{
+  if(e.button!==0)return;stopInertia();velX=0;velY=0;
+  mouseCX=e.clientX;mouseCY=e.clientY;didDrag=false;
+  panning=true;panStartX=e.clientX;panStartY=e.clientY;panStartTx=tx;panStartTy=ty;
+  wrap.classList.add('grabbing');
+});
+window.addEventListener('mousemove',e=>{
+  mouseCX=e.clientX;mouseCY=e.clientY;
+  const rect=wrap.getBoundingClientRect();
+  const cx=e.clientX-rect.left,cy=e.clientY-rect.top;
+  if(panning){
+    const dx=e.clientX-panStartX,dy=e.clientY-panStartY;
+    if(Math.hypot(dx,dy)>3)didDrag=true;
+    const newTx=panStartTx+dx,newTy=panStartTy+dy;
+    const now=performance.now(),dt=Math.max(1,now-lastMoveTime);
+    velX=(newTx-tx)*(16/dt);velY=(newTy-ty)*(16/dt);lastMoveTime=now;
+    tx=newTx;ty=newTy;render();
+  }
+  if(!panning)wrap.style.cursor=hitNode(cx,cy)?'pointer':'grab';
+});
+window.addEventListener('mouseup',e=>{
+  if(e.button!==0)return;
+  const rect=wrap.getBoundingClientRect();
+  const cx=e.clientX-rect.left,cy=e.clientY-rect.top;
+  if(!didDrag){
+    const hit=hitNode(cx,cy);
+    if(hit){selected=(selected&&selected.id===hit.id)?null:hit;render();if(selected)showTip(selected);else hideTip();}
+    else{selected=null;hideTip();render();}
+  }else if(panning&&Math.hypot(velX,velY)>1){startInertia();}
+  panning=false;wrap.classList.remove('grabbing');wrap.style.cursor='grab';
+});
+wrap.addEventListener('wheel',e=>{
+  e.preventDefault();stopInertia();
+  const rect=wrap.getBoundingClientRect();
+  const cx=e.clientX-rect.left,cy=e.clientY-rect.top;
+  const delta=e.deltaY>0?0.9:1.1;
+  const ns=Math.min(MAX_S,Math.max(MIN_S,scale*delta));
+  tx=cx-(cx-tx)*(ns/scale);ty=cy-(cy-ty)*(ns/scale);scale=ns;render();
+},{passive:false});
+
+let lastTouches=[];
+wrap.addEventListener('touchstart',e=>{
+  e.preventDefault();stopInertia();velX=0;velY=0;lastTouches=[...e.touches];didDrag=false;
+  if(e.touches.length===1){const t=e.touches[0];panning=true;panStartX=t.clientX;panStartY=t.clientY;panStartTx=tx;panStartTy=ty;}
+},{passive:false});
+wrap.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(e.touches.length===1){const t=e.touches[0];if(panning){const dx=t.clientX-panStartX,dy=t.clientY-panStartY;if(Math.hypot(dx,dy)>5)didDrag=true;tx=panStartTx+dx;ty=panStartTy+dy;}render();}
+  else if(e.touches.length===2){
+    didDrag=true;const[t1,t2]=[e.touches[0],e.touches[1]];const[l1,l2]=[lastTouches[0],lastTouches[1]];if(!l1||!l2)return;
+    const prevD=Math.hypot(l1.clientX-l2.clientX,l1.clientY-l2.clientY);
+    const currD=Math.hypot(t1.clientX-t2.clientX,t1.clientY-t2.clientY);
+    const midX=(t1.clientX+t2.clientX)/2-wrap.getBoundingClientRect().left;
+    const midY=(t1.clientY+t2.clientY)/2-wrap.getBoundingClientRect().top;
+    const ns=Math.min(MAX_S,Math.max(MIN_S,scale*currD/prevD));
+    tx=midX-(midX-tx)*(ns/scale);ty=midY-(midY-ty)*(ns/scale);scale=ns;render();
+  }
+  lastTouches=[...e.touches];
+},{passive:false});
+wrap.addEventListener('touchend',e=>{
+  if(!didDrag&&e.changedTouches.length===1){
+    const t=e.changedTouches[0];const rect=wrap.getBoundingClientRect();
+    const hit=hitNode(t.clientX-rect.left,t.clientY-rect.top);
+    if(hit){selected=(selected&&selected.id===hit.id)?null:hit;render();if(selected)showTip(selected);else hideTip();}
+    else{selected=null;hideTip();render();}
+  }
+  panning=false;
+});
+
+document.getElementById('z-in').addEventListener('click',()=>zoomCenter(1.25));
+document.getElementById('z-out').addEventListener('click',()=>zoomCenter(0.8));
+document.getElementById('z-rst').addEventListener('click',()=>fitToView());
+function zoomCenter(d){const cw=wrap.clientWidth,ch=wrap.clientHeight;const ns=Math.min(MAX_S,Math.max(MIN_S,scale*d));tx=cw/2-(cw/2-tx)*(ns/scale);ty=ch/2-(ch/2-ty)*(ns/scale);scale=ns;render();}
+
+// ── TOOLTIP ───────────────────────────────────────
+const isMobile=()=>window.innerWidth<700;
+function positionTip(){
+  const el=document.getElementById('tip');const W=el.offsetWidth||240,H=el.offsetHeight||280;
+  const vw=window.innerWidth,vh=window.innerHeight,off=18;
+  let x=mouseCX+off,y=mouseCY+off;
+  if(x+W>vw-8)x=mouseCX-W-off;if(y+H>vh-8)y=mouseCY-H-off;
+  x=Math.max(8,x);y=Math.max(8,y);el.style.left=x+'px';el.style.top=y+'px';
+}
+
+function showTip(n){
+  const d=priceData[n.id];
+  const mktL=n.mkt==='TW'?'台股':n.mkt==='US'?'美股':n.mkt==='KR'?'韓股':'日股';
+  const nvdaBdg=n.nvda?'<span class="bdg b-nvda">NVDA供應鏈</span>':'';
+  const amdBdg=n.amd?'<span class="bdg b-amd">AMD $100億</span>':'';
+  const catBdg=`<span class="bdg b-cat">${CATS[n.cat]?.label||n.cat}</span>`;
+  const priceStr=d?fmtP(d.price,d.cur):'—';
+  const chgStr=d?(()=>{const s=d.diff>=0?'+':'';return`${s}${d.diff.toFixed(2)} (${s}${d.pct.toFixed(2)}%)`})():'';
+  const chgCol=d?(d.diff>=0?'#22863a':'#cb2431'):'var(--dim)';
+  const stateL=d?(d.state==='REGULAR'?'盤中即時':d.state==='CLOSED'||d.state==='POST'?'前日收盤':''):'';
+  const role=(activeChain.roles||{})[n.id]||n.desc||'';
+  const goStock=()=>{window.location.href=`/?autoq=${encodeURIComponent(n.t)}`;};
+  if(isMobile()){
+    document.getElementById('s-name').textContent=n.name;
+    document.getElementById('s-sub').textContent=`${n.t} · ${mktL}`;
+    document.getElementById('s-badges').innerHTML=`${catBdg}${nvdaBdg}${amdBdg}`;
+    document.getElementById('s-price').textContent=priceStr;
+    const sc=document.getElementById('s-chg');sc.textContent=chgStr;sc.style.color=chgCol;
+    const sr=document.getElementById('s-role');if(role){sr.textContent=role;sr.style.display='block';}else sr.style.display='none';
+    document.getElementById('s-src').textContent=stateL?`Yahoo Finance・${stateL}`:'';
+    document.getElementById('s-btn').onclick=goStock;
+    document.getElementById('sheet').classList.add('open');document.getElementById('overlay').classList.add('show');
+  }else{
+    document.getElementById('t-name').textContent=n.name;
+    document.getElementById('t-sub').textContent=`${n.t} · ${mktL}`;
+    document.getElementById('t-badges').innerHTML=`${catBdg}${nvdaBdg}${amdBdg}`;
+    document.getElementById('t-price').textContent=priceStr;
+    const tc=document.getElementById('t-chg');tc.textContent=chgStr;tc.style.color=chgCol;
+    const tr=document.getElementById('t-role');if(role){tr.textContent=role;tr.style.display='block';}else tr.style.display='none';
+    document.getElementById('t-src').textContent=stateL?`Yahoo Finance・${stateL}`:'';
+    document.getElementById('t-btn').onclick=goStock;
+    const tip=document.getElementById('tip');tip.classList.add('show');
+    requestAnimationFrame(()=>requestAnimationFrame(positionTip));
+  }
+}
+function hideTip(){
+  document.getElementById('tip').classList.remove('show');
+  document.getElementById('sheet').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+document.getElementById('tip-close').addEventListener('click',e=>{e.stopPropagation();selected=null;hideTip();render();});
+document.getElementById('overlay').addEventListener('click',()=>{selected=null;hideTip();render();});
+document.getElementById('sh-close').addEventListener('click',()=>{selected=null;hideTip();render();});
+
+// ── FILTERS ───────────────────────────────────────
+function renderFilters(chain){
+  const bar=document.getElementById('filters');bar.innerHTML='';
+  if(!chain.filters||chain.filters.length===0){bar.classList.add('hidden');return;}
+  bar.classList.remove('hidden');
+  chain.filters.forEach(f=>{
+    const btn=document.createElement('button');
+    btn.className='ftab'+(f.cls?' '+f.cls:'')+(f.id==='all'?' active':'');
+    btn.textContent=f.label;btn.dataset.f=f.id;
+    btn.addEventListener('click',()=>{
+      bar.querySelectorAll('.ftab').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active');activeFilter=f.id;selected=null;hideTip();render();
+    });
+    bar.appendChild(btn);
+  });
+}
+
+// ── LEGEND ────────────────────────────────────────
+function renderLegend(chain){
+  const leg=document.getElementById('legend');let html='';
+  (chain.legendCats||[]).forEach(k=>{const cat=CATS[k];if(!cat)return;html+=`<div class="li"><span class="ls" style="background:${cat.color}"></span>${cat.label}</div>`;});
+  if(chain===AI_CHAIN){
+    html+=`<div class="li" style="gap:4px"><svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#3BAD8D" stroke-width="1.5"/></svg>NVDA線</div>`;
+    html+=`<div class="li" style="gap:4px"><svg width="16" height="6"><line x1="0" y1="3" x2="16" y2="3" stroke="#E07030" stroke-width="1.5" stroke-dasharray="4 2"/></svg>AMD線</div>`;
+  }
+  leg.innerHTML=html;
+}
+
+// ── TAB SWITCHING ─────────────────────────────────
+function switchTab(key,el){
+  document.querySelectorAll('.chain-tab').forEach(t=>t.classList.remove('on'));
   el.classList.add('on');
-  renderChain(key);
+  activeChainKey=key;activeChain=CHAIN_MAP[key];activeFilter='all';
+  selected=null;hideTip();
+  buildNodeMap(activeChain.nodes);resetPositions(activeChain.nodes);
+  renderFilters(activeChain);renderLegend(activeChain);fitToView();
+  document.getElementById('loadbar').style.display='block';
+  prog.style.width='0%';prog.style.background='var(--accent)';
+  loadmsgEl.textContent='載入股價中…';
+  loadPrices(activeChain.nodes);
 }
 
-// 初始載入
-renderChain('semicon');
-</script>
-
-<!-- Dark mode toggle (sync with main page) -->
-<button id="theme-btn" onclick="toggleTheme()" title="切換深色/淺色模式" style="
-  position:fixed; bottom:20px; right:16px; z-index:900;
-  width:36px; height:36px; border-radius:50%;
-  background:var(--card); border:1px solid var(--bd);
-  cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;
-  box-shadow:0 2px 8px rgba(0,0,0,.15); transition:background .2s, border-color .2s;
-" aria-label="切換深色模式">🌙</button>
-
-<script>
-function applyTheme(dark) {
-  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-  const btn = document.getElementById('theme-btn');
-  if(btn) btn.textContent = dark ? '☀️' : '🌙';
-  localStorage.setItem('theme', dark ? 'dark' : 'light');
+// ── THEME ─────────────────────────────────────────
+function applyTheme(dark){
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+  const btn=document.getElementById('theme-btn');
+  if(btn)btn.textContent=dark?'☀️':'🌙';
+  localStorage.setItem('theme',dark?'dark':'light');
+  render();
 }
-function toggleTheme() {
-  const isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
-  applyTheme(!isDarkNow);
-  // 重新繪製供應鏈（顏色需要更新）
-  renderChain(currentChain);
-}
+document.getElementById('theme-btn').addEventListener('click',()=>applyTheme(!isDark()));
 (function(){
-  const saved = localStorage.getItem('theme');
-  const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyTheme(saved ? saved === 'dark' : sysDark);
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-    if(!localStorage.getItem('theme')) applyTheme(e.matches);
-  });
+  const saved=localStorage.getItem('theme');
+  const sysDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  applyTheme(saved?saved==='dark':sysDark);
+  window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',e=>{if(!localStorage.getItem('theme'))applyTheme(e.matches);});
 })();
+
+// ── RESIZE + INIT ──────────────────────────────────
+function resize(){
+  const dpr=window.devicePixelRatio||1,cw=wrap.clientWidth,ch=wrap.clientHeight;
+  cv.width=cw*dpr;cv.height=ch*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);fitToView();
+}
+window.addEventListener('resize',()=>resize());
+
+buildNodeMap(activeChain.nodes);
+resetPositions(activeChain.nodes);
+renderFilters(activeChain);
+renderLegend(activeChain);
+requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  resize();loadPrices(activeChain.nodes);
+}));
 </script>
 </body>
 </html>

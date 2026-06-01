@@ -8,37 +8,49 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:    #f4f2ed;
-  --card:  #ffffff;
-  --card2: #faf9f6;
-  --bd:    #e2ddd5;
-  --text:  #1a1a1a;
-  --dim:   #6b6460;
-  --navy:  #1e3a5f;
-  --navy2: #2a4f7a;
-  --neu-bg:#f7f6f2;
-  --tw-up: #d0021b;
-  --tw-dn: #007a3d;
-  --us-up: #007a3d;
-  --us-dn: #d0021b;
-  --up:    #d0021b;
-  --dn:    #007a3d;
-  --up-bg: #fff0f0;
-  --dn-bg: #f0faf4;
+  /* ── 現代冷調配色（亮色模式）── */
+  --bg:      #ECF0F6;
+  --card:    #FFFFFF;
+  --card2:   #F4F7FB;
+  --bd:      #DCE3EF;
+  --text:    #0F1923;
+  --dim:     #627088;
+  /* 深藍主色 */
+  --navy:    #1A3A58;
+  --navy2:   #1F4D78;
+  /* 深橘輔色 */
+  --accent:  #D45F25;
+  --accent2: #B34E1A;
+  --neu-bg:  #EEF2F7;
+  --tw-up:   #d0021b;
+  --tw-dn:   #007a3d;
+  --us-up:   #007a3d;
+  --us-dn:   #d0021b;
+  --up:      #d0021b;
+  --dn:      #007a3d;
+  --up-bg:   #fdf0ee;
+  --dn-bg:   #edf7f2;
+  /* 陰影 */
+  --shadow-sm: 0 1px 3px rgba(15,25,35,.06), 0 4px 16px rgba(15,25,35,.07);
+  --shadow-md: 0 2px 8px rgba(15,25,35,.08), 0 8px 32px rgba(15,25,35,.09);
 }
 @media(prefers-color-scheme: dark){ :root { --sys-dark:1; } }
 [data-theme="dark"] {
-    --bg:    #111210;
-    --card:  #1c1c1a;
-    --card2: #242422;
-    --bd:    #333330;
-    --text:  #e8e6e0;
-    --dim:   #888580;
-    --navy:  #1a3454;
-    --navy2: #234872;
-    --neu-bg:#1e1e1c;
-    --up-bg: #2a1015;
-    --dn-bg: #0e1f15;
+  --bg:      #0B1622;
+  --card:    #132130;
+  --card2:   #1A2C3E;
+  --bd:      #233A52;
+  --text:    #E2EAF4;
+  --dim:     #7A90A8;
+  --navy:    #163248;
+  --navy2:   #1D4060;
+  --accent:  #E8713A;
+  --accent2: #C85C28;
+  --neu-bg:  #152030;
+  --up-bg:   #2A1015;
+  --dn-bg:   #0D1F15;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.25), 0 4px 16px rgba(0,0,0,.3);
+  --shadow-md: 0 2px 8px rgba(0,0,0,.35), 0 8px 32px rgba(0,0,0,.4);
 }
 body.us {
   --up:    #007a3d;
@@ -55,7 +67,7 @@ html, body { width: 100%; overflow-x: hidden; }
 body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; min-height: 100vh; padding-bottom: 48px; }
 
 /* Header */
-.hdr { background: var(--navy); color: #fff; padding: 14px 16px; }
+.hdr { background: linear-gradient(135deg, #0D1F35 0%, #1A3A58 55%, #0F2A40 100%); color: #fff; padding: 14px 16px; border-bottom: 2px solid var(--accent); box-shadow: 0 4px 24px rgba(0,0,0,.25); }
 .hdr-row { display: flex; align-items: center; justify-content: space-between; }
 .hdr-title { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
 .hdr-sub   { font-size: 12px; color: #8eabc8; margin-top: 3px; }
@@ -72,7 +84,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
   .hdr { padding: 16px 32px; }
   .hdr-title { font-size: 24px; }
   .W { max-width: 1240px; padding: 0 28px; }
-  .desktop-grid { display: grid; grid-template-columns: 1fr 400px; gap: 22px; align-items: start; margin-top: 20px; }
+  .desktop-grid { display: grid; grid-template-columns: 1fr 320px; gap: 22px; align-items: start; margin-top: 20px; }
   .desktop-right { position: sticky; top: 72px; display: flex; flex-direction: column; gap: 0; }
   .desktop-left  { min-width: 0; }
   .s-inp  { font-size: 20px; padding: 13px 16px; }
@@ -93,16 +105,16 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 }
 
 /* Search card */
-.s-card { background: var(--card); border: 1px solid var(--bd); border-radius: 14px; padding: 14px; margin-top: 14px; box-shadow: 0 1px 8px rgba(0,0,0,.06); }
+.s-card { background: var(--card); border: 1px solid var(--bd); border-radius: 16px; padding: 16px; margin-top: 14px; box-shadow: var(--shadow-md); }
 .s-label { font-size: 13px; color: var(--dim); margin-bottom: 9px; }
 .s-row   { display: flex; gap: 8px; align-items: stretch; width: 100%; }
 .s-wrap  { flex: 1; min-width: 0; position: relative; }
-.s-inp   { display: block; width: 100%; font-size: 18px; font-family: 'Noto Sans TC', sans-serif; padding: 11px 12px; border: 2px solid var(--bd); border-radius: 10px; background: var(--card2); color: var(--text); outline: none; transition: border-color .2s; -webkit-appearance: none; appearance: none; color-scheme: light dark; }
-.s-inp:focus { border-color: var(--navy); }
+.s-inp   { display: block; width: 100%; font-size: 18px; font-family: 'Noto Sans TC', sans-serif; padding: 12px 14px; border: 2px solid var(--bd); border-radius: 10px; background: var(--card2); color: var(--text); outline: none; transition: all .2s; -webkit-appearance: none; appearance: none; color-scheme: light dark; }
+.s-inp:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(212,95,37,.12); }
 .s-inp::placeholder { color: var(--dim); font-size: 15px; }
-.s-btn  { flex-shrink: 0; width: 72px; font-size: 16px; font-family: 'Noto Sans TC', sans-serif; font-weight: 700; background: var(--navy); color: #fff; border: none; border-radius: 10px; cursor: pointer; transition: background .2s; }
-.s-btn:hover    { background: var(--navy2); }
-.s-btn:disabled { background: #aaa; cursor: not-allowed; }
+.s-btn  { flex-shrink: 0; width: 72px; font-size: 16px; font-family: 'Noto Sans TC', sans-serif; font-weight: 700; background: linear-gradient(135deg, #E06828 0%, var(--accent) 100%); color: #fff; border: none; border-radius: 10px; cursor: pointer; transition: all .2s; box-shadow: 0 2px 12px rgba(212,95,37,.35); }
+.s-btn:hover    { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); box-shadow: 0 4px 16px rgba(212,95,37,.45); transform: translateY(-1px); }
+.s-btn:disabled { background: #aaa; cursor: not-allowed; box-shadow: none; transform: none; }
 
 /* Dropdown */
 .dd { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--card); border: 1px solid var(--bd); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.12); z-index: 200; overflow: hidden; }
@@ -133,7 +145,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 .result { display: none; margin-top: 14px; }
 
 /* Price card */
-.p-card { background: var(--card); border: 1px solid var(--bd); border-radius: 14px; padding: 16px; box-shadow: 0 1px 8px rgba(0,0,0,.06); margin-bottom: 10px; }
+.p-card { background: var(--card); border: 1px solid var(--bd); border-radius: 16px; padding: 18px; box-shadow: var(--shadow-md); margin-bottom: 10px; }
 .p-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
 .p-name { font-size: 22px; font-weight: 700; }
 .p-code { font-size: 13px; color: var(--dim); background: var(--card2); border: 1px solid var(--bd); padding: 2px 9px; border-radius: 20px; }
@@ -149,9 +161,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 .p-cv   { font-size: 15px; font-weight: 500; }
 
 /* Lights */
-.sec-t  { font-size: 12px; font-weight: 700; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; margin: 16px 0 9px; }
+.sec-t  { font-size: 15px; font-weight: 800; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; margin: 20px 0 10px; padding-left: 10px; border-left: 3px solid var(--accent); }
 .lights { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-.l-row  { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 11px 13px; display: flex; align-items: center; gap: 11px; }
+.l-row  { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 11px 13px; display: flex; align-items: center; gap: 11px; box-shadow: var(--shadow-sm); }
 .l-dot  { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
 .l-lbl  { font-size: 11px; color: var(--dim); margin-bottom: 2px; }
 .l-txt  { font-size: 14px; font-weight: 500; line-height: 1.4; color: var(--text); }
@@ -164,7 +176,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 .a-hdr { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
 .a-ico { font-size: 28px; }
 .a-ttl { font-size: 19px; font-weight: 700; }
-.a-ttl.up { color: var(--up); } .a-ttl.dn { color: var(--dn); } .a-ttl.neu { color: #444; }
+.a-ttl.up { color: var(--up); } .a-ttl.dn { color: var(--dn); } .a-ttl.neu { color: var(--text); }
 .a-bdy { font-size: 15px; line-height: 1.85; }
 .a-bdy p { margin-bottom: 7px; }
 .a-bdy p:last-child { margin-bottom: 0; }
@@ -202,8 +214,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 .leg-sep  { width: 1px; height: 14px; background: var(--bd); }
 
 .w-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-.w-card { background: var(--card); border: 1px solid var(--bd); border-radius: 13px; padding: 13px 12px; cursor: pointer; transition: border-color .15s; }
-.w-card:active { border-color: var(--navy); background: var(--card2); }
+.w-card { background: var(--card); border: 1px solid var(--bd); border-radius: 14px; padding: 13px 12px; cursor: pointer; transition: all .2s; box-shadow: var(--shadow-sm); }
+.w-card:hover  { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.w-card:active { border-color: var(--navy); background: var(--card2); transform: none; }
 .w-name  { font-size: 14px; font-weight: 700; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .w-code  { font-size: 11px; color: var(--dim); margin-bottom: 8px; }
 .w-price { font-size: 22px; font-weight: 700; line-height: 1.1; }
@@ -212,7 +225,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 @keyframes shim { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
 /* Health check */
-.hc-row { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+.hc-row { background: var(--card); border: 1px solid var(--bd); border-radius: 12px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; box-shadow: var(--shadow-sm); }
 .hc-dot  { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
 .hc-dot.green  { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,.4); }
 .hc-dot.yellow { background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,.4); }
@@ -224,13 +237,13 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 
 
 /* Score card */
-.score-card { background: var(--card); border: 1px solid var(--bd); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; }
+.score-card { background: var(--card); border: 1px solid var(--bd); border-left: 3px solid var(--accent); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); }
 .score-ring { width: 52px; height: 52px; flex-shrink: 0; }
 .score-info { flex: 1; }
 .score-title { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
 .score-desc  { font-size: 13px; color: var(--dim); line-height: 1.5; }
-.add-fav-btn { padding:5px 13px;border:1px solid var(--navy);border-radius:20px;background:transparent;color:var(--navy);font-size:13px;font-family:inherit;font-weight:600;cursor:pointer;transition:.15s; }
-.add-fav-btn:active { background:var(--navy);color:#fff; }
+.add-fav-btn { padding:5px 13px;border:1px solid var(--accent);border-radius:20px;background:transparent;color:var(--accent);font-size:13px;font-family:inherit;font-weight:600;cursor:pointer;transition:.15s; }
+.add-fav-btn:active { background:var(--accent);color:#fff; }
 .fav-card { background:var(--card);border:1px solid var(--bd);border-radius:13px;padding:13px 12px;cursor:pointer;transition:border-color .15s;position:relative; }
 .fav-card:active { border-color:var(--navy); }
 .fav-del { position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;background:var(--card2);border:1px solid var(--bd);color:var(--dim);font-size:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1; }
@@ -267,6 +280,39 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 
 /* Section divider */
 .sec-div { height: 1px; background: var(--bd); margin: 18px 0; }
+
+/* ── 技術分析 Checklist ── */
+.ck-header { display:flex; align-items:flex-start; gap:12px; padding:16px; background:var(--card); border:1px solid var(--bd); border-left:3px solid var(--accent); border-radius:14px; margin-bottom:10px; box-shadow:var(--shadow-md); }
+.ck-score  { flex-shrink:0; }
+.ck-siginfo{ flex:1; min-width:0; }
+.ck-signal { font-size:20px; font-weight:700; margin-bottom:5px; }
+.ck-signal-plain { font-size:13px; color:var(--dim); margin-bottom:6px; line-height:1.5; }
+.ck-meta   { font-size:12px; color:var(--dim); margin-top:2px; }
+.ck-diverg { font-size:11px; margin-top:6px; padding:4px 9px; border-radius:6px; background:rgba(124,58,237,.12); color:#a78bfa; display:inline-block; }
+
+.ck-tabs   { display:flex; gap:4px; margin-bottom:8px; }
+.ck-tab    { flex:1; padding:9px 0; border-radius:8px; border:2px solid transparent; cursor:pointer; font-size:13px; font-weight:700; font-family:'Noto Sans TC',sans-serif; background:var(--card2); color:var(--dim); transition:.15s; }
+.ck-tab.active.ck-tab-entry { background:rgba(34,197,94,.08); color:#22c55e; border-color:rgba(34,197,94,.3); }
+.ck-tab.active.ck-tab-exit  { background:rgba(239,68,68,.08); color:#ef4444; border-color:rgba(239,68,68,.3); }
+
+.ck-subtitle { font-size:12px; color:var(--dim); margin-bottom:8px; }
+.ck-row    { display:flex; align-items:flex-start; gap:10px; padding:9px 12px; border-radius:8px; margin-bottom:4px; background:var(--card); border:1px solid var(--bd); }
+.ck-row.ck-pass { background:rgba(34,197,94,.04); border-color:rgba(34,197,94,.2); }
+.ck-row.ck-fail { background:rgba(239,68,68,.04); border-color:rgba(239,68,68,.15); }
+.ck-row.ck-warn { background:rgba(239,68,68,.07); border-color:rgba(239,68,68,.28); }
+.ck-dot    { width:18px; height:18px; border-radius:50%; flex-shrink:0; margin-top:1px; border:1.5px solid; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:800; }
+.ck-content{ flex:1; min-width:0; }
+.ck-label  { font-size:12px; font-weight:600; color:var(--text); display:flex; align-items:center; gap:4px; flex-wrap:nowrap; overflow:hidden; }
+.ck-list    { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+@media(max-width:480px){ .ck-list { grid-template-columns:1fr; } }
+.ck-plain   { font-size:10px; color:var(--dim); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ck-verdict { font-size:12px; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ck-detail  { font-size:10px; color:var(--dim); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ck-tag    { font-size:10px; padding:1px 5px; border-radius:4px; font-weight:600; }
+.ck-tag.core  { background:var(--accent); color:#fff; }
+.ck-tag.bonus { background:rgba(124,58,237,.15); color:#a78bfa; }
+.ck-tag.warn  { background:rgba(239,68,68,.15); color:#ef4444; }
+.ck-note   { font-size:11px; color:var(--dim); background:var(--card2); border:1px solid var(--bd); border-radius:8px; padding:9px 12px; margin-top:8px; line-height:1.7; }
 </style>
 </head>
 <body>
@@ -274,15 +320,15 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
 <div class="hdr">
   <div class="hdr-row">
     <div>
-      <div class="hdr-title">📈 股票查詢</div>
+      <div class="hdr-title" style="display:flex;align-items:center;gap:8px;"><span style="display:inline-block;width:4px;height:22px;background:var(--accent);border-radius:2px;"></span>股票查詢</div>
       <div class="hdr-sub">輸入代號或公司名稱，簡單看懂今天的行情</div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;">
-      <a href="/supply-chain.html" style="font-size:12px;color:#8eabc8;text-decoration:none;border:1px solid #3a5f82;padding:5px 10px;border-radius:8px;white-space:nowrap;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#8eabc8'">🗺 供應鏈地圖</a>
-    </div>
-    <div class="hdr-right">
-      <div class="hdr-time" id="clk">--:--</div>
-      <div class="mkt-badge" id="mkt-badge"></div>
+    <div class="hdr-right" style="display:flex;align-items:center;gap:10px;">
+      <a href="/supply-chain.html" style="font-size:12px;color:#e8a882;text-decoration:none;border:1px solid var(--accent);padding:5px 10px;border-radius:8px;white-space:nowrap;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#e8a882'">🗺 供應鏈地圖</a>
+      <div>
+        <div class="hdr-time" id="clk">--:--</div>
+        <div class="mkt-badge" id="mkt-badge"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -330,11 +376,22 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', s
           </div>
           <canvas id="kline-canvas" style="width:100%;height:200px;display:block;border-radius:8px;"></canvas>
           <div id="kline-msg" style="text-align:center;padding:16px;font-size:13px;color:var(--dim);display:none">資料載入中…</div>
+          <!-- MACD 柱狀圖 -->
+          <div id="macd-section" style="margin-top:10px;display:none">
+            <div style="font-size:10px;color:var(--dim);margin-bottom:4px;letter-spacing:.5px">MACD 柱狀圖（近 40 根）</div>
+            <canvas id="macd-canvas" style="width:100%;height:60px;display:block;border-radius:6px;"></canvas>
+          </div>
+          <!-- 成交量 -->
+          <div id="vol-section" style="margin-top:8px;display:none">
+            <div style="font-size:10px;color:var(--dim);margin-bottom:4px;letter-spacing:.5px">成交量（虛線：20 日均量）</div>
+            <canvas id="vol-canvas" style="width:100%;height:48px;display:block;border-radius:6px;"></canvas>
+          </div>
         </div>
         <div class="sec-t">📐 K 線型態辨識</div>
         <div id="pattern-box"></div>
-        <div class="sec-t">技術訊號說明</div>
-        <div class="lights" id="lights"></div>
+        <div class="sec-t">🎯 技術分析訊號</div>
+        <div id="signal-box"></div>
+        <div class="sec-t">🤖 AI 整體解讀</div>
         <div class="a-card neu" id="acrd">
           <div class="a-hdr">
             <div class="a-ico" id="aico">🔍</div>
@@ -611,27 +668,432 @@ inp.addEventListener('keydown',e=>{
 document.addEventListener('click',e=>{ if(!e.target.closest('.s-card'))dd.style.display='none'; });
 
 // ── Tech math ─────────────────────────────────────────────────
-function calcRSI(c,p=14){
-  if(c.length<p+1)return null;
-  let g=0,l=0;
-  for(let i=1;i<=p;i++){const d=c[i]-c[i-1];d>0?g+=d:l+=Math.abs(d);}
-  let ag=g/p,al=l/p;
-  for(let i=p+1;i<c.length;i++){const d=c[i]-c[i-1];ag=(ag*(p-1)+(d>0?d:0))/p;al=(al*(p-1)+(d<0?Math.abs(d):0))/p;}
-  return al===0?100:+(100-100/(1+ag/al)).toFixed(1);
-}
-function calcKD(h,l,c,p=9){
-  if(c.length<p)return{k:50,d:50};
-  let k=50,d=50;
-  for(let i=p-1;i<c.length;i++){
-    const sh=h.slice(i-p+1,i+1),sl=l.slice(i-p+1,i+1);
-    const hh=Math.max(...sh),ll=Math.min(...sl);
-    const rsv=hh===ll?50:((c[i]-ll)/(hh-ll))*100;
-    k=(2/3)*k+(1/3)*rsv;d=(2/3)*d+(1/3)*k;
-  }
-  return{k:+k.toFixed(1),d:+d.toFixed(1)};
-}
-function ema(a,p){const k=2/(p+1);let e=a[0];for(let i=1;i<a.length;i++)e=a[i]*k+e*(1-k);return e;}
 function mav(a,p){const s=a.slice(-p);return+(s.reduce((x,y)=>x+y,0)/s.length).toFixed(1);}
+
+// SMA 陣列版
+function calcSMAArr(data, period){
+  return data.map((_,i)=>{
+    if(i<period-1) return null;
+    return data.slice(i-period+1,i+1).reduce((a,b)=>a+b,0)/period;
+  });
+}
+
+// EMA 陣列版（SMA 初始值，Wilder 標準）
+function calcEMAFull(data, period){
+  const k=2/(period+1);
+  const result=[];
+  let ema=null;
+  for(let i=0;i<data.length;i++){
+    if(data[i]==null){result.push(null);continue;}
+    if(ema===null){
+      if(i<period-1){result.push(null);continue;}
+      ema=data.slice(0,period).reduce((a,b)=>a+b,0)/period;
+      result.push(ema);continue;
+    }
+    ema=data[i]*k+ema*(1-k);
+    result.push(ema);
+  }
+  return result;
+}
+
+// MACD 完整版（回傳 dif / signal / histogram 陣列）
+function calcMACDFull(closes){
+  const ema12=calcEMAFull(closes,12);
+  const ema26=calcEMAFull(closes,26);
+  const dif=ema12.map((v,i)=>(v!=null&&ema26[i]!=null)?v-ema26[i]:null);
+  const validDif=dif.filter(v=>v!=null);
+  const rawSig=calcEMAFull(validDif,9);
+  const offset=dif.length-validDif.length;
+  const fullSig=Array(dif.length).fill(null);
+  rawSig.forEach((v,i)=>{fullSig[offset+i]=v;});
+  const histogram=dif.map((v,i)=>(v!=null&&fullSig[i]!=null)?v-fullSig[i]:null);
+  return{dif,signal:fullSig,histogram};
+}
+
+// RSI（Wilder 平滑法），回傳 { value, series }
+function calcRSIFull(closes, period=14){
+  if(closes.length<period+1) return{value:null,series:[]};
+  const changes=closes.map((c,i)=>i===0?0:c-closes[i-1]);
+  let avgGain=changes.slice(1,period+1).filter(c=>c>0).reduce((a,b)=>a+b,0)/period;
+  let avgLoss=changes.slice(1,period+1).filter(c=>c<0).reduce((a,b)=>a+Math.abs(b),0)/period;
+  const series=Array(period).fill(null);
+  series.push(avgLoss===0?100:100-100/(1+avgGain/avgLoss));
+  for(let i=period+1;i<closes.length;i++){
+    const chg=changes[i];
+    avgGain=(avgGain*(period-1)+Math.max(chg,0))/period;
+    avgLoss=(avgLoss*(period-1)+Math.max(-chg,0))/period;
+    series.push(avgLoss===0?100:100-100/(1+avgGain/avgLoss));
+  }
+  return{value:series[series.length-1],series};
+}
+
+// 背離偵測（價格與指標高低點方向比較）
+function detectDivergence(prices, indicator, lookback=20){
+  const len=prices.length;
+  if(len<lookback) return{bullish:false,bearish:false};
+  const p=prices.slice(-lookback);
+  const ind=indicator.filter(v=>v!=null).slice(-lookback);
+  if(ind.length<5) return{bullish:false,bearish:false};
+
+  function findPeaks(arr){
+    const peaks=[];
+    for(let i=1;i<arr.length-1;i++)
+      if(arr[i]>arr[i-1]&&arr[i]>arr[i+1]) peaks.push({i,v:arr[i]});
+    return peaks.slice(-2);
+  }
+  function findTroughs(arr){
+    const troughs=[];
+    for(let i=1;i<arr.length-1;i++)
+      if(arr[i]<arr[i-1]&&arr[i]<arr[i+1]) troughs.push({i,v:arr[i]});
+    return troughs.slice(-2);
+  }
+
+  const pPeaks=findPeaks(p), pTroughs=findTroughs(p);
+  const iPeaks=findPeaks(ind), iTroughs=findTroughs(ind);
+
+  const bearish=pPeaks.length>=2&&iPeaks.length>=2&&
+    pPeaks[1].v>pPeaks[0].v&&iPeaks[1].v<iPeaks[0].v;
+  const bullish=pTroughs.length>=2&&iTroughs.length>=2&&
+    pTroughs[1].v<pTroughs[0].v&&iTroughs[1].v>iTroughs[0].v;
+
+  return{bullish,bearish};
+}
+
+// Pivot 支撐壓力（左右各 strength 根確認）
+function calcPivots(highs, lows, strength=3){
+  const pivotHighs=[],pivotLows=[];
+  for(let i=strength;i<highs.length-strength;i++){
+    const h=highs[i],l=lows[i];
+    if(highs.slice(i-strength,i).every(v=>v<h)&&highs.slice(i+1,i+strength+1).every(v=>v<h))
+      pivotHighs.push({idx:i,price:h});
+    if(lows.slice(i-strength,i).every(v=>v>l)&&lows.slice(i+1,i+strength+1).every(v=>v>l))
+      pivotLows.push({idx:i,price:l});
+  }
+  return{pivotHighs,pivotLows};
+}
+
+// 攻擊速度：近 N 日漲幅 ÷ ATR，> 1.5 為強攻
+function calcAttackSpeed(closes, highs, lows, period=5){
+  if(closes.length<period+1) return null;
+  const atrArr=[];
+  for(let i=1;i<closes.length;i++){
+    const tr=Math.max(highs[i]-lows[i],Math.abs(highs[i]-closes[i-1]),Math.abs(lows[i]-closes[i-1]));
+    atrArr.push(tr);
+  }
+  const recentATR=atrArr.slice(-period).reduce((a,b)=>a+b)/period;
+  const priceMove=closes[closes.length-1]-closes[closes.length-1-period];
+  return recentATR>0?priceMove/recentATR:null;
+}
+
+// 假突破 / 假跌破偵測
+function detectFakePattern(closes, highs, lows, volumes){
+  const{pivotHighs,pivotLows}=calcPivots(highs,lows,3);
+  if(!pivotHighs.length||!pivotLows.length) return{type:null,desc:''};
+  const lastR=pivotHighs[pivotHighs.length-1]?.price;
+  const lastS=pivotLows[pivotLows.length-1]?.price;
+  const last=closes[closes.length-1];
+  const prev3=closes.slice(-4,-1);
+  const avgVol=volumes.slice(-20).reduce((a,b)=>a+b)/20;
+  const recentVol=volumes[volumes.length-1];
+  if(lastR&&prev3.some(p=>p>lastR)&&last<lastR&&recentVol<avgVol)
+    return{type:'fake_breakout',desc:`假突破：曾突破 ${lastR.toFixed(2)} 後量縮拉回`};
+  if(lastS&&prev3.some(p=>p<lastS)&&last>lastS&&recentVol>avgVol*0.8)
+    return{type:'fake_breakdown',desc:`假跌破洗盤：跌破 ${lastS.toFixed(2)} 後站回`};
+  return{type:null,desc:''};
+}
+
+// 停損建議：帶量 K 棒前 1 根實際 Low
+function calcStopLoss(lows, volumes){
+  if(lows.length<3) return null;
+  const lookback=Math.min(lows.length-1,10);
+  let maxVol=0,maxIdx=lows.length-1;
+  for(let i=lows.length-lookback;i<lows.length;i++)
+    if(volumes[i]>maxVol){maxVol=volumes[i];maxIdx=i;}
+  return maxIdx>0?lows[maxIdx-1]:lows[lows.length-1];
+}
+
+// ── 主分析引擎 ────────────────────────────────────────────────
+function analyzeSignals(closes, highs, lows, vols){
+  const n=closes.length-1;
+
+  // MACD
+  const macd=calcMACDFull(closes);
+  const lastBar=macd.histogram[n],prevBar=macd.histogram[n-1],prev2Bar=macd.histogram[n-2];
+  const macdPositive=lastBar!=null&&lastBar>0;
+  const macdExpanding=lastBar!=null&&prevBar!=null&&Math.abs(lastBar)>Math.abs(prevBar);
+  const macdTurning=prevBar!=null&&prev2Bar!=null&&prevBar<0&&lastBar>0;
+  const macdDiv=detectDivergence(closes,macd.histogram.filter(v=>v!=null));
+
+  // RSI
+  const rsiR=calcRSIFull(closes);
+  const rsi=rsiR.value;
+  const rsiDiv=detectDivergence(closes,rsiR.series.filter(v=>v!=null));
+
+  // 均線
+  const sma5=calcSMAArr(closes,5),sma20=calcSMAArr(closes,20),sma60=calcSMAArr(closes,60);
+  const ma5=sma5[n],ma20=sma20[n],ma60=sma60[n];
+  const lc=closes[n];
+  const fullBull=ma60?lc>ma5&&ma5>ma20&&ma20>ma60:(ma5&&ma20?lc>ma5&&ma5>ma20:null);
+  const fullBear=ma60?lc<ma5&&ma5<ma20&&ma20<ma60:(ma5&&ma20?lc<ma5&&ma5<ma20:null);
+  const maDesc=fullBull?'多頭排列':fullBear?'空頭排列':'均線糾結';
+
+  // 攻擊速度
+  const attackSpeed=calcAttackSpeed(closes,highs,lows,5);
+  const isAttacking=attackSpeed!=null&&attackSpeed>1.5;
+
+  // Pivot
+  const{pivotHighs,pivotLows}=calcPivots(highs,lows,3);
+  const nearestSupport=pivotLows.slice(-1)[0]?.price;
+  const nearestResistance=pivotHighs.slice(-1)[0]?.price;
+  const aboveSupport=nearestSupport?lc>nearestSupport:false;
+
+  // 量能
+  const avgVol20=vols.slice(-20).reduce((a,b)=>a+b,0)/Math.min(20,vols.length);
+  const lastVol=vols[n];
+  const volRatio=avgVol20>0?lastVol/avgVol20:1;
+  const priceUp=lc>closes[n-1];
+  const volUpPrice=volRatio>1.3&&priceUp;
+  const volDownFall=volRatio>1.3&&!priceUp;
+
+  // 假突破
+  const fake=detectFakePattern(closes,highs,lows,vols);
+
+  // 停損
+  const stopLoss=calcStopLoss(lows,vols);
+  const stopLossPct=stopLoss?((lc-stopLoss)/lc*100):null;
+
+  // 進場 Checklist
+  const entryChecks=[
+    {
+      label:'MACD 正柱且擴張',
+      plain:'衡量買賣雙方誰比較強',
+      verdict:macdTurning?'剛從跌轉漲，進場好時機':macdPositive&&macdExpanding?'買方在加速，市場看漲':'買方力道不足，先觀望',
+      pass:macdPositive&&macdExpanding,
+      detail:lastBar!=null?`柱: ${lastBar.toFixed(4)}，${macdTurning?'⚡ 剛從負轉正（最佳進場區）':macdExpanding?'持續擴張':'正柱但收斂'}`:'資料不足',
+      weight:3,core:true,
+    },
+    {
+      label:'均線多頭排列',
+      plain:'看股價是往上還是往下走',
+      verdict:fullBull?'趨勢向上，方向正確':fullBear?'趨勢向下，逆風操作':'方向還不明確，等訊號',
+      pass:!!fullBull,
+      detail:`${maDesc}${ma5?`  MA5:${ma5.toFixed(1)}`:''}${ma20?` MA20:${ma20.toFixed(1)}`:''}${ma60?` MA60:${ma60.toFixed(1)}`:''}`,
+      weight:2,
+    },
+    {
+      label:'放量上漲（量價配合）',
+      plain:'漲的時候有沒有大量資金跟進',
+      verdict:volUpPrice?'有人大量買進，漲勢可信':volRatio<0.7?'成交清淡，市場觀望':'量沒跟上，漲勢要小心',
+      pass:volUpPrice,
+      detail:`量比: ${volRatio.toFixed(2)}x（目前成交量 vs 20日均量）`,
+      weight:2,
+    },
+    {
+      label:'攻擊速度強勁',
+      plain:'這波漲得快不快、有沒有力道',
+      verdict:isAttacking?'漲得很猛，動能充足':'漲得偏慢，動能普通',
+      pass:isAttacking,
+      detail:attackSpeed!=null?`動能指數: ${attackSpeed.toFixed(2)}（>1.5 為強攻）`:'資料不足',
+      weight:1,
+    },
+    {
+      label:'站上樞紐支撐',
+      plain:'股價有沒有站在「地板」上方',
+      verdict:aboveSupport?'站在支撐上，不容易跌下去':nearestSupport?'跌破支撐，小心繼續下跌':'支撐位置資料不足',
+      pass:aboveSupport,
+      detail:nearestSupport?`最近支撐: ${nearestSupport.toFixed(2)}，收盤: ${lc.toFixed(2)}`:'Pivot 資料不足',
+      weight:1,
+    },
+    {
+      label:'RSI 50–70 動能區',
+      plain:'股票現在是熱還是冷',
+      verdict:rsi==null?'資料不足':rsi>70?'太熱了，漲過頭要小心':rsi>=50?'剛剛好，買氣正常':rsi>=30?'偏冷，買氣不足':'很冷，可能快要止跌反彈',
+      pass:rsi!=null&&rsi>=50&&rsi<=70,
+      detail:rsi!=null?`RSI: ${rsi.toFixed(1)}${rsi>70?' ⚠ 超買區':rsi<40?' 弱勢區':''}`:'資料不足',
+      weight:1,
+    },
+    {
+      label:'MACD / RSI 底背離',
+      plain:'跌了一段，下跌力道是否在衰退',
+      verdict:(macdDiv.bullish||rsiDiv.bullish)?'下跌力道在減弱，可能快反彈':'目前沒有反彈訊號',
+      pass:macdDiv.bullish||rsiDiv.bullish,
+      detail:macdDiv.bullish?'MACD 底背離 — 下跌動能衰竭':rsiDiv.bullish?'RSI 底背離 — 反彈訊號':'無底背離',
+      weight:1,bonus:true,
+    },
+    {
+      label:'假跌破洗盤完成',
+      plain:'有沒有先騙人跌破再拉回來',
+      verdict:fake.type==='fake_breakdown'?'洗盤跡象明顯，可能是起漲前的訊號':'無此訊號',
+      pass:fake.type==='fake_breakdown',
+      detail:fake.type==='fake_breakdown'?fake.desc:'無假跌破訊號',
+      weight:1,bonus:true,
+    },
+  ];
+
+  // 出場 Checklist
+  const exitChecks=[
+    {
+      label:'MACD 負柱 / 由正轉負',
+      plain:'買方力道是否消失',
+      verdict:(!macdPositive&&prevBar>0)?'剛轉弱，出場訊號明確':!macdPositive?'買方退場，賣方主導':'買方仍在，暫無出場訊號',
+      pass:!macdPositive||(prevBar!=null&&prevBar>0&&lastBar<=0),
+      detail:lastBar!=null?`柱: ${lastBar.toFixed(4)}${!macdPositive&&prevBar>0?' ⚡ 本根剛轉負，出場訊號明確':''}`:'',
+      critical:true,
+    },
+    {
+      label:'均線空頭排列',
+      plain:'走勢是否已經轉為向下',
+      verdict:fullBear?'趨勢轉下，不宜持股':fullBull?'趨勢仍向上，暫無疑慮':'方向還不明確',
+      pass:!!fullBear,
+      detail:maDesc,
+      critical:true,
+    },
+    {
+      label:'放量下跌（量價背離）',
+      plain:'有沒有人趁量大的時候出貨',
+      verdict:volDownFall?'量大且股價下跌，有出貨嫌疑':'無明顯出貨訊號',
+      pass:volDownFall,
+      detail:`量比: ${volRatio.toFixed(2)}x，收盤${priceUp?'↑':'↓'}`,
+      critical:true,
+    },
+    {
+      label:'跌破樞紐支撐',
+      plain:'股價有沒有跌破「地板」',
+      verdict:(nearestSupport&&lc<nearestSupport)?'地板被打穿，小心繼續下跌':'仍站在支撐之上',
+      pass:nearestSupport!=null&&lc<nearestSupport,
+      detail:nearestSupport?`支撐: ${nearestSupport.toFixed(2)}，收盤: ${lc.toFixed(2)}`:'',
+      critical:true,
+    },
+    {
+      label:'RSI / MACD 頂背離',
+      plain:'漲到高點，力道是否在偷偷減弱',
+      verdict:(rsiDiv.bearish||macdDiv.bearish)?'漲勢力道在衰退，考慮減少持股':'目前無頂背離，漲勢尚可',
+      pass:rsiDiv.bearish||macdDiv.bearish,
+      detail:rsiDiv.bearish?'RSI 頂背離 — 動能衰竭':macdDiv.bearish?'MACD 頂背離 — 趨勢末段':'無頂背離',
+      critical:false,
+    },
+    {
+      label:'假突破出貨訊號',
+      plain:'有沒有突破高點後又跌回來的跡象',
+      verdict:fake.type==='fake_breakout'?'假突破，可能是主力出貨陷阱':'無假突破，高點看起來真實',
+      pass:fake.type==='fake_breakout',
+      detail:fake.type==='fake_breakout'?fake.desc:'無假突破訊號',
+      critical:false,
+    },
+  ];
+
+  // 評分
+  const weighted=entryChecks.filter(c=>!c.bonus);
+  const totalW=weighted.reduce((s,c)=>s+c.weight,0);
+  const passedW=weighted.filter(c=>c.pass).reduce((s,c)=>s+c.weight,0);
+  const bonusPassed=entryChecks.filter(c=>c.bonus&&c.pass).length;
+  let score=Math.round((passedW/totalW)*85)+bonusPassed*7;
+  score=Math.min(score,99);
+  if(!macdPositive) score=Math.min(score,38);
+
+  const criticalExits=exitChecks.filter(c=>c.critical&&c.pass).length;
+  let signal,signalCls;
+  if(criticalExits>=2)           {signal='出場 / 停損';signalCls='exit';}
+  else if(criticalExits===1)     {signal='減倉觀察';  signalCls='caution';}
+  else if(score>=75&&macdPositive){signal='積極進場'; signalCls='strong';}
+  else if(score>=55&&macdPositive){signal='條件進場'; signalCls='cond';}
+  else                           {signal='觀望等待';  signalCls='wait';}
+
+  return{
+    entryChecks,exitChecks,score,signal,signalCls,
+    stopLoss,stopLossPct,corePassed:macdPositive,criticalExits,
+    fakePattern:fake,lastClose:lc,macdBar:lastBar,rsi,
+    nearestSupport,nearestResistance,ma5,ma20,
+    macdDiv,rsiDiv,
+  };
+}
+
+// ── Checklist UI 渲染 ─────────────────────────────────────────
+const _ckColors={strong:'#22c55e',cond:'#f97316',wait:'#94a3b8',caution:'#f59e0b',exit:'#ef4444'};
+
+function renderChecklist(sig){
+  const box=document.getElementById('signal-box');
+  if(!sig){box.innerHTML='';return;}
+
+  const sc=_ckColors[sig.signalCls]||'#94a3b8';
+  const score=sig.score;
+
+  // 評分環 SVG
+  const r=24,cx=30,cy=30,circ=2*Math.PI*r;
+  const dash=(score/100)*circ;
+  const scoreSVG=`<svg width="60" height="60" viewBox="0 0 60 60">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--bd)" stroke-width="4"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${sc}" stroke-width="4"
+      stroke-dasharray="${dash.toFixed(1)} ${circ.toFixed(1)}"
+      stroke-dashoffset="${(circ/4).toFixed(1)}" stroke-linecap="round"/>
+    <text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="central"
+      font-size="13" font-weight="700" fill="${sc}" font-family="sans-serif">${score}</text>
+  </svg>`;
+
+  // 背離標籤
+  const divTags=[];
+  if(sig.macdDiv.bullish) divTags.push('MACD 底背離');
+  if(sig.macdDiv.bearish) divTags.push('MACD 頂背離');
+  if(sig.rsiDiv.bullish)  divTags.push('RSI 底背離');
+  if(sig.rsiDiv.bearish)  divTags.push('RSI 頂背離');
+
+  // 單列渲染
+  function row(c,isExit){
+    const isWarn=isExit&&c.critical&&c.pass;
+    const nullish=c.pass===null||c.pass===undefined;
+    const dotBg=nullish?'transparent':c.pass&&!isWarn?'#22c55e':'#ef4444';
+    const dotBd=nullish?'var(--bd)':c.pass&&!isWarn?'#22c55e':'#ef4444';
+    const icon=nullish?'·':c.pass?(isWarn?'!':'✓'):'✗';
+    const cls='ck-row'+(nullish?'':c.pass&&!isWarn?' ck-pass':isWarn?' ck-warn':' ck-fail');
+    const tags=[];
+    if(c.core)  tags.push(`<span class="ck-tag core">核心</span>`);
+    if(c.bonus) tags.push(`<span class="ck-tag bonus">加分</span>`);
+    if(isWarn)  tags.push(`<span class="ck-tag warn">關鍵警示</span>`);
+    return `<div class="${cls}">
+      <div class="ck-dot" style="background:${dotBg};border-color:${dotBd};color:${nullish?'var(--dim)':'#fff'}">${icon}</div>
+      <div class="ck-content">
+        <div class="ck-label">${c.label} ${tags.join('')}</div>
+        ${c.plain?`<div class="ck-plain">📌 ${c.plain}</div>`:''}
+        ${c.verdict?`<div class="ck-verdict" style="color:${nullish?'var(--dim)':isWarn?'#f59e0b':c.pass?'#22c55e':'#ef4444'}">${c.verdict}</div>`:''}
+        ${c.detail?`<div class="ck-detail">${c.detail}</div>`:''}
+      </div>
+    </div>`;
+  }
+
+  box.innerHTML=`
+    <div class="ck-header">
+      <div class="ck-score">${scoreSVG}</div>
+      <div class="ck-siginfo">
+        <div class="ck-signal" style="color:${sc}">▸ ${sig.signal}</div>
+        <div class="ck-signal-plain">${{strong:'各項條件都對，現在是進場的好時機',cond:'部分條件符合，可以小量試探，注意停損',wait:'條件還不夠成熟，先觀察就好，不急著進場',caution:'有出場跡象出現，建議減少持股或提高警覺',exit:'多項出場訊號觸發，建議盡快出場或嚴守停損'}[sig.signalCls]||''}</div>
+        ${sig.stopLoss?`<div class="ck-meta">停損參考 <strong style="color:#ef4444">${sig.stopLoss.toFixed(2)}</strong>${sig.stopLossPct?` (-${sig.stopLossPct.toFixed(1)}%)`:''}</div>`:''}
+        ${sig.nearestResistance?`<div class="ck-meta">壓力目標 <strong style="color:#f59e0b">${sig.nearestResistance.toFixed(2)}</strong></div>`:''}
+        ${divTags.length?`<div class="ck-diverg">⚡ ${divTags.join('　')}</div>`:''}
+      </div>
+    </div>
+    <div class="ck-tabs">
+      <button class="ck-tab ck-tab-entry active" onclick="switchCkTab('entry',this)">▲ 進場條件</button>
+      <button class="ck-tab ck-tab-exit" onclick="switchCkTab('exit',this)">▼ 出場條件</button>
+    </div>
+    <div id="ck-entry-panel">
+      <div class="ck-subtitle">通過 ${sig.entryChecks.filter(c=>c.pass).length} / ${sig.entryChecks.length} 項${!sig.corePassed?' <span style="color:#ef4444">— MACD 核心條件未通過</span>':''}</div>
+      <div class="ck-list">${sig.entryChecks.map(c=>row(c,false)).join('')}</div>
+      <div class="ck-note">停損設帶量 K 前 1 根 Low，R:R 最少 1:2。MACD 正柱為必要條件，均線排列 + 量能配合為確認條件。</div>
+    </div>
+    <div id="ck-exit-panel" style="display:none">
+      <div class="ck-subtitle">關鍵項觸發 ${sig.criticalExits} / ${sig.exitChecks.filter(c=>c.critical).length} 項${sig.criticalExits>=2?' <span style="color:#ef4444">— 強烈出場訊號</span>':''}</div>
+      <div class="ck-list">${sig.exitChecks.map(c=>row(c,true)).join('')}</div>
+      <div class="ck-note">關鍵項觸發 ≥2 → 直接出場。波段停利：日 K 跌破 MA5 且 MACD 轉負柱，觀察隔日確認。</div>
+    </div>
+  `;
+}
+
+function switchCkTab(tab,btn){
+  document.getElementById('ck-entry-panel').style.display=tab==='entry'?'block':'none';
+  document.getElementById('ck-exit-panel').style.display =tab==='exit' ?'block':'none';
+  document.querySelectorAll('.ck-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
 
 // ── Plain Chinese signals ─────────────────────────────────────
 function iRSI(v){
@@ -857,7 +1319,7 @@ function renderPatterns(patterns, tw){
 }
 
 // ── K 線繪圖 ──────────────────────────────────────────────────
-function drawKLine(closes, highs, lows, vols, dates, currentPrice, tw){
+function drawKLine(closes, highs, lows, vols, dates, currentPrice, tw, support, resistance){
   const canvas = document.getElementById('kline-canvas');
   canvas.style.display = 'block';
   document.getElementById('kline-msg').style.display = 'none';
@@ -925,6 +1387,20 @@ function drawKLine(closes, highs, lows, vols, dates, currentPrice, tw){
   drawLine(calcMA(C,5),'#d0021b');
   drawLine(calcMA(C,20),'#f59e0b');
 
+  // 支撐 / 壓力虛線
+  function hLine(price, color){
+    if(!price) return;
+    const y=py(price);
+    if(y<PAD.top||y>TH-PAD.bottom) return;
+    ctx.strokeStyle=color; ctx.lineWidth=1; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(PAD.left,y); ctx.lineTo(W-PAD.right,y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=color; ctx.font='9px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(price.toFixed(1),W-2,y-2);
+  }
+  hLine(support,'#22c55e');
+  hLine(resistance,'#f59e0b');
+
   ctx.fillStyle=isDark?'#666':'#aaa'; ctx.font='9px sans-serif'; ctx.textAlign='center';
   const step=Math.ceil(n/6);
   D.forEach((d,i)=>{
@@ -933,6 +1409,89 @@ function drawKLine(closes, highs, lows, vols, dates, currentPrice, tw){
   });
 }
 
+
+// ── MACD 柱狀圖 ───────────────────────────────────────────────
+function drawMACDChart(closes){
+  const section=document.getElementById('macd-section');
+  const canvas=document.getElementById('macd-canvas');
+  if(!canvas||!closes||closes.length<30){if(section)section.style.display='none';return;}
+  section.style.display='block';
+
+  const macd=calcMACDFull(closes);
+  const bars=macd.histogram.slice(-40).filter(v=>v!=null);
+  if(!bars.length) return;
+
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.parentElement.clientWidth||300;
+  const H=60;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  ctx.fillStyle=isDark?'#1c1c1a':'#fff';
+  ctx.fillRect(0,0,W,H);
+
+  const maxAbs=Math.max(...bars.map(Math.abs),0.001);
+  const bw=W/bars.length-0.8;
+
+  ctx.strokeStyle=isDark?'#333330':'#e2ddd5'; ctx.lineWidth=0.5;
+  ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+
+  bars.forEach((b,i)=>{
+    const barH=Math.max((Math.abs(b)/maxAbs)*(H/2-2),1);
+    const y=b>=0?H/2-barH:H/2;
+    ctx.fillStyle=b>=0?'#22c55e':'#ef4444';
+    ctx.globalAlpha=i===bars.length-1?1:0.7;
+    ctx.fillRect(i*(bw+0.8),y,bw,barH);
+  });
+  ctx.globalAlpha=1;
+}
+
+// ── 成交量圖 ──────────────────────────────────────────────────
+function drawVolumeChart(C, V, tw){
+  const section=document.getElementById('vol-section');
+  const canvas=document.getElementById('vol-canvas');
+  if(!canvas||!V||V.length<5){if(section)section.style.display='none';return;}
+  section.style.display='block';
+
+  const show=V.slice(-40);
+  const showC=C.slice(-40);
+  const maxVol=Math.max(...show);
+  const avgVol=show.reduce((a,b)=>a+b,0)/show.length;
+
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.parentElement.clientWidth||300;
+  const H=48;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  ctx.fillStyle=isDark?'#1c1c1a':'#fff';
+  ctx.fillRect(0,0,W,H);
+
+  const bw=W/show.length-0.8;
+  const upC=tw?'#d0021b':'#007a3d';
+  const dnC=tw?'#007a3d':'#d0021b';
+
+  const avgY=H-(avgVol/maxVol)*H;
+  ctx.strokeStyle=isDark?'#444440':'#d0ccc4'; ctx.lineWidth=1;
+  ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(0,avgY); ctx.lineTo(W,avgY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  show.forEach((v,i)=>{
+    const h=Math.max((v/maxVol)*H,1);
+    const up=i===0||showC[i]>=showC[i-1];
+    ctx.fillStyle=up?upC:dnC;
+    ctx.globalAlpha=0.65;
+    ctx.fillRect(i*(bw+0.8),H-h,bw,h);
+  });
+  ctx.globalAlpha=1;
+}
 
 // ── 健康檢查 ──────────────────────────────────────────────────
 function interpretPE(pe) {
@@ -1051,7 +1610,6 @@ function renderHealthCheck(fund, price) {
   const checks = [
     { label:'💰 本益比評估', ...interpretPE(fund.pe ?? fund.forwardPE) },
     { label:'📈 近期走勢',   ...growthCheck },
-    { label:'📏 均線位置',   ...marginCheck },
     { label:'🏦 財務健康',   ...debtCheck },
     { label:'🎯 52週位置',   ...interpretPos(price, fund.week52Low, fund.week52High) },
   ];
@@ -1235,12 +1793,7 @@ async function doSearch(){
     }
 
     const aC=[...C,q.price],aH=[...H,q.high||q.price],aL=[...L,q.low||q.price];
-    const rv=C.length>14?calcRSI(aC):null;
-    const {k,d}=C.length>9?calcKD(aH,aL,aC):{k:50,d:50};
-    const ma5=C.length>=5?mav(aC,5):null,ma20=C.length>=20?mav(aC,20):null;
-    const mc=aC.length>=26?+(ema(aC,12)-ema(aC,26)).toFixed(2):null;
-    const avgV=V.slice(-20).reduce((a,b)=>a+b,0)/Math.max(1,V.slice(-20).length);
-    const vr=avgV>0?+(q.volume/avgV).toFixed(1):'–';
+    const aV=[...V,q.volume];
     const cls=upDn(q.changePct);
     const cur=q.currency||'TWD';
 
@@ -1264,17 +1817,9 @@ async function doSearch(){
         <div class="p-cell"><div class="p-cl">最低</div><div class="p-cv" style="color:var(--dn)">${q.low||'–'}</div></div>
       </div>`;
 
-    // Lights
-    const ri=iRSI(rv),ki=iKD(k,d),mi=iMACD(mc),mai=iMA(q.price,ma5,ma20),vi=iVol(vr);
-    document.getElementById('lights').innerHTML=[
-      {lbl:'💹 漲跌動能',...ri},{lbl:'📉 買賣訊號',...ki},
-      {lbl:'⚡ 趨勢力道',...mi},{lbl:'📏 均線位置',...mai},
-      {lbl:'🔊 成交量',...vi},
-    ].map(l=>`
-      <div class="l-row">
-        <div class="l-dot" style="background:${dotC(l.dot)};box-shadow:0 0 6px ${dotC(l.dot)}55"></div>
-        <div><div class="l-lbl">${l.lbl}</div><div class="l-txt">${l.txt}</div></div>
-      </div>`).join('');
+    // 技術分析訊號
+    const sig = C.length >= 5 ? analyzeSignals(aC, aH, aL, aV) : null;
+    renderChecklist(sig);
 
     document.getElementById('loading').style.display='none';
     document.getElementById('result').style.display='block';
@@ -1285,8 +1830,11 @@ async function doSearch(){
     if(hint) hint.textContent = tw ? '🇹🇼 紅漲綠跌' : '🇺🇸 綠漲紅跌';
 
     if(C.length >= 5){
-      _lastKLine = { C, H, L, V, dates, price: q.price, tw };
-      drawKLine(C, H, L, V, dates, q.price, tw);
+      const sup = sig?.nearestSupport, res = sig?.nearestResistance;
+      _lastKLine = { C, H, L, V, dates, price: q.price, tw, support: sup, resistance: res };
+      drawKLine(C, H, L, V, dates, q.price, tw, sup, res);
+      drawMACDChart(aC);
+      drawVolumeChart(C, V, tw);
     } else {
       document.getElementById('kline-msg').style.display='block';
       document.getElementById('kline-canvas').style.display='none';
@@ -1302,7 +1850,7 @@ async function doSearch(){
         `<div class="pat-none">需要至少 20 個交易日數據才能辨識型態（目前取得 ${C.length} 筆）。</div>`;
     }
 
-    fetchAI(q,{rv,k,d,mc,ma5,ma20,vr,riT:ri.txt,kiT:ki.txt,miT:mi.txt,maiT:mai.txt,viT:vi.txt,tw});
+    fetchAI(q, sig, tw);
     fetchHealthAndNews(sn, q.price, { C, H, L });
 
   }catch(e){
@@ -1316,8 +1864,14 @@ async function doSearch(){
 }
 
 // ── AI analysis ───────────────────────────────────────────────
-async function fetchAI(q,ind){
+async function fetchAI(q, sig, tw){
   const cls=upDn(q.changePct);
+  const sigDesc=sig?`技術訊號：${sig.signal}，評分 ${sig.score}/100
+MACD：${sig.macdBar!=null?`柱 ${sig.macdBar.toFixed(4)}`:'無資料'}
+RSI：${sig.rsi!=null?sig.rsi.toFixed(1):'無資料'}
+均線：${sig.ma5&&sig.ma20?`MA5=${sig.ma5.toFixed(1)} MA20=${sig.ma20.toFixed(1)}`:'無資料'}
+${[sig.macdDiv.bullish&&'MACD底背離',sig.macdDiv.bearish&&'MACD頂背離',sig.rsiDiv.bullish&&'RSI底背離',sig.rsiDiv.bearish&&'RSI頂背離'].filter(Boolean).join('、')||''}`:
+    `今天${q.changePct>0?'上漲':'下跌'} ${Math.abs(q.changePct)}%`;
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',headers:{'Content-Type':'application/json'},
@@ -1326,12 +1880,8 @@ async function fetchAI(q,ind){
         system:`你是幫助台灣長輩看懂股票的助理。用非常口語、溫和的白話文說明，像鄰居朋友聊天。不用數字或術語。不給買賣建議。
 輸出純JSON：{"icon":"一個表情","title":"今天這支股票一句話（15字內）","summary":"2-3句話說明今天整體狀況","tip":"下單前一個溫和提醒（一句話）","signal":"UP或DOWN或FLAT"}`,
         messages:[{role:'user',content:
-          `${q.name}(${q.code})今天${q.changePct>0?'上漲':'下跌'}${Math.abs(q.changePct)}%${ind.tw?'（台股）':'（美股）'}。
-漲跌動能：${ind.riT}
-買賣訊號：${ind.kiT}
-趨勢力道：${ind.miT}
-均線位置：${ind.maiT}
-成交量：${ind.viT}
+          `${q.name}(${q.code})今天${q.changePct>0?'上漲':'下跌'}${Math.abs(q.changePct)}%${tw?'（台股）':'（美股）'}。
+${sigDesc}
 請用白話文整理給長輩聽。`}]
       })
     });
@@ -1361,7 +1911,7 @@ async function fetchAI(q,ind){
     at.className='a-ttl '+cls2;
     document.getElementById('abdy').innerHTML=
       `<p>${q.name}今天${q.changePct>0?'上漲':'下跌'} ${Math.abs(q.changePct)}%。</p>
-       <p>${ind.maiT}</p><p>${ind.viT}</p>`;
+       ${sig?`<p>技術評分 ${sig.score}/100，訊號：${sig.signal}。</p>`:''}`;
   }
 }
 
@@ -1657,8 +2207,10 @@ function applyTheme(dark) {
   localStorage.setItem('theme', dark ? 'dark' : 'light');
   // 如果有 K 線資料就重新畫
   if (_lastKLine) {
-    const { C, H, L, V, dates, price, tw } = _lastKLine;
-    drawKLine(C, H, L, V, dates, price, tw);
+    const { C, H, L, V, dates, price, tw, support, resistance } = _lastKLine;
+    drawKLine(C, H, L, V, dates, price, tw, support, resistance);
+    drawMACDChart([...C, price]);
+    drawVolumeChart(C, V, tw);
   }
 }
 function toggleTheme() {

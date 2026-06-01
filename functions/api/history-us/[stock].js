@@ -1,5 +1,5 @@
 // functions/api/history-us/[stock].js
-// 美股歷史 K 線 — 使用 Yahoo Finance（免費，不需要 API Key）
+// 美股歷史 K 線（最近 3 個月），使用 Yahoo Finance v8 chart API
 
 export async function onRequest(context) {
   const symbol = context.params.stock?.trim().toUpperCase();
@@ -12,40 +12,40 @@ export async function onRequest(context) {
     'Accept': 'application/json',
   };
 
-  const to   = Math.floor(Date.now() / 1000);
-  const from = to - 90 * 24 * 3600;
-
   try {
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&period1=${from}&period2=${to}`;
+    // range=3mo, interval=1d
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=3mo`;
     const res  = await fetch(url, { headers });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data   = await res.json();
     const result = data?.chart?.result?.[0];
-    if (!result) throw new Error(`查無 ${symbol} 資料`);
+    if (!result) throw new Error(`查無「${symbol}」`);
 
-    const ts  = result.timestamp || [];
-    const q   = result.indicators?.quote?.[0] || {};
+    const timestamps = result.timestamp || [];
+    const q = result.indicators?.quote?.[0] || {};
+    const opens   = q.open   || [];
+    const highs   = q.high   || [];
+    const lows    = q.low    || [];
+    const closes  = q.close  || [];
+    const volumes = q.volume || [];
 
-    const rows = ts.map((t, i) => ({
-      date:   new Date(t * 1000).toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric' }),
-      open:   q.open?.[i]   ? +q.open[i].toFixed(2)   : null,
-      high:   q.high?.[i]   ? +q.high[i].toFixed(2)   : null,
-      low:    q.low?.[i]    ? +q.low[i].toFixed(2)    : null,
-      close:  q.close?.[i]  ? +q.close[i].toFixed(2)  : null,
-      volume: q.volume?.[i] || 0,
-    })).filter(r => r.close !== null);
-
-    if (!rows.length) throw new Error(`${symbol} 暫無歷史資料`);
+    const rows = timestamps.map((ts, i) => ({
+      date:   new Date(ts * 1000).toISOString().slice(0, 10),
+      open:   opens[i]   != null ? +opens[i].toFixed(2)   : null,
+      high:   highs[i]   != null ? +highs[i].toFixed(2)   : null,
+      low:    lows[i]    != null ? +lows[i].toFixed(2)    : null,
+      close:  closes[i]  != null ? +closes[i].toFixed(2)  : null,
+      volume: volumes[i] || 0,
+    })).filter(r => r.close != null);
 
     return Response.json(
       { ok: true, data: rows },
       { headers: { 'Access-Control-Allow-Origin': '*' } }
     );
-
   } catch (e) {
     return Response.json(
-      { ok: false, error: e.message },
+      { ok: false, error: e.message || '查詢失敗，請稍後再試' },
       { status: 500, headers: { 'Access-Control-Allow-Origin': '*' } }
     );
   }
