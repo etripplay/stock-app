@@ -1,6 +1,6 @@
 // Cloudflare Pages Function
 // 路徑: functions/api/quote/[stock].js
-// 負責從台灣證交所抓取即時報價
+// 負責從台灣證交所抓取即時報價，TWSE 失敗時 fallback 到 Yahoo Finance
 
 export async function onRequest(context) {
   const stockNo = context.params.stock?.trim();
@@ -9,16 +9,18 @@ export async function onRequest(context) {
     return Response.json({ ok: false, error: '請提供股票代號' }, { status: 400 });
   }
 
-  const headers = {
+  const corsHeaders = { 'Access-Control-Allow-Origin': '*' };
+
+  // ── 1. 先試 TWSE（tse 上市 / otc 上櫃）──
+  const twseHeaders = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
     'Referer': 'https://mis.twse.com.tw/',
   };
 
-  // 先試 tse（上市），再試 otc（上櫃）
   for (const ex of ['tse', 'otc']) {
     try {
       const url = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${ex}_${stockNo}.tw&json=1&delay=0`;
-      const res = await fetch(url, { headers });
+      const res = await fetch(url, { headers: twseHeaders, signal: AbortSignal.timeout(5000) });
       const data = await res.json();
       const arr = data?.msgArray || [];
 
@@ -30,7 +32,6 @@ export async function onRequest(context) {
         const chg   = Math.round((price - prev) * 100) / 100;
         const pct   = prev ? Math.round((chg / prev) * 10000) / 100 : 0;
 
-        // 有股票名稱就視為找到，price=0 只是休市或未開盤，不跳過
         return Response.json({
           ok: true,
           code:      q.c || stockNo,
@@ -45,17 +46,52 @@ export async function onRequest(context) {
           volume:    parseInt(q.v)   || 0,
           exchange:  ex === 'tse' ? '上市' : '上櫃',
           time:      q.t || '',
-        }, {
-          headers: { 'Access-Control-Allow-Origin': '*' }
-        });
+          source:    'twse',
+        }, { headers: corsHeaders });
       }
     } catch (_) {
       continue;
     }
   }
 
+  // ── 2. TWSE 失敗，fallback 到 Yahoo Finance（台股加 .TW）──
+  try {
+    const symbol = `${stockNo}.TW`;
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=5d`;
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+      signal: AbortSignal.timeout(6000),
+    });
+    const data = await res.json();
+    const meta = data?.chart?.result?.[0]?.meta;
+
+    if (meta && meta.regularMarketPrice) {
+      const price = Math.round(meta.regularMarketPrice * 100) / 100;
+      const prev  = Math.round((meta.previousClose || meta.chartPreviousClose || price) * 100) / 100;
+      const chg   = Math.round((price - prev) * 100) / 100;
+      const pct   = prev ? Math.round((chg / prev) * 10000) / 100 : 0;
+
+      return Response.json({
+        ok: true,
+        code:      stockNo,
+        name:      meta.shortName || meta.longName || stockNo,
+        price,
+        prev,
+        change:    chg,
+        changePct: pct,
+        high:      Math.round((meta.regularMarketDayHigh || 0) * 100) / 100,
+        low:       Math.round((meta.regularMarketDayLow  || 0) * 100) / 100,
+        open:      Math.round((meta.regularMarketOpen    || 0) * 100) / 100,
+        volume:    meta.regularMarketVolume || 0,
+        exchange:  '上市',
+        time:      '',
+        source:    'yahoo',
+      }, { headers: corsHeaders });
+    }
+  } catch (_) {}
+
   return Response.json(
     { ok: false, error: `查無代號「${stockNo}」，請確認是否為台股代號` },
-    { status: 404, headers: { 'Access-Control-Allow-Origin': '*' } }
+    { status: 404, headers: corsHeaders }
   );
 }
