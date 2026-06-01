@@ -71,10 +71,25 @@ export async function onRequest(context) {
       const chg   = Math.round((price - prev) * 100) / 100;
       const pct   = prev ? Math.round((chg / prev) * 10000) / 100 : 0;
 
+      // 嘗試從 TWSE OpenAPI 取得中文名稱
+      let chineseName = null;
+      try {
+        const today = new Date();
+        const dateStr = `${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
+        const nameRes = await fetch(
+          `https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?response=json&date=${dateStr}&stockNo=${stockNo}`,
+          { signal: AbortSignal.timeout(3000) }
+        );
+        const nameData = await nameRes.json();
+        // title 格式: "115年06月 2330 台積電           各日成交資訊"
+        const match = nameData?.title?.match(/\d+\s+[\w]+\s+(.+?)\s+各日/);
+        if (match) chineseName = match[1].trim();
+      } catch (_) {}
+
       return Response.json({
         ok: true,
         code:      stockNo,
-        name:      meta.shortName || meta.longName || stockNo,
+        name:      chineseName || meta.shortName || meta.longName || stockNo,
         price,
         prev,
         change:    chg,
