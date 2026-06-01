@@ -71,20 +71,30 @@ export async function onRequest(context) {
       const chg   = Math.round((price - prev) * 100) / 100;
       const pct   = prev ? Math.round((chg / prev) * 10000) / 100 : 0;
 
-      // 嘗試從 TWSE OpenAPI 取得中文名稱
+      // 嘗試從 TWSE OpenAPI 公司清單取得中文名稱
       let chineseName = null;
       try {
-        const today = new Date();
-        const dateStr = `${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
-        const nameRes = await fetch(
-          `https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?response=json&date=${dateStr}&stockNo=${stockNo}`,
-          { signal: AbortSignal.timeout(3000) }
+        const listRes = await fetch(
+          `https://openapi.twse.com.tw/v1/company/getPrimaryMarket`,
+          { signal: AbortSignal.timeout(4000) }
         );
-        const nameData = await nameRes.json();
-        // title 格式: "115年06月 2330 台積電           各日成交資訊"
-        const match = nameData?.title?.match(/\d+\s+[\w]+\s+(.+?)\s+各日/);
-        if (match) chineseName = match[1].trim();
+        const list = await listRes.json();
+        const found = list.find(c => c['公司代號'] === stockNo);
+        if (found) chineseName = found['公司簡稱'] || found['公司名稱'];
       } catch (_) {}
+
+      // OTC 上櫃也試試
+      if (!chineseName) {
+        try {
+          const listRes = await fetch(
+            `https://openapi.twse.com.tw/v1/company/getOTCMarket`,
+            { signal: AbortSignal.timeout(4000) }
+          );
+          const list = await listRes.json();
+          const found = list.find(c => c['公司代號'] === stockNo);
+          if (found) chineseName = found['公司簡稱'] || found['公司名稱'];
+        } catch (_) {}
+      }
 
       return Response.json({
         ok: true,
