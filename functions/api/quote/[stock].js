@@ -24,13 +24,13 @@ export async function onRequest(context) {
 
       if (arr.length > 0 && arr[0].n) {
         const q = arr[0];
+        // q.z 是即時成交價（盤中），q.y 是昨收價；盤後/休市時 q.z 為 '-'
         const price = parseFloat(q.z) || parseFloat(q.y) || 0;
         const prev  = parseFloat(q.y) || price;
         const chg   = Math.round((price - prev) * 100) / 100;
         const pct   = prev ? Math.round((chg / prev) * 10000) / 100 : 0;
 
-        if (price === 0) continue; // 還沒開盤或無效，試另一個交易所
-
+        // 有股票名稱就視為找到，price=0 只是休市或未開盤，不跳過
         return Response.json({
           ok: true,
           code:      q.c || stockNo,
