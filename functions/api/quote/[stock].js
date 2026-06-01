@@ -71,30 +71,15 @@ export async function onRequest(context) {
       const chg   = Math.round((price - prev) * 100) / 100;
       const pct   = prev ? Math.round((chg / prev) * 10000) / 100 : 0;
 
-      // 嘗試從 TWSE OpenAPI 公司清單取得中文名稱
+      // 從自己的 /api/twse-list 取中文名稱（有 24h cache，很快）
       let chineseName = null;
       try {
-        const listRes = await fetch(
-          `https://openapi.twse.com.tw/v1/company/getPrimaryMarket`,
-          { signal: AbortSignal.timeout(4000) }
-        );
-        const list = await listRes.json();
-        const found = list.find(c => c['公司代號'] === stockNo);
-        if (found) chineseName = found['公司簡稱'] || found['公司名稱'];
+        const baseUrl = new URL(context.request.url).origin;
+        const listRes = await fetch(`${baseUrl}/api/twse-list`, { signal: AbortSignal.timeout(4000) });
+        const listData = await listRes.json();
+        const found = (listData.data || []).find(s => s.c === stockNo);
+        if (found) chineseName = found.n;
       } catch (_) {}
-
-      // OTC 上櫃也試試
-      if (!chineseName) {
-        try {
-          const listRes = await fetch(
-            `https://openapi.twse.com.tw/v1/company/getOTCMarket`,
-            { signal: AbortSignal.timeout(4000) }
-          );
-          const list = await listRes.json();
-          const found = list.find(c => c['公司代號'] === stockNo);
-          if (found) chineseName = found['公司簡稱'] || found['公司名稱'];
-        } catch (_) {}
-      }
 
       return Response.json({
         ok: true,
