@@ -176,14 +176,6 @@ body{font-family:'Noto Sans TC',-apple-system,sans-serif;background:var(--bg);co
 </head>
 <body>
 
-<!-- Header -->
-<div class="hdr">
-  <div>
-    <div class="hdr-title"><span></span>產業供應鏈地圖</div>
-    <div class="hdr-sub">點擊節點查看詳細說明，再跳轉查詢股票</div>
-  </div>
-  <a class="back-btn" href="/">← 回股票看板</a>
-</div>
 
 <!-- Tabs -->
 <div class="tabs-bar">
@@ -1047,7 +1039,13 @@ function showTip(n){
   const chgCol=d?(d.diff>=0?'#22863a':'#cb2431'):'var(--dim)';
   const stateL=d?(d.state==='REGULAR'?'盤中即時':d.state==='CLOSED'||d.state==='POST'?'前日收盤':''):'';
   const role=(activeChain.roles||{})[n.id]||n.desc||'';
-  const goStock=()=>{window.location.href=`/?autoq=${encodeURIComponent(n.t)}`;};
+  const goStock=()=>{
+    if(window.parent!==window){
+      window.parent.postMessage({type:'gotoStock',ticker:n.t},'*');
+    }else{
+      window.location.href=`/?autoq=${encodeURIComponent(n.t)}`;
+    }
+  };;
   if(isMobile()){
     document.getElementById('s-name').textContent=n.name;
     document.getElementById('s-sub').textContent=`${n.t} · ${mktL}`;
