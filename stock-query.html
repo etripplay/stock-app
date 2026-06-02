@@ -566,7 +566,7 @@ const US_DB = [
 ];
 
 // ── Clock ─────────────────────────────────────────────────────
-function tick(){ document.getElementById('clk').textContent=new Date().toLocaleTimeString('zh-TW',{hour12:false,hour:'2-digit',minute:'2-digit'}); }
+function tick(){ const el=document.getElementById('clk'); if(el) el.textContent=new Date().toLocaleTimeString('zh-TW',{hour12:false,hour:'2-digit',minute:'2-digit'}); }
 setInterval(tick,1000); tick();
 
 // ── Market helpers ─────────────────────────────────────────────
