@@ -104,9 +104,17 @@
 <body>
 <div class="page">
   <div class="page-header">
-    <div class="page-title">📊 AI 供應鏈股票分析看板</div>
-    <div class="page-sub">12 檔重點股票 · 長線短線分析 · 財務數據 · 投資結論</div>
-    <div class="disclaimer">⚠️ 本看板資料整理自公開財報與外資研究報告，僅供參考，不構成任何投資建議。投資人應自行評估風險。</div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div>
+        <div class="page-title">📊 AI 供應鏈股票分析看板</div>
+        <div class="page-sub">12 檔重點股票 · 長線短線分析 · 財務數據 · 投資結論</div>
+      </div>
+      <div id="today-badge" style="flex-shrink:0;background:#E1F5EE;border:1px solid #b2ddc8;border-radius:8px;padding:5px 12px;text-align:right;">
+        <div style="font-size:10px;color:#0F6E56;font-weight:600;letter-spacing:.04em;">今日分析</div>
+        <div id="today-date" style="font-size:13px;font-weight:700;color:#085041;margin-top:1px;"></div>
+      </div>
+    </div>
+    <div class="disclaimer" style="margin-top:6px;">⚠️ 本看板資料整理自公開財報與外資研究報告，僅供參考，不構成任何投資建議。投資人應自行評估風險。</div>
   </div>
 
   <div class="sel-row" id="selRow"></div>
@@ -421,6 +429,13 @@ function render(){
 window.sel=k=>{curStock=k;render()}
 window.selTab=t=>{curTab=t;render()}
 render();
+
+// 今日日期
+(function(){
+  const d=new Date();
+  const s=d.toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
+  document.getElementById('today-date').textContent=s;
+})();
 </script>
 </body>
 </html>
