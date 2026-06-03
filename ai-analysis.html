@@ -99,6 +99,39 @@
 
   /* ── footer note ── */
   .footer{margin-top:20px;padding:12px 14px;background:#fff;border-radius:10px;border:1px solid #e8e6de;font-size:11px;color:#999;line-height:1.6}
+
+  /* ── edit mode ── */
+  .edit-btn{padding:6px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#666;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap;margin-left:8px}
+  .edit-btn:hover{border-color:#185FA5;color:#185FA5}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}
+  .modal-overlay.show{display:flex}
+  .modal-box{background:#fff;border-radius:16px;padding:20px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.18)}
+  .modal-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+  .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#888;padding:0 4px;line-height:1}
+  .stock-mgr-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:8px;background:#f5f5f0;margin-bottom:6px}
+  .smr-info{font-size:12px;font-weight:500;color:#333}
+  .smr-code{font-size:10px;color:#888;margin-top:1px}
+  .del-btn{background:none;border:1px solid #ddd;border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;color:#aaa;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
+  .del-btn:hover{border-color:#D85A30;color:#D85A30;background:#FCEBEB}
+  .add-row{display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid #e8e6de;flex-wrap:wrap}
+  .add-input{flex:1;min-width:80px;padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:12px;font-family:inherit;outline:none}
+  .add-input:focus{border-color:#185FA5}
+  .add-confirm-btn{padding:8px 16px;background:#185FA5;color:#fff;border:none;border-radius:8px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;white-space:nowrap}
+  .add-confirm-btn:hover{background:#0d4a82}
+  /* ── custom stock card ── */
+  .gen-card{background:#fff;border:2px dashed #ddd;border-radius:12px;padding:28px 16px;text-align:center;margin-bottom:10px}
+  .gen-price{display:inline-block;background:#E1F5EE;color:#085041;border:1px solid #b2ddc8;border-radius:6px;padding:3px 12px;font-size:13px;font-weight:700;margin-bottom:10px}
+  .gen-chg{font-size:11px;margin-bottom:16px}
+  .gen-title{font-size:12px;color:#888;margin-bottom:14px;line-height:1.6}
+  .gen-btn{padding:11px 28px;background:linear-gradient(135deg,#185FA5,#0d4a82);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 2px 10px rgba(24,95,165,.3);transition:all .15s}
+  .gen-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(24,95,165,.4)}
+  .gen-btn:disabled{background:#bbb;box-shadow:none;transform:none;cursor:not-allowed}
+  /* ── prompt modal ── */
+  .prompt-hint{font-size:12px;color:#555;margin-bottom:10px;line-height:1.6}
+  .prompt-box{background:#f5f5f0;border-radius:8px;padding:12px;font-size:11px;color:#333;line-height:1.7;white-space:pre-wrap;word-break:break-word;margin:0 0 10px;max-height:220px;overflow-y:auto;border:1px solid #e8e6de}
+  .copy-btn{width:100%;padding:10px;background:#185FA5;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s}
+  .copy-btn:hover{background:#0d4a82}
+  .copy-done{background:#0F6E56!important}
 </style>
 </head>
 <body>
@@ -109,9 +142,12 @@
         <div class="page-title">📊 AI 供應鏈股票分析看板</div>
         <div class="page-sub">12 檔重點股票 · 長線短線分析 · 財務數據 · 投資結論</div>
       </div>
-      <div id="today-badge" style="flex-shrink:0;background:#E1F5EE;border:1px solid #b2ddc8;border-radius:8px;padding:5px 12px;text-align:right;">
-        <div style="font-size:10px;color:#0F6E56;font-weight:600;letter-spacing:.04em;">今日分析</div>
-        <div id="today-date" style="font-size:13px;font-weight:700;color:#085041;margin-top:1px;"></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <button class="edit-btn" onclick="openEditModal()">✏️ 編輯股票</button>
+        <div id="today-badge" style="background:#E1F5EE;border:1px solid #b2ddc8;border-radius:8px;padding:5px 12px;text-align:right;">
+          <div style="font-size:10px;color:#0F6E56;font-weight:600;letter-spacing:.04em;">今日分析</div>
+          <div id="today-date" style="font-size:13px;font-weight:700;color:#085041;margin-top:1px;"></div>
+        </div>
       </div>
     </div>
     <div class="disclaimer" style="margin-top:6px;">⚠️ 本看板資料整理自公開財報與外資研究報告，僅供參考，不構成任何投資建議。投資人應自行評估風險。</div>
@@ -126,25 +162,55 @@
   </div>
 </div>
 
+<!-- 編輯股票 Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span>✏️ 管理股票清單</span>
+      <button class="modal-close" onclick="closeEditModal()">×</button>
+    </div>
+    <div style="font-size:11px;color:#888;margin-bottom:12px;">點 ✕ 可移除；新增輸入代號＋名稱（支援台股、美股）</div>
+    <div id="editStockList"></div>
+    <div class="add-row">
+      <input class="add-input" id="addCode" placeholder="代號（如 0050）" maxlength="8" />
+      <input class="add-input" id="addName" placeholder="公司名稱" maxlength="12" />
+      <button class="add-confirm-btn" onclick="addCustomStock()">＋ 新增</button>
+    </div>
+  </div>
+</div>
+
+<!-- 生成分析 Prompt Modal -->
+<div class="modal-overlay" id="promptModal">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-title">
+      <span>🤖 啟動 AI 分析</span>
+      <button class="modal-close" onclick="closePromptModal()">×</button>
+    </div>
+    <div class="prompt-hint">複製以下提示，貼到左側 Claude 對話框，即可為這支股票生成完整分析並自動更新看板：</div>
+    <div class="prompt-box" id="promptText"></div>
+    <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">📋 複製提示</button>
+  </div>
+</div>
+
 <script>
 const STOCKS = {
-  "2382":{name:"廣達電腦",en:"Quanta",color:"#185FA5",bg:"#dceefb",role:"AI 伺服器 ODM 龍頭",price:"~285元",eps_q1:"5.2元",rev_yoy:"+48%",target:"340元",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
+  "2382":{name:"廣達電腦",en:"Quanta",color:"#185FA5",bg:"#dceefb",role:"AI 伺服器 ODM 龍頭",price:"~430元",eps_q1:"5.5元",rev_yoy:"+121%",target:"416元（富邦）",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
   long:[
     {i:"🏭",t:"Vera Rubin 機架組裝主力",d:"黃仁勳首站拜訪、林百里 GTC 同台。廣達是 Vera Rubin NVL 72 機櫃最核心的 ODM 組裝商，Q3 進入新舊平台轉換、Q4 放量，訂單能見度業界最高。",tags:["tg:Vera Rubin 核心","tb:黃仁勳首訪","tg:Q4 放量確認"]},
     {i:"📦",t:"AI 伺服器三巨頭地位穩固",d:"廣達、鴻海、緯創是 NVIDIA 整機櫃式伺服器的三大組裝商，廣達在高階產品的話語權最強，毛利率也優於同業。",tags:["tg:ODM 三巨頭最強","tb:高階產品優先"]},
     {i:"💡",t:"AI PC 佈局悄悄進行",d:"隨 RTX Spark（N1X）筆電晶片發表，廣達作為 AI PC 組裝商也同步受惠，是伺服器之外的第二條成長線。",tags:["tp:AI PC 第二條線"]}
   ],
   short:[
-    {i:"📈",t:"近期走勢強，COMPUTEX 展期題材延燒",d:"昨日（6/1）外資買超前十名中唯一的 AI 伺服器股，今日 COMPUTEX 開幕繼續有題材支撐。短線均線多頭排列。",tags:["tg:外資昨日積極加碼","ta:乖離率偏大"]},
-    {i:"🎯",t:"短線進場策略",d:"現價已在相對高位，不建議今日追高。等量縮回測 260~270 元整理區，確認不破後分批進場，風險報酬更佳。",tags:["tb:理想進場 260~270","tr:停損 250 以下"]}
+    {i:"📈",t:"法說後回調已消化，4月年增 121% 驗證訂單爆量",d:"5月法說毛利率降至 4.78% 引發短暫回調，但元大目標價上修至 385 元、富邦 416 元均維持買進。4月營收年增 120.71% 創新高，Q1 EPS 5.5 元歷年同期最高，長線故事未變。",tags:["tg:元大目標385/富邦416","tg:4月年增120.71%","ta:毛利率4.78%需關注"]},
+    {i:"🎯",t:"短線進場策略",d:"短線等量縮回測 400~420 元整理區，確認站穩再進，停損設在 390 元收盤以下。",tags:["tb:理想進場 400~420","tr:停損 390 以下"]}
   ],
   prod:{segs:[{w:60,c:"#185FA5",l:"AI 伺服器"},{w:20,c:"#0F6E56",l:"筆電 ODM"},{w:12,c:"#534AB7",l:"雲端基建"},{w:8,c:"#888",l:"其他"}]},
-  fin:[{l:"Q1 2026 EPS",v:"5.2元",w:75,c:"#185FA5"},{l:"4月營收年增",v:"+48%",w:85,c:"#3B6D11"},{l:"Q4 放量預期",v:"強勁",w:90,c:"#0F6E56"},{l:"全年 EPS 預估",v:"~22元",w:80,c:"#854F0B"}],
-  val:[{i:"💰",t:"本益比約 13 倍，五檔最具性價比",d:"以預估 EPS 22 元、現價 285 元計算，本益比僅 13 倍。對於訂單能見度最高的 AI 伺服器龍頭，這個估值明顯偏低，是外資持續加碼的原因。",tags:["tg:本益比 13x 偏低","tb:外資持續買超"]}],
-  risk:[{i:"⚡",t:"匯率風險",d:"廣達出口比重高，台幣升值侵蝕毛利。"},{i:"📉",t:"短線乖離",d:"近期已大漲，短線追高風險較高。"},{i:"🏗️",t:"Rubin 爬坡進度",d:"若 Vera Rubin 出貨延遲，Q3 營收不如預期。"}],
-  verdict:"Vera Rubin 最直接受惠者，訂單能見度最高，本益比反而最低。長線首選。短線等回踩 260~270 再進。",
+  fin:[{l:"Q1 2026 EPS",v:"5.5元（歷年同期最高）",w:80,c:"#185FA5"},{l:"4月營收年增",v:"+121%",w:98,c:"#3B6D11"},{l:"Q4 放量預期",v:"強勁",w:90,c:"#0F6E56"},{l:"全年 EPS 預估",v:"~26元（富邦）",w:85,c:"#854F0B"}],
+  val:[{i:"💰",t:"本益比約 17 倍，Vera Rubin 龍頭估值合理",d:"以預估 EPS 26 元、現價 430 元計算，本益比約 17 倍。4月年增 121% 驗證訂單能見度，富邦目標 416 元尚有空間。",tags:["tg:本益比17x合理","tb:外資持續買超"]}],
+  risk:[{i:"⚡",t:"匯率風險",d:"廣達出口比重高，台幣升值侵蝕毛利。"},{i:"📉",t:"毛利率偏低",d:"Q1 毛利率降至 4.78%，為近 15 季低點，需觀察後續改善。"},{i:"🏗️",t:"Rubin 爬坡進度",d:"若 Vera Rubin 出貨延遲，Q3 營收不如預期。"}],
+  verdict:"Vera Rubin 最直接受惠者，4月年增 121% 訂單爆量。法說後拉回已消化，等回踩 400~420 再進。",
   suit:"相信 NVIDIA AI 伺服器訂單會持續放量的長線投資人。不在意短線震盪，能持股 6 個月以上。",
-  entry:"260~270 元",cur:"~285元",stop:"250 以下"},
+  entry:"400~420 元",cur:"~430元",stop:"390 以下"},
 
   "3044":{name:"健鼎科技",en:"Tripod Tech",color:"#0F6E56",bg:"#E1F5EE",role:"PCB 龍頭 AI+記憶體雙引擎",price:"~529元",eps_q1:"5.61元",rev_yoy:"+29%",target:"~650元",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
   long:[
@@ -221,51 +287,51 @@ const STOCKS = {
   suit:"保守型或想今日就進場的投資人。不想冒高估值風險，需要殖利率保護，看好可成 AI 伺服器轉型故事。",
   entry:"195~200 元",cur:"~203元",stop:"185 以下"},
 
-  "2317":{name:"鴻海精密",en:"Foxconn",color:"#185FA5",bg:"#dceefb",role:"Vera Rubin Co-design 核心",price:"~293元",eps_q1:"~2.5元",rev_yoy:"+35%",target:"~340元",grade:"A-",grade_bg:"#E1F5EE",grade_c:"#085041",
+  "2317":{name:"鴻海精密",en:"Foxconn",color:"#185FA5",bg:"#dceefb",role:"Vera Rubin Co-design 核心",price:"~293元",eps_q1:"3.56元",rev_yoy:"+30%",target:"~444元（大摩）",grade:"A-",grade_bg:"#E1F5EE",grade_c:"#085041",
   long:[
     {i:"⚙️",t:"從代工廠升格為 Co-design 共同設計者",d:"黃仁勳演講特別點名鴻海參與打造 Grok-3 LPX 晶片托盤，機架組裝從 2 小時縮短到 5 分鐘。這是鴻海在 NVIDIA 生態系地位的質變，不只是代工。",tags:["tg:Co-design 核心","tb:組裝效率 2h→5min"]},
     {i:"🏥",t:"數位健康 AI 生態系另一條線",d:"GTC 大會中鴻海同時發表數位健康 AI 生態系統，AI + 醫療是鴻海的第二條長線成長引擎。",tags:["tp:數位健康 AI","tg:第二條成長線"]}
   ],
   short:[
-    {i:"📈",t:"昨日盤中衝上 304.5 元創 26 年新高",d:"GTC 演講激勵下，昨日盤中創近 26 年新高，外資持續買超。今日 COMPUTEX 展期題材延燒。",tags:["tg:26 年股價新高","tb:外資持續買超"]},
-    {i:"🎯",t:"短線進場策略",d:"現價已在相對高位，等量縮回測 280~285 元整理區再分批進場，停損設在 270 元月線。",tags:["tb:理想 280~285","tr:停損 270 月線"]}
+    {i:"📈",t:"Q1 EPS 3.56元年增17%，全年挑戰 19 元",d:"Q1 合併營收年增 29.74%，EPS 3.56 元年增 17%。4月營收 832 億元年增 29.74%，全年 EPS 有望挑戰 19 元。TIME百大影響力企業，與三菱電機簽 MOU（汽車零件50%股權）。Vera Rubin 下半年放量，補漲行情可期。",tags:["tg:Q1 EPS 3.56元","tg:全年EPS挑戰19元","tb:TIME百大影響力企業"]},
+    {i:"🎯",t:"短線進場策略",d:"老 AI 伺服器族群今日有補漲跡象，可小量跟進。理想等量縮回測 280~285 元整理區再分批，停損設在 270 元月線。",tags:["tb:理想 280~285","tr:停損 270 月線"]}
   ],
   prod:{segs:[{w:45,c:"#185FA5",l:"AI 伺服器"},{w:25,c:"#0F6E56",l:"消費電子"},{w:15,c:"#534AB7",l:"EV/電動車"},{w:15,c:"#888",l:"其他"}]},
-  fin:[{l:"Vera Rubin 出貨時程",v:"Q3 轉換 Q4 放量",w:80,c:"#185FA5"},{l:"外資近月買超",v:"連續大幅加碼",w:85,c:"#3B6D11"},{l:"2025 全年 EPS",v:"約 10 元",w:70,c:"#0F6E56"},{l:"2026 EPS 預估",v:"~13元",w:85,c:"#854F0B"}],
-  val:[{i:"💰",t:"本益比約 23 倍，Co-design 升格後合理",d:"以現價 293 元、預估 EPS 13 元，本益比約 23 倍，對 Co-design 升格後在 NVIDIA 生態系話語權大增的廠商，估值合理。",tags:["tg:本益比 23x 合理","tb:Co-design 地位升格"]}],
-  risk:[{i:"📉",t:"EV 電動車業務逆風",d:"電動車相關業務短期貢獻有限。"},{i:"⚡",t:"股價已創新高，短線追高風險",d:"昨日盤中創 26 年新高，短線追高需謹慎，等回踩更安全。"}],
-  verdict:"Co-design 升格是質變訊號，外資持續買超確認籌碼方向。本益比 23 倍合理。等回踩 280~285 再進。",
+  fin:[{l:"Q1 2026 EPS",v:"3.56元（年增17%）",w:75,c:"#185FA5"},{l:"4月營收年增",v:"+29.74%",w:75,c:"#3B6D11"},{l:"全年 EPS 目標",v:"~19元",w:85,c:"#0F6E56"},{l:"Vera Rubin 出貨",v:"Q3 轉換 Q4 放量",w:80,c:"#854F0B"}],
+  val:[{i:"💰",t:"本益比約 15 倍，Co-design 升格後低估",d:"以現價 293 元、預估 EPS 19 元，本益比約 15 倍，對 Co-design 升格後在 NVIDIA 生態系話語權大增的廠商，估值偏低。大摩目標 444 元。",tags:["tg:本益比15x低估","tg:大摩目標444元"]}],
+  risk:[{i:"📉",t:"EV 電動車業務逆風",d:"電動車相關業務短期貢獻有限。"},{i:"⚡",t:"短線追高風險",d:"股價相對高位，短線追高需謹慎，等回踩更安全。"}],
+  verdict:"Co-design 升格是質變訊號，Q1 EPS 3.56元年增17%，全年挑戰 19 元。本益比 15 倍低估，大摩目標 444 元。等回踩 280~285 再進。",
   suit:"看好 NVIDIA Vera Rubin 下半年放量、鴻海 Co-design 地位升格的中長線投資人。",
   entry:"280~285 元",cur:"~293元",stop:"270 以下"},
 
-  "2454":{name:"聯發科",en:"MediaTek",color:"#534AB7",bg:"#EEEDFE",role:"N1X CPU 獨家設計 / AI PC 唯一受惠",price:"~4555元",eps_q1:"~60元",rev_yoy:"+25%",target:"~5200元",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
+  "2454":{name:"聯發科",en:"MediaTek",color:"#534AB7",bg:"#EEEDFE",role:"N1X CPU 獨家設計 / AI ASIC 大爆發",price:"~4700元",eps_q1:"~60元",rev_yoy:"+25%",target:"5922元（外資最高）",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
   long:[
     {i:"💻",t:"N1X（RTX Spark）CPU 全球唯一設計者",d:"黃仁勳發表的 RTX Spark AI PC 晶片，CPU 由聯發科客製設計，台積電 3nm 製程，700 億顆電晶體。AI PC 新品週期中台股唯一直接受惠的 CPU 廠，沒有替代品。",tags:["tg:N1X CPU 唯一設計","tb:台積電 3nm 製程","tg:無可替代"]},
     {i:"🌐",t:"手機 SoC 龍頭，AI 邊緣運算受惠",d:"聯發科在手機 AI SoC 市場持續領先，Dimensity 系列在 Android 高階機搶單，邊緣 AI 算力升級是第二條長線。",tags:["tt:手機 SoC 市場領先","tg:邊緣 AI 算力升級"]}
   ],
   short:[
-    {i:"📈",t:"昨日盤中改寫 4710 元天價",d:"GTC 演講激勵下，昨日聯發科盤中改寫歷史新高 4710 元，貢獻大盤漲點近 129 點。今日 COMPUTEX 展期有後續催化。",tags:["tg:歷史新高 4710","tb:單日貢獻 129 點"]},
-    {i:"🎯",t:"短線進場策略",d:"現價 4555 元偏高，等量縮回測 4200~4300 元平台再分批進場，停損設在 4000 元整數關卡。",tags:["tb:理想 4200~4300","tr:停損 4000 整數關"]}
+    {i:"🚀",t:"AI ASIC 確認第二家雲端大廠訂單，外資目標上看 5922 元",d:"除 Google 外已確認第二家雲端大廠推論晶片訂單，法人估 2028 年 AI ASIC 營收從 190 億美元暴增至 480 億美元（佔比 66%）。近一個月漲幅超 100%，曾列 5/7-5/20 處置股，目前仍在高位。",tags:["tg:第二雲端大廠訂單確認","tg:2028 ASIC佔比66%","ta:曾被列處置股"]},
+    {i:"🎯",t:"短線進場策略：高位等回踩",d:"現價約 4700 元在歷史天價區，等量縮回測 4200~4500 元整理區，確認多頭未破再分批，停損 4000 元整數關。",tags:["tb:理想 4200~4500","tr:停損 4000 整數關"]}
   ],
-  prod:{segs:[{w:50,c:"#534AB7",l:"手機 SoC"},{w:20,c:"#185FA5",l:"AI PC（N1X）"},{w:15,c:"#0F6E56",l:"IoT/邊緣"},{w:15,c:"#888",l:"其他"}]},
-  fin:[{l:"昨日盤中天價",v:"4710元",w:90,c:"#185FA5"},{l:"4月營收年增",v:"+25%（估）",w:70,c:"#3B6D11"},{l:"外資買超",v:"近月持續加碼",w:80,c:"#534AB7"},{l:"2026 EPS 預估",v:"~240元",w:95,c:"#854F0B"}],
-  val:[{i:"💰",t:"本益比約 19 倍，N1X 唯一性支撐溢價",d:"以現價 4555 元、EPS 240 元估算，本益比約 19 倍，在 AI 設計公司中算合理。N1X 的唯一性讓市場願意給予溢價。",tags:["tg:本益比 19x 合理","tg:N1X 唯一性溢價"]}],
-  risk:[{i:"📉",t:"昨日大漲後短線壓力",d:"昨日暴漲至歷史新高，短線追高風險高。"},{i:"🔄",t:"N1X 量產時程風險",d:"RTX Spark 秋季上市，量產爬坡若不如預期，題材可能提前消化。"},{i:"🌍",t:"地緣政治風險",d:"出口中國比重較高，中美科技戰升溫可能影響部分訂單。"}],
-  verdict:"AI PC 新品週期的唯一受惠 CPU 廠，長線故事最純。本益比 19 倍合理，但昨日已創歷史新高，等回踩 4200~4300 再進。",
-  suit:"看好 AI PC 超級換機週期、相信聯發科在高端手機 SoC 市場持續領先的長線投資人。",
-  entry:"4200~4300 元",cur:"~4555元",stop:"4000 以下"},
+  prod:{segs:[{w:40,c:"#534AB7",l:"手機 SoC"},{w:25,c:"#185FA5",l:"AI ASIC/資料中心"},{w:20,c:"#0F6E56",l:"AI PC（N1X）"},{w:15,c:"#888",l:"其他"}]},
+  fin:[{l:"AI ASIC 2028年預估",v:"480億美元（佔66%）",w:95,c:"#185FA5"},{l:"4月營收年增",v:"+25%（估）",w:70,c:"#3B6D11"},{l:"外資最高目標價",v:"5922元",w:95,c:"#534AB7"},{l:"2026 EPS 預估",v:"~240元",w:85,c:"#854F0B"}],
+  val:[{i:"💰",t:"本益比約 20 倍，ASIC 雙客戶確認支撐溢價",d:"以現價 4700 元、EPS 240 元估算，本益比約 20 倍，對雙大廠 ASIC 訂單確認的設計公司，估值合理。外資目標最高 5922 元。",tags:["tg:本益比20x合理","tg:ASIC雙大廠確認","tg:目標5922元"]}],
+  risk:[{i:"📉",t:"高位波動，曾被列處置股",d:"5月被列10個營業日處置股，短線波動加大，高位追高風險高。"},{i:"🔄",t:"N1X 量產時程風險",d:"RTX Spark 秋季上市，量產爬坡若不如預期，題材可能提前消化。"},{i:"🌍",t:"地緣政治風險",d:"出口中國比重較高，中美科技戰升溫可能影響部分訂單。"}],
+  verdict:"AI ASIC 雙大廠訂單確認，外資目標最高 5922 元，長線故事最純粹。現在在高位，等回踩 4200~4500 再進。",
+  suit:"看好聯發科 AI ASIC 大爆發、相信在手機 SoC 持續領先的長線投資人。",
+  entry:"4200~4500 元",cur:"~4700元",stop:"4000 以下"},
 
-  "3037":{name:"欣興電子",en:"Unimicron",color:"#185FA5",bg:"#dceefb",role:"ABF 載板龍頭 / 外資超級循環",price:"~950元",eps_q1:"~5元",rev_yoy:"+30%",target:"1350元（外資）",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
+  "3037":{name:"欣興電子",en:"Unimicron",color:"#185FA5",bg:"#dceefb",role:"ABF 載板龍頭 / 外資超級循環",price:"~950元",eps_q1:"3.28元",rev_yoy:"+24%",target:"1225元（外資）",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
   long:[
     {i:"📋",t:"ABF 載板今年產能幾乎全數售罄",d:"外資指出 ABF 載板供需缺口比預期更大，產能幾乎全數售罄。AI GPU、ASIC、CPU 及交換器需求同步爆發，外資喊出「超級循環」，漲價延伸到 2027 年。",tags:["tg:產能全數售罄","tb:外資喊超級循環","tg:漲價看到 2027"]},
     {i:"💡",t:"日系外資目標價上修至 1350 元",d:"日系外資目標價一舉上修至 1350 元，多家美系外資在 1060~1100 元。EPS 預估上看 45 元，評估基準延伸至 2028 年。",tags:["tg:外資目標 1350","tb:2027 EPS 預估 45元"]}
   ],
   short:[
-    {i:"📈",t:"ABF 族群外資籌碼最重",d:"外資與投信昨日同步買超，在 ABF 載板族群中外資籌碼最重。現價與目標價 1350 元仍有顯著距離。",tags:["tg:外資投信雙買超","tb:距目標價空間大"]},
-    {i:"🎯",t:"短線進場策略",d:"現價可分批進場，理想等量縮回測 880~920 元，停損設在 850 元月線。",tags:["tb:理想 880~920","tr:停損 850 月線"]}
+    {i:"📈",t:"Q1 EPS 3.28元創13季新高，T-glass缺料加速漲價循環",d:"Q1 EPS 3.28 元年增顯著，創 13 季以來新高。T-glass 缺料推升 ABF 漲價循環預期差再放大，供給缺口預估 2030 年擴大至 22%，漲價看到 2027 年。外資目標價上修至 1225 元，2027 EPS 估 24.03 元。",tags:["tg:Q1 EPS 13季新高","tg:外資目標1225元","tt:T-glass缺料加速漲價"]},
+    {i:"🎯",t:"短線進場策略",d:"現價可分批進場，理想等量縮回測 880~950 元，停損設在 850 元月線。",tags:["tb:理想 880~950","tr:停損 850 月線"]}
   ],
   prod:{segs:[{w:65,c:"#185FA5",l:"ABF 載板"},{w:20,c:"#0F6E56",l:"BT 載板"},{w:15,c:"#888",l:"PCB"}]},
-  fin:[{l:"外資目標價",v:"1350元",w:95,c:"#185FA5"},{l:"2027 EPS 預估",v:"45.06元",w:90,c:"#3B6D11"},{l:"ABF 載板占比",v:"AI 應用 >60%",w:80,c:"#0F6E56"},{l:"本益比（2027）",v:"30x",w:70,c:"#854F0B"}],
+  fin:[{l:"Q1 2026 EPS",v:"3.28元（13季新高）",w:80,c:"#185FA5"},{l:"外資目標價",v:"1225元",w:90,c:"#3B6D11"},{l:"2027 EPS 預估",v:"24.03元",w:90,c:"#0F6E56"},{l:"ABF 供給缺口",v:"2030年擴大至22%",w:85,c:"#854F0B"}],
   val:[{i:"💰",t:"現價到目標價有大幅空間，外資共識強",d:"日系外資目標 1350 元，多家美系 1060~1100 元，與現價仍有 12~40% 距離。多個外資同時看好的罕見共識。",tags:["tg:外資目標大幅上修","tb:多家外資共識"]}],
   risk:[{i:"🏗️",t:"擴產資本支出壓力",d:"新產能投入，初期折舊壓短期毛利率。"},{i:"🌍",t:"客戶集中度風險",d:"AI 載板客戶集中在 NVIDIA 生態，單一平台遞延直接衝擊。"},{i:"⚡",t:"原材料成本波動",d:"ABF 材料、銅箔等原料若大漲，調價有時間差。"}],
   verdict:"ABF 超級循環才剛開始，外資共識最強、目標價上修幅度最大。現價到目標價仍有空間，是外資看法最一致的長線標的。",
@@ -443,8 +509,218 @@ function render(){
   document.getElementById('mainGrid').innerHTML=`<div>${leftPanel(curStock)}</div><div>${rightPanel(curStock,curTab)}</div>`
 }
 
+// ── 使用者偏好（localStorage）────────────────────────
+const PREFS_KEY='ai_stock_prefs_v1';
+function loadPrefs(){
+  try{return JSON.parse(localStorage.getItem(PREFS_KEY))||{hidden:[],custom:[]};}
+  catch{return{hidden:[],custom:[]};}
+}
+function savePrefs(p){localStorage.setItem(PREFS_KEY,JSON.stringify(p));}
+
+// 取得目前顯示的股票代號清單（預設13檔 - 隱藏 + 自訂）
+function getDisplayList(){
+  const p=loadPrefs();
+  const base=Object.keys(STOCKS).filter(k=>!p.hidden.includes(k));
+  const custom=p.custom.map(c=>c.code).filter(c=>!base.includes(c));
+  return[...base,...custom];
+}
+
+function getStockInfo(code){
+  if(STOCKS[code])return STOCKS[code];
+  const p=loadPrefs();
+  const c=p.custom.find(x=>x.code===code);
+  if(c)return{
+    name:c.name,en:c.en||code,color:'#555',bg:'#f5f5f0',role:c.role||'自訂股票',
+    price:'—',eps_q1:'—',rev_yoy:'—',target:'—',
+    grade:'?',grade_bg:'#f5f5f0',grade_c:'#555',
+    long:[{i:'📋',t:'分析待生成',d:'點擊「🤖 生成 AI 分析」按鈕，讓 Claude 即時為這支股票生成完整分析。',tags:[]}],
+    short:[{i:'⏳',t:'待生成',d:'',tags:[]}],
+    prod:{segs:[{w:100,c:'#ccc',l:'待分析'}]},
+    fin:[],val:[{i:'💡',t:'待生成',d:'',tags:[]}],
+    risk:[{i:'⚠️',t:'待分析',d:'',tags:[]}],
+    verdict:'點擊「生成 AI 分析」按鈕獲取完整分析。',
+    suit:'待分析',entry:'—',cur:'—',stop:'—',
+    isCustom:true
+  };
+  return null;
+}
+
+// ── 修改 render 使用 getDisplayList ────────────────
 window.sel=k=>{curStock=k;render()}
 window.selTab=t=>{curTab=t;render()}
+
+function render(){
+  const list=getDisplayList();
+  if(!list.includes(curStock))curStock=list[0]||'2382';
+  document.getElementById('selRow').innerHTML=list.map(k=>{
+    const d=getStockInfo(k);
+    if(!d)return'';
+    return`<div class="chip${k===curStock?' on':''}" onclick="sel('${k}')">${d.name} ${k}</div>`;
+  }).join('');
+  document.getElementById('tabRow').innerHTML=TABS.map(t=>`<div class="tab${t===curTab?' on':''}" onclick="selTab('${t}')">${t}</div>`).join('');
+  const d=getStockInfo(curStock);
+  if(!d){document.getElementById('mainGrid').innerHTML='';return;}
+  if(d.isCustom){
+    renderCustomStock(curStock,d);
+  }else{
+    document.getElementById('mainGrid').innerHTML=`<div>${leftPanel(curStock)}</div><div>${rightPanel(curStock,curTab)}</div>`;
+  }
+}
+
+// ── 自訂股票面板 ───────────────────────────────────
+const customPrices={};
+async function fetchCustomPrice(code){
+  const sym=code.match(/^\d{4}$/)? code+'.TW':code;
+  const proxies=[
+    s=>`https://corsproxy.io/?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=1d&range=5d`)}`,
+    s=>`https://api.allorigins.win/raw?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=1d&range=5d`)}`,
+  ];
+  for(const b of proxies){
+    try{
+      const r=await fetch(b(sym),{signal:AbortSignal.timeout(8000)});
+      if(!r.ok)continue;
+      const j=await r.json();
+      const m=j?.chart?.result?.[0]?.meta;if(!m)continue;
+      const price=m.regularMarketPrice,prev=m.previousClose||m.chartPreviousClose;
+      if(!price)continue;
+      const pct=(price-prev)/prev*100;
+      return{price,prev,pct,cur:m.currency||''};
+    }catch{}
+  }
+  return null;
+}
+
+function renderCustomStock(code,d){
+  const priceData=customPrices[code];
+  let priceHtml='';
+  if(priceData){
+    const s=priceData.cur==='TWD'?'NT$':priceData.cur==='USD'?'$':'';
+    const pv=priceData.cur==='TWD'?priceData.price.toFixed(0):priceData.price.toFixed(2);
+    const sign=priceData.pct>=0?'+':'';
+    const col=priceData.pct>=0?'#D85A30':'#0F6E56';
+    priceHtml=`<div class="gen-price">${s}${pv}</div><div class="gen-chg" style="color:${col}">${sign}${priceData.pct.toFixed(2)}%</div>`;
+  }else{
+    priceHtml=`<div class="gen-price" id="price-${code}">載入股價中…</div><div class="gen-chg" id="chg-${code}" style="color:#888"></div>`;
+    fetchCustomPrice(code).then(data=>{
+      customPrices[code]=data;
+      if(curStock===code)renderCustomStock(code,getStockInfo(code));
+    });
+  }
+  document.getElementById('mainGrid').innerHTML=`
+    <div>
+      <div class="card">
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+          <div class="avatar" style="background:${d.bg}">
+            <span style="font-size:10px;font-weight:600;color:${d.color}">${code}</span>
+            <span style="font-size:13px;font-weight:700;color:${d.color}">${d.name.slice(0,2)}</span>
+          </div>
+          <div>
+            <div class="sname">${d.name}</div>
+            <div class="scode">${d.en}</div>
+            <div class="srole">${d.role}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="gen-card">
+        ${priceHtml}
+        <div class="gen-title">這支股票尚未有 AI 分析資料。<br>點擊下方按鈕，讓 Claude 即時搜尋並生成完整分析。</div>
+        <button class="gen-btn" onclick="openPromptModal('${code}','${d.name}')">🤖 生成 AI 分析</button>
+      </div>
+    </div>`;
+}
+
+// ── 生成分析 Prompt Modal ──────────────────────────
+function openPromptModal(code,name){
+  const prompt=`請為台股 ${code}（${name}）生成 AI 供應鏈分析，並更新 /Users/erinshih/Projects/Claude/Projects/stock-app/ai-analysis.html。
+
+步驟：
+1. 搜尋 "${name} ${code} 股票 最新新聞 2026" 取得近期動態
+2. 在 STOCKS 物件中新增或更新 "${code}" 的完整資料，包含：
+   - long（長線分析陣列）
+   - short（短線分析陣列）
+   - prod（產品結構）
+   - fin（財務數據）
+   - val（估值分析）
+   - risk（主要風險）
+   - verdict（投資結論）
+   - suit（適合投資人）
+   - entry / cur / stop（進場/現價/停損）
+   - grade（A/A-/B+/B）、grade_bg、grade_c
+3. 將 isCustom 欄位移除（代表分析已完成）
+4. 寫回檔案並執行：
+   cd ~/Projects/Claude/Projects/stock-app && git add ai-analysis.html && git commit -m "新增 ${code} ${name} AI 分析" && git push origin master:main`;
+
+  document.getElementById('promptText').textContent=prompt;
+  document.getElementById('copyBtn').textContent='📋 複製提示';
+  document.getElementById('copyBtn').classList.remove('copy-done');
+  document.getElementById('promptModal').classList.add('show');
+}
+function closePromptModal(){document.getElementById('promptModal').classList.remove('show');}
+function copyPrompt(){
+  const txt=document.getElementById('promptText').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='✅ 已複製！貼到對話框即可';
+    btn.classList.add('copy-done');
+  });
+}
+
+// ── 編輯 Modal ─────────────────────────────────────
+function openEditModal(){
+  const p=loadPrefs();
+  const list=[...Object.keys(STOCKS),...p.custom.map(c=>c.code)];
+  document.getElementById('editStockList').innerHTML=list.map(code=>{
+    const d=getStockInfo(code);if(!d)return'';
+    const isHidden=p.hidden.includes(code);
+    return`<div class="stock-mgr-row" id="mgr-${code}" style="${isHidden?'opacity:.4':''}">
+      <div>
+        <div class="smr-info">${d.name}</div>
+        <div class="smr-code">${code}${isHidden?' · 已隱藏':''}</div>
+      </div>
+      <button class="del-btn" onclick="toggleStock('${code}')" title="${isHidden?'重新顯示':'隱藏'}">${isHidden?'＋':'✕'}</button>
+    </div>`;
+  }).join('');
+  document.getElementById('addCode').value='';
+  document.getElementById('addName').value='';
+  document.getElementById('editModal').classList.add('show');
+}
+function closeEditModal(){document.getElementById('editModal').classList.remove('show');render();}
+
+function toggleStock(code){
+  const p=loadPrefs();
+  const isBuiltIn=!!STOCKS[code];
+  if(isBuiltIn){
+    // 內建股票只能隱藏/顯示
+    const idx=p.hidden.indexOf(code);
+    if(idx>=0)p.hidden.splice(idx,1);else p.hidden.push(code);
+  }else{
+    // 自訂股票直接刪除
+    p.custom=p.custom.filter(c=>c.code!==code);
+  }
+  savePrefs(p);
+  openEditModal();
+}
+
+function addCustomStock(){
+  const code=document.getElementById('addCode').value.trim().toUpperCase();
+  const name=document.getElementById('addName').value.trim();
+  if(!code){alert('請輸入股票代號');return;}
+  if(!name){alert('請輸入公司名稱');return;}
+  const p=loadPrefs();
+  if(STOCKS[code]||p.custom.find(c=>c.code===code)){
+    alert(`${code} 已在清單中`);return;
+  }
+  p.custom.push({code,name,en:code,role:'自訂股票'});
+  savePrefs(p);
+  openEditModal();
+}
+
+// ── 關閉 Modal 點空白區 ────────────────────────────
+document.getElementById('editModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeEditModal();});
+document.getElementById('promptModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closePromptModal();});
+
 render();
 
 // 今日日期
