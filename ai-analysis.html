@@ -250,7 +250,7 @@ const STOCKS = {
   suit:"長線看好 CCL 漲價循環、但今天絕對不追高的投資人。有耐心等回踩，且能接受上櫃劇烈波動。",
   entry:"1450~1550 元",cur:"~1690元",stop:"1400 以下"},
 
-  "8358":{name:"金居開發",en:"Kinpo",color:"#993C1D",bg:"#FAECE7",role:"HVLP4 高階銅箔 / 最稀缺材料",price:"~451元",eps_q1:"2.06元",rev_yoy:"+60%",target:"~600元（法人預估）",grade:"B+",grade_bg:"#FAEEDA",grade_c:"#633806",
+  "8358":{name:"金居開發",en:"Kinpo",color:"#993C1D",bg:"#FAECE7",role:"HVLP4 高階銅箔 / 最稀缺材料",price:"~620元",eps_q1:"2.06元",rev_yoy:"+60%",target:"~600元（法人預估）",grade:"B+",grade_bg:"#FAEEDA",grade_c:"#633806",
   long:[
     {i:"🔬",t:"HVLP4 全球不到 10 家能量產，最稀缺",d:"台廠中唯一能對接 NVIDIA GB200/B200 等 AI 伺服器 HVLP4 銅箔的廠商。加工費比標準銅箔高 3~5 倍，毛利率從 12% 飆升到 28%，結構性轉型已完成。",tags:["tr:全球 <10 家能量產","tg:加工費 3~5 倍","tg:毛利從 12%→28%"]},
     {i:"📋",t:"Intel / AMD / NVIDIA 三大平台認證打通",d:"三大 AI 晶片平台都已完成認證，未來 3~5 年訂單不愁。法人預估 2026 全年 EPS 挑戰 10 元，等於再翻一倍。",tags:["tg:三平台認證","tb:2026 EPS 挑戰 10元"]}
@@ -265,7 +265,7 @@ const STOCKS = {
   risk:[{i:"📊",t:"估值嚴重偏高",d:"滾動 PER ~90 倍，PB 14~17 倍，EPS 不達 10 元有 30~40% 壓縮空間。"},{i:"💥",t:"籌碼混亂，違約交割紀錄",d:"今年最大筆違約交割 1.1 億，多次列處置股，高投機籌碼進出劇烈。"},{i:"🏗️",t:"擴產初期折舊壓毛利",d:"HVLP4 擴產資本支出大，初期低稼動率壓低毛利率。"},{i:"🌍",t:"日廠競爭壓力",d:"古河、三井等日廠若加大擴產，或中國突破技術，長期競爭壓力上升。"}],
   verdict:"材料最稀缺，故事最純，但估值泡沫最嚴重、籌碼最混亂。高風險投機標的，嚴設停損。不適合保守型投資人。",
   suit:"高風險承受度、理解泡沫化估值的投機型投資人。月線 410~420 分批，停損 400，不建議新手或媽媽級保守型投資人。",
-  entry:"410~420 元（月線）",cur:"~451元",stop:"400 以下"},
+  entry:"410~420 元（月線）",cur:"~620元",stop:"400 以下"},
 
   "2474":{name:"可成科技",en:"Catcher",color:"#534AB7",bg:"#EEEDFE",role:"機殼精密製造 / AI 轉型新面孔",price:"~223元",eps_q1:"~2.8元",rev_yoy:"轉型推進中",target:"240元",grade:"B+",grade_bg:"#EEEDFE",grade_c:"#3C3489",
   long:[
@@ -465,7 +465,7 @@ function leftPanel(s){
     </div>
   </div>
   <div class="kgrid">
-    <div class="kc"><div class="kv" style="color:${d.color}">${d.price}</div><div class="kl">現價（參考）</div></div>
+    <div class="kc"><div class="kv" style="color:${d._liveClr||d.color}">${d._livePrice?Math.round(d._livePrice)+'元':d.price}</div><div class="kl">${d._livePrice?`<span style="color:#0F6E56;font-size:9px;font-weight:600">● 即時</span> <span style="color:${d._liveClr};font-size:10px">${d._livePct}</span>`:'現價（參考）'}</div></div>
     <div class="kc"><div class="kv" style="color:#3B6D11">${d.eps_q1}</div><div class="kl">Q1 EPS</div></div>
     <div class="kc"><div class="kv" style="color:#0F6E56">${d.rev_yoy}</div><div class="kl">營收年增</div></div>
     <div class="kc"><div class="kv" style="color:#854F0B;font-size:11px">${d.target}</div><div class="kl">外資目標價</div></div>
@@ -566,6 +566,43 @@ function getStockInfo(code){
 // ── 修改 render 使用 getDisplayList ────────────────
 window.sel=k=>{curStock=k;render()}
 window.selTab=t=>{curTab=t;render()}
+
+// ── 即時股價（Yahoo Finance via CORS Proxy）──────────────
+const OTC_SET=new Set(['6274','8358']);
+async function fetchLivePrice(code){
+  try{
+    const sfx=OTC_SET.has(code)?'.TWO':'.TW';
+    const url=`https://corsproxy.io/?https://query1.finance.yahoo.com/v8/finance/chart/${code}${sfx}?interval=1d&range=1d`;
+    const res=await fetch(url,{cache:'no-store'});
+    const data=await res.json();
+    const meta=data?.chart?.result?.[0]?.meta;
+    if(!meta||!meta.regularMarketPrice)return null;
+    const p=meta.regularMarketPrice;
+    const prev=meta.chartPreviousClose||meta.previousClose||p;
+    const pct=((p-prev)/prev*100);
+    const up=p>=prev;
+    return{p,pct:pct.toFixed(2),sign:up?'▲':'▼',clr:up?'#3B6D11':'#A32D2D'};
+  }catch{return null;}
+}
+
+async function updateLivePrices(){
+  const codes=Object.keys(STOCKS);
+  const results=await Promise.allSettled(codes.map(c=>fetchLivePrice(c)));
+  let changed=false;
+  results.forEach((r,i)=>{
+    if(r.status==='fulfilled'&&r.value){
+      const{p,pct,sign,clr}=r.value;
+      const code=codes[i];
+      STOCKS[code]._livePrice=p;
+      STOCKS[code]._livePct=`${sign}${Math.abs(pct)}%`;
+      STOCKS[code]._liveClr=clr;
+      STOCKS[code].cur=`${Math.round(p)}元`;
+      changed=true;
+    }
+  });
+  if(changed)render();
+}
+updateLivePrices();
 
 function render(){
   const list=getDisplayList();
