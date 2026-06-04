@@ -100,6 +100,41 @@
   /* ── footer note ── */
   .footer{margin-top:20px;padding:12px 14px;background:#fff;border-radius:10px;border:1px solid #e8e6de;font-size:11px;color:#999;line-height:1.6}
 
+  /* ── what box（公司白話說明）── */
+  .what-box{background:#f0f4ff;border-left:3px solid #185FA5;border-radius:0 8px 8px 0;padding:8px 11px;font-size:12px;color:#333;line-height:1.6;margin-top:8px}
+
+  /* ── risk meter（風險等級）── */
+  .risk-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .risk-dots{display:flex;gap:3px}
+  .risk-dot{width:9px;height:9px;border-radius:50%;background:#e8e6de}
+  .risk-dot.on-1{background:#0F6E56}
+  .risk-dot.on-2{background:#3B6D11}
+  .risk-dot.on-3{background:#BA7517}
+  .risk-dot.on-4{background:#D85A30}
+  .risk-dot.on-5{background:#A32D2D}
+  .risk-lbl{font-size:11px;color:#666}
+
+  /* ── action badge（現在應該怎麼做）── */
+  .action-badge{border-radius:8px;padding:9px 12px;font-size:12px;font-weight:600;margin-top:8px;line-height:1.5}
+  .action-badge .ab-title{font-size:10px;font-weight:500;opacity:.75;margin-bottom:2px}
+
+  /* ── target box（目標價三層分析）── */
+  .target-box{border-radius:10px;overflow:hidden;margin-bottom:10px}
+  .target-row{padding:9px 12px;font-size:12px;line-height:1.55}
+  .target-row .tr-label{font-size:10px;font-weight:600;opacity:.7;margin-bottom:2px}
+  .target-row .tr-val{font-weight:600;font-size:13px}
+  .target-row .tr-note{font-size:11px;opacity:.85;margin-top:2px}
+  .tr-consensus{background:#EAF3DE;color:#1a4a12}
+  .tr-price{background:#dceefb;color:#0C447C}
+  .tr-warning{background:#FCEBEB;color:#7a1e1e}
+  .tr-ok{background:#E1F5EE;color:#085041}
+  .tr-neutral{background:#f5f5f0;color:#444}
+  .tr-outlier{background:#FAEEDA;color:#633806}
+
+  /* ── beginner tip ── */
+  .tip-box{background:#fffbe6;border:1px solid #ffe082;border-radius:8px;padding:8px 11px;font-size:11px;color:#5a4200;line-height:1.6;margin-bottom:8px}
+  .tip-box b{color:#3d2d00}
+
   /* ── edit mode ── */
   .edit-btn{padding:6px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;color:#666;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap;margin-left:8px}
   .edit-btn:hover{border-color:#185FA5;color:#185FA5}
@@ -140,7 +175,7 @@
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
       <div>
         <div class="page-title">📊 AI 供應鏈股票分析看板</div>
-        <div class="page-sub">14 檔重點股票 · 長線短線分析 · 財務數據 · 投資結論</div>
+        <div class="page-sub">14 檔重點股票 · 白話解析 · 目標價三層邏輯 · 清楚告訴你現在應該怎麼做</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
         <button class="edit-btn" onclick="openEditModal()">✏️ 編輯股票</button>
@@ -195,6 +230,11 @@
 <script>
 const STOCKS = {
   "2382":{name:"廣達電腦",en:"Quanta",color:"#185FA5",bg:"#dceefb",role:"AI 伺服器 ODM 龍頭",price:"~417元",eps_q1:"5.5元",rev_yoy:"+121%",target:"416元（富邦）",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
+  what:"幫 NVIDIA、Google 等科技巨頭組裝 AI 超級電腦的工廠，是台灣最大 AI 伺服器代工廠。黃仁勳（NVIDIA 執行長）到台灣第一站就是去拜訪廣達。",
+  risk:3,risk_text:"中等風險",
+  action:"現價已進理想進場區，可小量試單",action_color:"#0F6E56",
+  consensus:"外資目標：富邦 416 元、元大 385 元",
+  consensus_vs:"現價 417 元已達富邦目標，空間有限，宜等小回踩再加碼",
   long:[
     {i:"🏭",t:"Vera Rubin 機架組裝主力",d:"黃仁勳首站拜訪、林百里 GTC 同台。廣達是 Vera Rubin NVL 72 機櫃最核心的 ODM 組裝商，Q3 進入新舊平台轉換、Q4 放量，訂單能見度業界最高。",tags:["tg:Vera Rubin 核心","tb:黃仁勳首訪","tg:Q4 放量確認"]},
     {i:"📦",t:"AI 伺服器三巨頭地位穩固",d:"廣達、鴻海、緯創是 NVIDIA 整機櫃式伺服器的三大組裝商，廣達在高階產品的話語權最強，毛利率也優於同業。",tags:["tg:ODM 三巨頭最強","tb:高階產品優先"]},
@@ -213,6 +253,11 @@ const STOCKS = {
   entry:"400~420 元",cur:"~417元",stop:"390 以下"},
 
   "3044":{name:"健鼎科技",en:"Tripod Tech",color:"#0F6E56",bg:"#E1F5EE",role:"PCB 龍頭 AI+記憶體雙引擎",price:"~529元",eps_q1:"5.61元",rev_yoy:"+29%",target:"310元（匯豐，現價已遠超）",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
+  what:"製造 AI 伺服器和 AI 記憶體裡的多層電路板（PCB）。AI 越強大，需要的電路板就越複雜、層數越多、價格越高，健鼎直接受惠。",
+  risk:4,risk_text:"偏高風險（現價已遠超外資目標）",
+  action:"暫時觀望，等估值修正後再進場",action_color:"#A32D2D",
+  consensus:"匯豐最新目標 310 元（最近一份外資報告）",
+  consensus_vs:"⚠️ 現價 529 元已超出外資目標 310 元達 70%，代表市場定價遠超外資估值，追高風險高",
   long:[
     {i:"🖥️",t:"AI 伺服器 PCB 規格升級不停歇",d:"AI 伺服器 PCB 從 12 層升到 50 層，每次升級健鼎單片售價跳漲。GPU + ASIC 客戶訂單能見度延伸到下半年，黃仁勳演講直接點燃高層板長線需求。",tags:["tg:PCB 層數 12→50","tb:訂單看到 H2"]},
     {i:"🧠",t:"DDR5 記憶體板：被低估的爆發催化劑",d:"AI 熱潮讓 HBM 大量消耗 DDR 產能，DDR5 記憶體模組板出現供需缺口，健鼎是全球最大供應商之一，報價持續上揚，2026 年記憶體業務占比拉升至 26%。",tags:["tt:DDR5 供需吃緊","tg:記憶體占比 26%"]},
@@ -232,6 +277,11 @@ const STOCKS = {
   entry:"500~515 元",cur:"~529元",stop:"480 以下"},
 
   "6274":{name:"台燿科技",en:"Taiwan Union",color:"#854F0B",bg:"#FAEEDA",role:"CCL 三雄 / 高階銅箔基板",price:"~1590元",eps_q1:"4.36元",rev_yoy:"+98%",target:"1888元（高盛）",grade:"A-",grade_bg:"#FAEEDA",grade_c:"#633806",
+  what:"生產製造電路板用的高階原材料（銅箔基板/CCL）。全球能做 AI 伺服器專用頂級材料的廠商不超過 5 家，台燿是其中之一。",
+  risk:4,risk_text:"偏高風險（上櫃股，無漲跌幅限制）",
+  action:"等急漲後回踩再布局",action_color:"#BA7517",
+  consensus:"高盛目標 1888 元（個別機構，非多方共識）",
+  consensus_vs:"現價 1590 元，6/2 單日大跌 6.74%，前期暴漲後正在回調，等確認止穩後再進場",
   long:[
     {i:"🏭",t:"CCL 三雄地位，技術護城河最深",d:"全球高速低損耗 CCL 三大供應商之一，高速材料（ELL+SLL+VLL+LL）合計占營收 70%。M8/M8+ 量產能力全球稀缺，正積極認證次世代 M9 等級材料，技術升級路線只進不退。",tags:["tg:M8 量產稀缺","tb:M9 認證中"]},
     {i:"📈",t:"CCL 漲價循環才剛開始，看到 2027",d:"外資明確指出高階 CCL 供需缺口仍大，4 月已出現 10~40% 季增漲價，預期 2026 下半年與 2027 年將有多輪漲價。CSP 客戶展現「以價換量」的高承受力。",tags:["tg:多輪漲價到 2027","tb:CSP 以價換量"]},
@@ -250,7 +300,12 @@ const STOCKS = {
   suit:"長線看好 CCL 漲價循環、但今天絕對不追高的投資人。有耐心等回踩，且能接受上櫃劇烈波動。",
   entry:"1450~1550 元",cur:"~1590元",stop:"1400 以下"},
 
-  "8358":{name:"金居開發",en:"Kinpo",color:"#993C1D",bg:"#FAECE7",role:"HVLP4 高階銅箔 / 最稀缺材料",price:"~620元",eps_q1:"2.06元",rev_yoy:"+60%",target:"~600元（法人預估）",grade:"B+",grade_bg:"#FAEEDA",grade_c:"#633806",
+  "8358":{name:"金居開發",en:"Kinpo",color:"#993C1D",bg:"#FAECE7",role:"HVLP4 高階銅箔 / 最稀缺材料",price:"~615元",eps_q1:"2.06元",rev_yoy:"+44%",target:"法人估全年EPS挑戰10元",grade:"B+",grade_bg:"#FAEEDA",grade_c:"#633806",
+  what:"生產全球最高規格的銅箔（HVLP4），NVIDIA AI 晶片的電路板必須用這種材料，全球能做的廠商不到 10 家，台灣只有金居。",
+  risk:5,risk_text:"最高風險（投機標的，不適合新手）",
+  action:"不建議新手或保守型投資人參與",action_color:"#A32D2D",
+  consensus:"無 FactSet 共識，法人預估 2026 全年 EPS 約 10 元，本益比約 60 倍",
+  consensus_vs:"⚠️ 本益比極高，有違約交割紀錄，曾多次被列為處置股，籌碼混亂，新手請迴避",
   long:[
     {i:"🔬",t:"HVLP4 全球不到 10 家能量產，最稀缺",d:"台廠中唯一能對接 NVIDIA GB200/B200 等 AI 伺服器 HVLP4 銅箔的廠商。加工費比標準銅箔高 3~5 倍，毛利率從 12% 飆升到 28%，結構性轉型已完成。",tags:["tr:全球 <10 家能量產","tg:加工費 3~5 倍","tg:毛利從 12%→28%"]},
     {i:"📋",t:"Intel / AMD / NVIDIA 三大平台認證打通",d:"三大 AI 晶片平台都已完成認證，未來 3~5 年訂單不愁。法人預估 2026 全年 EPS 挑戰 10 元，等於再翻一倍。",tags:["tg:三平台認證","tb:2026 EPS 挑戰 10元"]}
@@ -267,7 +322,12 @@ const STOCKS = {
   suit:"高風險承受度、理解泡沫化估值的投機型投資人。月線 410~420 分批，停損 400，不建議新手或媽媽級保守型投資人。",
   entry:"550~580 元",cur:"~615元",stop:"520 以下"},
 
-  "2474":{name:"可成科技",en:"Catcher",color:"#534AB7",bg:"#EEEDFE",role:"機殼精密製造 / AI 轉型新面孔",price:"~258元",eps_q1:"~2.8元",rev_yoy:"轉型推進中",target:"NVIDIA Vera Rubin 供應鏈",grade:"B+",grade_bg:"#EEEDFE",grade_c:"#3C3489",
+  "2474":{name:"可成科技",en:"Catcher",color:"#534AB7",bg:"#EEEDFE",role:"機殼精密製造 / AI 轉型新面孔",price:"~258元",eps_q1:"~2.8元",rev_yoy:"轉型推進中",target:"轉型中，目標尚待更新",grade:"B+",grade_bg:"#EEEDFE",grade_c:"#3C3489",
+  what:"原本做蘋果 iPhone 金屬外殼，現在轉型做 AI 伺服器的機殼零件。2026 年 6 月正式打入 NVIDIA 最新 AI 伺服器（Vera Rubin）供應鏈，是轉型的重要里程碑。",
+  risk:4,risk_text:"偏高風險（轉型中，近日急漲）",
+  action:"等近日急漲後回踩再考慮布局",action_color:"#BA7517",
+  consensus:"打入 NVIDIA 後各機構目標尚未更新，原目標約 240 元已大幅落後現價",
+  consensus_vs:"⚠️ 近兩日已急漲超過 15%，現價 258 元短線追高風險高，等回踩 235~245 元整理後再進",
   long:[
     {i:"🔄",t:"從蘋果機殼霸主轉型為 AI 機構件",d:"曾以 iPhone 金屬機殼稱霸市場，如今積極轉型：AI 伺服器機構件已少量出貨，目標 2026 年伺服器營收占兩成，三年內超車筆電成為核心主力。",tags:["tp:轉型 AI 伺服器","tg:目標 2026 年占 20%"]},
     {i:"📋",t:"GTC 背板首次入列——最新鮮的籌碼催化劑",d:"黃仁勳演講背板中，可成是今年兩大「新面孔」之一，消息出來後立刻漲停，6.4 萬張買盤排隊。背板入列代表 NVIDIA 官方認可。",tags:["tg:背板首次入列","tb:漲停 6.4 萬張買盤"]},
@@ -285,7 +345,12 @@ const STOCKS = {
   suit:"看好可成 AI 伺服器轉型的中線投資人，殖利率護底讓下檔風險有限。",
   entry:"235~245 元",cur:"~258元",stop:"225 以下"},
 
-  "2317":{name:"鴻海精密",en:"Foxconn",color:"#185FA5",bg:"#dceefb",role:"Vera Rubin Co-design 核心",price:"~299元",eps_q1:"3.56元",rev_yoy:"+30%",target:"~444元（大摩）",grade:"A-",grade_bg:"#E1F5EE",grade_c:"#085041",
+  "2317":{name:"鴻海精密",en:"Foxconn",color:"#185FA5",bg:"#dceefb",role:"Vera Rubin Co-design 核心",price:"~299元",eps_q1:"3.56元",rev_yoy:"+30%",target:"FactSet共識~304元",grade:"A-",grade_bg:"#E1F5EE",grade_c:"#085041",
+  what:"台灣最大科技代工廠，從 iPhone 到 AI 伺服器都幫忙組裝。不只是組裝工，NVIDIA 讓鴻海參與 AI 伺服器的共同設計，地位已升級。",
+  risk:2,risk_text:"低中風險（大型穩定股）",
+  action:"等回踩 280~285 元是更理想的進場時機",action_color:"#BA7517",
+  consensus:"FactSet 多家分析師共識目標約 304 元；個別樂觀機構：高盛 400 元、大摩 444 元",
+  consensus_vs:"現價 299 元約與 FactSet 共識 304 元持平，整體估值合理。高盛/大摩的高目標代表樂觀情境，非主流共識",
   long:[
     {i:"⚙️",t:"從代工廠升格為 Co-design 共同設計者",d:"黃仁勳演講特別點名鴻海參與打造 Grok-3 LPX 晶片托盤，機架組裝從 2 小時縮短到 5 分鐘。這是鴻海在 NVIDIA 生態系地位的質變，不只是代工。",tags:["tg:Co-design 核心","tb:組裝效率 2h→5min"]},
     {i:"🏥",t:"數位健康 AI 生態系另一條線",d:"GTC 大會中鴻海同時發表數位健康 AI 生態系統，AI + 醫療是鴻海的第二條長線成長引擎。",tags:["tp:數位健康 AI","tg:第二條成長線"]}
@@ -302,7 +367,12 @@ const STOCKS = {
   suit:"看好 NVIDIA Vera Rubin 下半年放量、鴻海 Co-design 地位升格的中長線投資人。",
   entry:"280~285 元",cur:"~299元",stop:"270 以下"},
 
-  "2454":{name:"聯發科",en:"MediaTek",color:"#534AB7",bg:"#EEEDFE",role:"N1X CPU 獨家設計 / AI ASIC 大爆發",price:"~4700元",eps_q1:"~60元",rev_yoy:"+25%",target:"5922元（外資最高）",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
+  "2454":{name:"聯發科",en:"MediaTek",color:"#534AB7",bg:"#EEEDFE",role:"N1X CPU 獨家設計 / AI ASIC 大爆發",price:"~4700元",eps_q1:"~60元",rev_yoy:"+25%",target:"外資差異大，共識尚不明確",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
+  what:"台灣最大晶片設計公司，從手機晶片起家。現在幫 Google 等科技巨頭設計專屬 AI 晶片（ASIC），也是 NVIDIA 最新 AI PC 晶片（N1X）的 CPU 設計者。",
+  risk:3,risk_text:"中等風險（本益比合理但在高位）",
+  action:"等明顯回踩再進場，不追高位",action_color:"#BA7517",
+  consensus:"外資目標差異極大：最樂觀一家喊 5922 元，但也有保守機構目標低很多，共識尚不明確",
+  consensus_vs:"現價約 4700 元在歷史天價區，AI ASIC 雙大廠訂單確認是強勁利多，但已急漲逾 100%，等回踩 4200~4500 更安全",
   long:[
     {i:"💻",t:"N1X（RTX Spark）CPU 全球唯一設計者",d:"黃仁勳發表的 RTX Spark AI PC 晶片，CPU 由聯發科客製設計，台積電 3nm 製程，700 億顆電晶體。AI PC 新品週期中台股唯一直接受惠的 CPU 廠，沒有替代品。",tags:["tg:N1X CPU 唯一設計","tb:台積電 3nm 製程","tg:無可替代"]},
     {i:"🌐",t:"手機 SoC 龍頭，AI 邊緣運算受惠",d:"聯發科在手機 AI SoC 市場持續領先，Dimensity 系列在 Android 高階機搶單，邊緣 AI 算力升級是第二條長線。",tags:["tt:手機 SoC 市場領先","tg:邊緣 AI 算力升級"]}
@@ -319,7 +389,12 @@ const STOCKS = {
   suit:"看好聯發科 AI ASIC 大爆發、相信在手機 SoC 持續領先的長線投資人。",
   entry:"4200~4500 元",cur:"~4700元",stop:"4000 以下"},
 
-  "3037":{name:"欣興電子",en:"Unimicron",color:"#185FA5",bg:"#dceefb",role:"ABF 載板龍頭 / 外資超級循環",price:"~1050元",eps_q1:"3.28元",rev_yoy:"+24%",target:"935元（FactSet）",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
+  "3037":{name:"欣興電子",en:"Unimicron",color:"#185FA5",bg:"#dceefb",role:"ABF 載板龍頭 / 外資超級循環",price:"~1050元",eps_q1:"3.28元",rev_yoy:"+24%",target:"935元（FactSet共識）",grade:"A",grade_bg:"#E1F5EE",grade_c:"#085041",
+  what:"製造 AI 晶片下面的「底座」，叫做 ABF 載板。每顆 NVIDIA 或 AMD 的 AI 晶片都必須安裝在這個底座上，才能接到電路板正常工作。",
+  risk:3,risk_text:"中等風險（現價略超FactSet共識）",
+  action:"等回踩至共識目標附近再布局",action_color:"#BA7517",
+  consensus:"FactSet 22 位分析師共識目標 935 元；個別樂觀機構：日系外資 1350 元",
+  consensus_vs:"⚠️ 現價 1050 元已超過 FactSet 共識 935 元約 12%，等回踩至 950~1000 元共識區間更安全",
   long:[
     {i:"📋",t:"ABF 載板今年產能幾乎全數售罄",d:"外資指出 ABF 載板供需缺口比預期更大，產能幾乎全數售罄。AI GPU、ASIC、CPU 及交換器需求同步爆發，外資喊出「超級循環」，漲價延伸到 2027 年。",tags:["tg:產能全數售罄","tb:外資喊超級循環","tg:漲價看到 2027"]},
     {i:"💡",t:"日系外資目標價上修至 1350 元",d:"日系外資目標價一舉上修至 1350 元，多家美系外資在 1060~1100 元。EPS 預估上看 45 元，評估基準延伸至 2028 年。",tags:["tg:外資目標 1350","tb:2027 EPS 預估 45元"]}
@@ -337,6 +412,11 @@ const STOCKS = {
   entry:"950~1000 元",cur:"~1050元",stop:"920 以下"},
 
   "8046":{name:"南亞電路板",en:"Nan Ya PCB",color:"#0F6E56",bg:"#E1F5EE",role:"ABF 載板 / 外資升評幅度最大",price:"~904元",eps_q1:"2.03元",rev_yoy:"+36%",target:"1275元（外資）",grade:"A-",grade_bg:"#E1F5EE",grade_c:"#085041",
+  what:"和欣興電子一樣做 ABF 載板（AI 晶片底座），隸屬台塑集團。外資認為它被市場低估，升評幅度是同類公司裡最大的。",
+  risk:3,risk_text:"中等風險（大股東賣壓需消化）",
+  action:"等大股東賣壓消化後再考慮布局",action_color:"#BA7517",
+  consensus:"外資目標 1275 元（升評幅度最大）",
+  consensus_vs:"現價 904 元距目標 1275 元有 41% 空間，但近期大股東（南亞集團）申讓 5959 張股票，是短期籌碼隱憂，需等賣壓消化",
   long:[
     {i:"📋",t:"外資目標價從 480 元升至 1275 元（+166%）",d:"美系外資將南電目標價升幅逾 166%，是外資升評幅度最猛的標的之一。ABF 超級循環開始，南電 AI 應用占比達 60%+。",tags:["tg:外資升評 166%","tb:AI 應用佔比 60%+"]},
     {i:"📈",t:"ABF 載板產能全年售罄，進入漲價循環",d:"今年產能幾乎全數售罄，Q2 起擴大調漲產品價格，第二季營運可望明顯回升。",tags:["tg:產能全數售罄","tg:Q2 調漲已啟動"]}
@@ -354,6 +434,11 @@ const STOCKS = {
   entry:"870~900 元",cur:"~904元",stop:"850 以下"},
 
   "2301":{name:"光寶科技",en:"Lite-On",color:"#185FA5",bg:"#dceefb",role:"BBU 電源 / AI 高效電源龍頭新星",price:"~250元",eps_q1:"1.66元",rev_yoy:"+19%",target:"~290元",grade:"B+",grade_bg:"#EAF3DE",grade_c:"#27500A",
+  what:"幫 AI 資料中心提供電源供應器和備用電池（BBU）。資料中心一旦停電，就靠光寶的備用電池撐著，確保不中斷。AI 越普及，資料中心越多，光寶的產品就越重要。",
+  risk:3,risk_text:"中等風險（剛急漲，等回踩）",
+  action:"今日急漲後等回踩 230~240 元再分批進場",action_color:"#BA7517",
+  consensus:"外資目標約 290 元",
+  consensus_vs:"現價 250 元，距目標 290 元約 16% 空間。今日股價大漲近 10%，短線追高風險升高，等整理後再進",
   long:[
     {i:"⚡",t:"BBU 備援電池模組：AI 伺服器標配趨勢",d:"AI 資料中心用電中斷風險推升 BBU 重要性，市場預期 BBU 將成為伺服器標配。光寶科高雄廠持續擴產，是 BBU 電源族群龍頭廠商之一。",tags:["tg:BBU 成為 AI 伺服器標配","tb:高雄廠持續擴產"]},
     {i:"📋",t:"外資 4、5 月連兩個月鎖碼，股價滯漲",d:"外資連兩月大量買超，但股價從低點僅小幅反彈，漲幅遠低於廣達、鴻海。這是「籌碼沉澱、尚未啟動」的才起漲型態。",tags:["tg:外資連兩月鎖碼","ta:股價滯漲→補漲空間"]}
@@ -370,7 +455,12 @@ const STOCKS = {
   suit:"看好 AI 電源需求長期成長、相信光寶科評價重估空間的中長線投資人。",
   entry:"230~240 元",cur:"~250元",stop:"220 以下"},
 
-  "3231":{name:"緯創資通",en:"Wistron",color:"#3B6D11",bg:"#EAF3DE",role:"AI 伺服器 ODM / Q1 EPS 創歷史單季新高",price:"~194元",eps_q1:"~3.8元",rev_yoy:"+40%",target:"~215元（大摩）",grade:"B+",grade_bg:"#EAF3DE",grade_c:"#27500A",
+  "3231":{name:"緯創資通",en:"Wistron",color:"#3B6D11",bg:"#EAF3DE",role:"AI 伺服器 ODM / Q1 EPS 創歷史單季新高",price:"~194元",eps_q1:"~3.8元",rev_yoy:"+40%",target:"215元（大摩）",grade:"B+",grade_bg:"#EAF3DE",grade_c:"#27500A",
+  what:"和廣達一樣幫 NVIDIA 組裝 AI 伺服器，但媒體關注度遠低於廣達，股價漲幅也落後，補漲潛力較清晰。",
+  risk:2,risk_text:"低中風險（估值低，目標價仍有空間）",
+  action:"等回踩 175~185 元可分批布局",action_color:"#0F6E56",
+  consensus:"大摩目標 215 元，法人估 2026 EPS 12.3~14.2 元",
+  consensus_vs:"現價 194 元，距大摩目標 215 元約 10% 空間。本益比約 13~14 倍，在 AI 伺服器族群裡估值最低，補漲邏輯清晰",
   long:[
     {i:"🏭",t:"Vera Rubin NVL 72 機櫃組裝，落後廣達",d:"緯創在 Vera Rubin 供應鏈中與廣達同列機櫃組裝商，Q3 轉換、Q4 放量。但市場資金明顯落後廣達，比價補漲空間清晰。",tags:["tg:Vera Rubin 組裝","tb:Q4 跟廣達同步放量","tg:比廣達漲幅低→補漲"]},
     {i:"📋",t:"GTC 前直播緯創董事長同台確認",d:"緯創董事長林憲銘受邀參加 GTC 前直播對談，確認與 NVIDIA 生態系深度綁定。",tags:["tb:GTC 同台確認"]}
@@ -387,7 +477,12 @@ const STOCKS = {
   suit:"看好 Vera Rubin 下半年放量、廣達已大漲後選擇同等受惠但更低估的投資人。",
   entry:"175~185 元",cur:"~194元",stop:"165 以下"},
 
-  "2308":{name:"台達電子",en:"Delta Electronics",color:"#BA7517",bg:"#FAEEDA",role:"AI 資料中心電源龍頭",price:"~2440元",eps_q1:"7.91元",rev_yoy:"+44%",target:"~2800元（估）",grade:"A-",grade_bg:"#EAF3DE",grade_c:"#27500A",
+  "2308":{name:"台達電子",en:"Delta Electronics",color:"#BA7517",bg:"#FAEEDA",role:"AI 資料中心電源龍頭",price:"~2440元",eps_q1:"7.91元",rev_yoy:"+44%",target:"~2800元（外資估）",grade:"A-",grade_bg:"#EAF3DE",grade_c:"#27500A",
+  what:"全球最好的電源供應器廠商。AI 伺服器每台耗電量越來越大，台達電的產品就越不可或缺。也做液冷散熱系統，幫超熱的 AI 晶片降溫。",
+  risk:3,risk_text:"中等風險（估值偏高約53倍本益比）",
+  action:"6/17 除息後等回踩 2200~2300 元再布局",action_color:"#BA7517",
+  consensus:"外資目標約 2800 元",
+  consensus_vs:"現價 2440 元，距目標約 15% 空間。本益比約 53 倍偏貴，6/17 除息 11.6 元後可能回落，等再進場比較划算",
   long:[
     {i:"⚡",t:"AI 資料中心電源需求暴增，台達電最直接",d:"Vera Rubin GPU 熱設計功耗飆至 2.3kW，電源需求暴增。台達電是 NVIDIA 整機櫃系統的關鍵電源模組供應商，量升 + 單價升雙重紅利。",tags:["tg:電源模組龍頭","tb:功耗 2.3kW 電源需求爆","tg:量升+單價升"]},
     {i:"🔋",t:"HVDC 800V 架構升級是下一個催化劑",d:"AI 機櫃從 400V 往 800V 升級，台達電的 HVDC 產品線正好卡位。董事長鄭平直言：AI 資料中心像軍備競賽，兩三年趨勢不會改變。",tags:["tt:HVDC 800V 卡位","tg:兩三年趨勢確立"]},
@@ -405,7 +500,12 @@ const STOCKS = {
   suit:"看好 AI 資料中心電力需求長期成長、能接受高估值溢價的長線投資人。",
   entry:"2200~2300 元",cur:"~2440元",stop:"2100 以下"},
 
-  "2368":{name:"金像電子",en:"Kinsus",color:"#2E86AB",bg:"#dceefb",role:"全製程 PCB 千金股 / ASIC 伺服器核心",price:"~1320元",eps_q1:"6.87元",rev_yoy:"+強勁成長",target:"持續上修中",grade:"A-",grade_bg:"#E1F5EE",grade_c:"#085041",
+  "2368":{name:"金像電子",en:"Kinsus",color:"#2E86AB",bg:"#dceefb",role:"全製程 PCB 千金股 / ASIC 伺服器核心",price:"~1325元",eps_q1:"6.87元",rev_yoy:"+強勁成長",target:"FactSet共識1000元（現價已超）",grade:"A-",grade_bg:"#E1F5EE",grade_c:"#085041",
+  what:"做最高階的多層電路板（PCB）。Amazon 的 AI 晶片 Trainium 的電路板，有 35~40% 是金像電做的。台股第一檔電路板「千元股」（股價破千元）。",
+  risk:4,risk_text:"偏高風險（現價超FactSet共識33%）",
+  action:"暫時觀望，等估值回歸共識目標附近",action_color:"#A32D2D",
+  consensus:"FactSet 13 位分析師共識目標 1000 元",
+  consensus_vs:"⚠️ 現價 1325 元已超過 FactSet 共識 1000 元約 33%，代表市場已充分甚至過度反映樂觀預期，追高風險高",
   long:[
     {i:"🏆",t:"台股首檔全製程 PCB 千金股，Q1 EPS 超越健鼎",d:"2026年3月以漲停 1005 元成為台股史上首檔全製程 PCB 千金股。Q1 EPS 6.87 元超越健鼎 5.61 元，創歷史新高。Trainium ASIC 伺服器板市占率 35~40%，目標提升至 40~50%。",tags:["tg:PCB千金股","tg:Q1 EPS 6.87元超越健鼎","tg:Trainium市占35-40%"]},
     {i:"📋",t:"資本支出大幅上調至 170 億元，Q2-Q3 新產能量產",d:"2026 年資本支出從原定 60-70 億大幅上調至 170 億元，台灣與蘇州新產能最快 Q2-Q3 量產，並持續評估泰國與台灣增產。管理層的大手筆確認對訂單能見度的信心。",tags:["tg:資本支出上調至170億","tb:Q2-Q3新產能量產"]},
@@ -423,7 +523,12 @@ const STOCKS = {
   suit:"看好台股 PCB 族群中 ASIC 伺服器受益者，能承受高股價波動、等待回踩布局的長線投資人。",
   entry:"1200~1250 元",cur:"~1320元",stop:"1150 以下"},
 
-  "2330":{name:"台積電",en:"TSMC",color:"#C41E3A",bg:"#FCEBEB",role:"全球晶圓代工龍頭 / AI 算力基礎設施核心",price:"~2380元",eps_q1:"22.08元",rev_yoy:"+41%",target:"3030元（里昂）",grade:"A+",grade_bg:"#E1F5EE",grade_c:"#085041",
+  "2330":{name:"台積電",en:"TSMC",color:"#C41E3A",bg:"#FCEBEB",role:"全球晶圓代工龍頭 / AI 算力基礎設施核心",price:"~2380元",eps_q1:"22.08元",rev_yoy:"+41%",target:"多家外資目標2800~3030元",grade:"A+",grade_bg:"#E1F5EE",grade_c:"#085041",
+  what:"全球唯一能量產最先進晶片（2nm）的代工廠。NVIDIA、Apple、AMD 的晶片全部委託台積電製造。AI 時代最不可取代的公司，被稱為「全球科技業的基礎設施」。",
+  risk:2,risk_text:"低中風險（台股最核心長線配置）",
+  action:"等回踩 2200~2300 元是理想布局機會",action_color:"#0F6E56",
+  consensus:"多家外資共識強：里昂 3030 元、花旗 2875 元、野村 2800 元",
+  consensus_vs:"現價 2380 元，多數外資目標落在 2800~3030 元，仍有 18~27% 空間，是外資共識最強的長線標的",
   long:[
     {i:"⚙️",t:"全球唯一能量產 2nm、3nm 先進製程，護城河無可複製",d:"3nm 佔營收 25%、5nm 佔 36%，先進製程合計 74%。2nm 已開始放量，A16/A14 製程持續推進，競爭對手仍落後 2~3 個世代。技術護城河是台股最深的一條。",tags:["tg:2nm放量開始","tb:先進製程佔比74%","tg:競爭對手落後2-3世代"]},
     {i:"🤖",t:"AI 算力需求爆發，HPC 季增 20% 佔比衝 61%",d:"Q1 2026 HPC（高效能運算）業務季增 20%、佔總營收 61%，是台積電有史以來最高佔比。NVIDIA、AMD、Broadcom、Apple 等頂級 AI 晶片全數由台積電代工，訂單能見度延伸至 2028 年。",tags:["tg:HPC 佔比61%季增20%","tg:NVIDIA/AMD/Broadcom全包","tb:訂單看到2028"]},
@@ -443,79 +548,128 @@ const STOCKS = {
   entry:"2200~2300 元",cur:"~2380元",stop:"2100 以下"}
 };
 
-const TABS=["總覽","長線分析","短線分析","財務數據","產品結構","估值分析","主要風險","投資結論"];
-let curStock="2382", curTab="總覽";
+const TABS=["今日重點","公司在做什麼","值多少錢","我該怎麼做","主要風險","詳細數據"];
+let curStock="2382", curTab="今日重點";
 
 function tag(cls,txt){return`<span class="tag ${cls}">${txt}</span>`}
 function renderTags(arr){return arr.map(t=>{const[c,l]=t.split(':');return tag(c,l)}).join('')}
 
+function riskDots(level){
+  return Array.from({length:5},(_,i)=>`<div class="risk-dot${i<level?' on-'+level:''}"></div>`).join('')
+}
+
 function leftPanel(s){
   const d=STOCKS[s];
+  const ab=d.action_color||'#BA7517';
+  const abBg=ab==='#0F6E56'?'#E1F5EE':ab==='#A32D2D'?'#FCEBEB':'#FAEEDA';
   return`
 <div class="card">
-  <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
     <div class="avatar" style="background:${d.bg}">
       <span style="font-size:10px;font-weight:600;color:${d.color}">${s}</span>
       <span style="font-size:13px;font-weight:700;color:${d.color}">${d.name.slice(0,2)}</span>
     </div>
     <div>
       <div class="sname">${d.name}</div>
-      <div class="scode">${d.en}</div>
-      <div class="srole">${d.role}</div>
+      <div class="scode">${d.en} · ${s}</div>
     </div>
   </div>
-  <div class="kgrid">
+  ${d.what?`<div class="what-box">${d.what}</div>`:''}
+  <div class="kgrid" style="margin-top:10px">
     <div class="kc"><div class="kv" style="color:${d._liveClr||d.color}">${d._livePrice?Math.round(d._livePrice)+'元':d.price}</div><div class="kl">${d._livePrice?`<span style="color:#0F6E56;font-size:9px;font-weight:600">● 即時</span> <span style="color:${d._liveClr};font-size:10px">${d._livePct}</span>`:'現價（參考）'}</div></div>
-    <div class="kc"><div class="kv" style="color:#3B6D11">${d.eps_q1}</div><div class="kl">Q1 EPS</div></div>
-    <div class="kc"><div class="kv" style="color:#0F6E56">${d.rev_yoy}</div><div class="kl">營收年增</div></div>
-    <div class="kc"><div class="kv" style="color:#854F0B;font-size:11px">${d.target}</div><div class="kl">外資目標價</div></div>
+    <div class="kc"><div class="kv" style="color:#3B6D11">${d.eps_q1}</div><div class="kl">Q1每股獲利</div></div>
+    <div class="kc"><div class="kv" style="color:#0F6E56">${d.rev_yoy}</div><div class="kl">營收年增率</div></div>
+    <div class="kc"><div class="kv" style="color:#854F0B;font-size:10px">${d.grade}</div><div class="kl">綜合評級</div></div>
   </div>
 </div>
 <div class="card">
-  <div class="sec-lbl sl-e" style="margin-bottom:8px">投資評級</div>
-  <div class="grade-row" style="background:${d.grade_bg}">
-    <div class="grade" style="color:${d.grade_c};border-color:${d.color}">${d.grade}</div>
-    <div class="gtext" style="color:${d.grade_c}">${d.verdict.slice(0,44)}…</div>
+  <div class="sec-lbl" style="color:#888;border-color:#888;margin-bottom:8px">風險等級</div>
+  <div class="risk-row">
+    <div class="risk-dots">${riskDots(d.risk||3)}</div>
+    <span class="risk-lbl">${d.risk_text||'中等風險'}</span>
   </div>
+  ${d.action?`<div class="action-badge" style="background:${abBg};color:${ab}"><div class="ab-title">現在建議</div>${d.action}</div>`:''}
 </div>
 <div class="card">
   <div class="sec-lbl sl-g" style="margin-bottom:8px">進場 / 停損參考</div>
+  <div class="tip-box">💡 <b>新手提示：</b>「理想進場」是分析師認為相對划算的買點；「停損」是若股價跌到這裡就應考慮停損出場的價位。分批買入可降低風險。</div>
   <div class="pz-grid">
     <div class="pzone" style="background:#EAF3DE"><div class="pzone-t" style="color:#3B6D11">理想進場</div><div class="pzone-v" style="color:#3B6D11">${d.entry}</div></div>
     <div class="pzone" style="background:#dceefb"><div class="pzone-t" style="color:#0C447C">現價</div><div class="pzone-v" style="color:#0C447C">${d.cur}</div></div>
     <div class="pzone" style="background:#FCEBEB"><div class="pzone-t" style="color:#A32D2D">停損</div><div class="pzone-v" style="color:#A32D2D">${d.stop}</div></div>
   </div>
-</div>
-<div class="card">
-  <div class="sec-lbl sl-p" style="margin-bottom:8px">適合投資人</div>
-  <div class="suit-box">${d.suit}</div>
 </div>`
+}
+
+function targetSection(d){
+  const rows=[];
+  if(d.consensus){
+    rows.push(`<div class="target-row tr-consensus"><div class="tr-label">📊 市場共識目標（多家分析師平均）</div><div class="tr-val">${d.consensus}</div></div>`);
+  }
+  if(d.consensus_vs){
+    const isWarn=d.consensus_vs.includes('⚠️');
+    rows.push(`<div class="target-row ${isWarn?'tr-warning':'tr-ok'}"><div class="tr-label">${isWarn?'⚠️ 注意':'✅ 現價對比'}</div><div class="tr-note">${d.consensus_vs.replace('⚠️','')}</div></div>`);
+  }
+  if(d.val&&d.val[0]){
+    rows.push(`<div class="target-row tr-outlier"><div class="tr-label">💬 分析師補充說明</div><div class="tr-note">${d.val[0].d}</div></div>`);
+  }
+  return`<div class="card"><div class="sec-lbl sl-p" style="margin-bottom:8px">值多少錢？目標價解讀</div>
+  <div class="tip-box">💡 <b>怎麼看目標價：</b>「共識目標」是多位分析師的平均看法，比單一機構更可靠。若現價已超過共識目標，代表市場樂觀定價已超前，追高風險較高。</div>
+  <div class="target-box">${rows.join('')}</div></div>`;
 }
 
 function secContent(s,tab){
   const d=STOCKS[s];
   const pts=(arr)=>arr.map(p=>`<div class="pt"><span class="pi">${p.i}</span><div class="ptx"><b>${p.t}</b><br>${p.d}<br>${renderTags(p.tags||[])}</div></div>`).join('');
   const sections={
-    "長線分析":()=>`<div class="card"><div class="sec-lbl sl-b">長線分析</div>${pts(d.long)}</div>`,
-    "短線分析":()=>`<div class="card"><div class="sec-lbl sl-r">短線分析</div>${pts(d.short)}</div>`,
-    "財務數據":()=>`<div class="card"><div class="sec-lbl sl-g">財務數據</div>${d.fin.map(b=>`<div class="bar-row"><span class="bar-lbl">${b.l}</span><div class="bar-out"><div class="bar-in" style="width:${b.w}%;background:${b.c}"><span class="bar-val">${b.v}</span></div></div></div>`).join('')}</div>`,
-    "產品結構":()=>`<div class="card"><div class="sec-lbl sl-a">產品結構</div><div class="prod-bar">${d.prod.segs.map(sg=>`<div class="prod-seg" style="width:${sg.w}%;background:${sg.c}">${sg.w>12?sg.w+'%':''}</div>`).join('')}</div><div class="prod-leg">${d.prod.segs.map(sg=>`<span class="leg"><span class="leg-dot" style="background:${sg.c}"></span>${sg.l} ${sg.w}%</span>`).join('')}</div></div>`,
-    "估值分析":()=>`<div class="card"><div class="sec-lbl sl-p">估值分析</div>${pts(d.val)}</div>`,
-    "主要風險":()=>`<div class="card"><div class="sec-lbl sl-e">主要風險</div>${pts(d.risk)}</div>`,
-    "投資結論":()=>`<div class="card"><div class="sec-lbl sl-e">投資結論</div><div class="pt" style="background:#E1F5EE"><span class="pi">🎯</span><div class="ptx" style="color:#085041"><b>${d.verdict}</b></div></div><div style="height:8px"></div><div class="sec-lbl sl-p" style="margin-bottom:6px">適合投資人</div><div class="suit-box">${d.suit}</div></div>`
+    "今日重點":()=>`<div class="card"><div class="sec-lbl sl-r">今日市場動態</div>${pts(d.short)}</div>`,
+    "公司在做什麼":()=>`
+      <div class="card">
+        <div class="sec-lbl sl-b" style="margin-bottom:8px">這家公司在做什麼？</div>
+        ${d.what?`<div class="what-box" style="font-size:13px;margin-bottom:10px">${d.what}</div>`:''}
+        <div class="sec-lbl sl-b" style="margin-top:12px;margin-bottom:8px">為什麼值得長期關注</div>
+        ${pts(d.long)}
+      </div>`,
+    "值多少錢":()=>targetSection(d),
+    "我該怎麼做":()=>`
+      <div class="card">
+        <div class="sec-lbl sl-e" style="margin-bottom:8px">投資結論</div>
+        <div class="pt" style="background:#E1F5EE"><span class="pi">🎯</span><div class="ptx" style="color:#085041"><b>${d.verdict}</b></div></div>
+        <div style="height:10px"></div>
+        <div class="sec-lbl sl-g" style="margin-bottom:6px">進場 / 停損參考</div>
+        <div class="tip-box">💡 <b>新手提示：</b>不建議一次全部買入。「分批進場」是每隔一段時間或每跌一定幅度才買一部分，可以平均成本、降低風險。</div>
+        <div class="pz-grid">
+          <div class="pzone" style="background:#EAF3DE"><div class="pzone-t" style="color:#3B6D11">理想進場</div><div class="pzone-v" style="color:#3B6D11">${d.entry}</div></div>
+          <div class="pzone" style="background:#dceefb"><div class="pzone-t" style="color:#0C447C">現價</div><div class="pzone-v" style="color:#0C447C">${d.cur}</div></div>
+          <div class="pzone" style="background:#FCEBEB"><div class="pzone-t" style="color:#A32D2D">停損</div><div class="pzone-v" style="color:#A32D2D">${d.stop}</div></div>
+        </div>
+        <div style="height:10px"></div>
+        <div class="sec-lbl sl-p" style="margin-bottom:6px">適合什麼樣的人</div>
+        <div class="suit-box">${d.suit}</div>
+      </div>`,
+    "主要風險":()=>`
+      <div class="card">
+        <div class="sec-lbl sl-e" style="margin-bottom:8px">主要風險</div>
+        <div class="tip-box">💡 <b>新手提示：</b>每支股票都有風險。以下是投資這家公司時，需要特別注意的事項。</div>
+        ${pts(d.risk)}
+      </div>`,
+    "詳細數據":()=>`
+      <div class="card"><div class="sec-lbl sl-g" style="margin-bottom:8px">財務數據</div>
+      <div class="tip-box">💡 <b>EPS（每股盈餘）</b>是公司每股賺了多少錢，越高越好。<b>本益比</b>是股價÷EPS，越低代表越便宜。<b>營收年增率</b>是今年比去年多賺了多少，越高越好。</div>
+      ${d.fin.map(b=>`<div class="bar-row"><span class="bar-lbl">${b.l}</span><div class="bar-out"><div class="bar-in" style="width:${b.w}%;background:${b.c}"><span class="bar-val">${b.v}</span></div></div></div>`).join('')}</div>
+      <div class="card"><div class="sec-lbl sl-a" style="margin-bottom:8px">營收來源結構</div>
+      <div class="prod-bar">${d.prod.segs.map(sg=>`<div class="prod-seg" style="width:${sg.w}%;background:${sg.c}">${sg.w>12?sg.w+'%':''}</div>`).join('')}</div>
+      <div class="prod-leg">${d.prod.segs.map(sg=>`<span class="leg"><span class="leg-dot" style="background:${sg.c}"></span>${sg.l} ${sg.w}%</span>`).join('')}</div></div>`,
   };
-  return sections[tab]?sections[tab]():sections["長線分析"]();
+  return sections[tab]?sections[tab]():sections["今日重點"]();
 }
 
 function rightPanel(s,tab){
-  if(tab==="總覽"){
+  if(tab==="今日重點"){
     return`<div class="right-col">
-      ${secContent(s,"長線分析")}
-      ${secContent(s,"短線分析")}
-      <div class="two-col">${secContent(s,"財務數據")}${secContent(s,"估值分析")}</div>
-      ${secContent(s,"產品結構")}
-      ${secContent(s,"主要風險")}
-      ${secContent(s,"投資結論")}
+      ${secContent(s,"今日重點")}
+      ${secContent(s,"值多少錢")}
+      ${secContent(s,"我該怎麼做")}
     </div>`
   }
   return`<div class="right-col">${secContent(s,tab)}</div>`
