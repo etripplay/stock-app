@@ -136,34 +136,48 @@ iframe.active { display: block; }
 <script>
 const TABS = ['query', 'supply', 'ai'];
 
-function switchTab(key) {
+function switchTab(key, pushState = true) {
   TABS.forEach(k => {
     document.getElementById('tab-' + k).classList.toggle('on', k === key);
-    const f = document.getElementById('frame-' + k);
-    f.classList.toggle('active', k === key);
+    document.getElementById('frame-' + k).classList.toggle('active', k === key);
   });
+  if (pushState) history.pushState({ tab: key }, '', '#' + key);
 }
+
+// 讀 hash 決定初始 tab
+function tabFromHash() {
+  const h = location.hash.replace('#', '');
+  return TABS.includes(h) ? h : 'query';
+}
+
+// 瀏覽器上一頁 / 下一頁
+window.addEventListener('popstate', e => {
+  switchTab(e.state?.tab || tabFromHash(), false);
+});
 
 // Handle "查詢這支股票" from supply-chain iframe
 window.addEventListener('message', e => {
   if (e.data && e.data.type === 'gotoStock' && e.data.ticker) {
     switchTab('query');
-    const qFrame = document.getElementById('frame-query');
-    // Wait for frame to be visible, then send message
     setTimeout(() => {
-      qFrame.contentWindow.postMessage({ type: 'autoSearch', ticker: e.data.ticker }, '*');
+      document.getElementById('frame-query').contentWindow
+        .postMessage({ type: 'autoSearch', ticker: e.data.ticker }, '*');
     }, 100);
   }
 });
 
 // Clock
 function tick() {
-  const now = new Date();
   document.getElementById('clk').textContent =
-    now.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
+    new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 tick();
 setInterval(tick, 1000);
+
+// 初始化：依 hash 顯示正確 tab，並建立初始 history entry
+const initTab = tabFromHash();
+switchTab(initTab, false);
+history.replaceState({ tab: initTab }, '', '#' + initTab);
 </script>
 </body>
 </html>
