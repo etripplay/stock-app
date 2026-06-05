@@ -730,63 +730,34 @@ function getStockInfo(code){
 window.sel=k=>{curStock=k;render()}
 window.selTab=t=>{curTab=t;render()}
 
-// ── 即時股價（Yahoo Finance，多 proxy 容錯）──────────────
-const OTC_SET=new Set(['6274','8358']);
-
-function buildProxyUrls(yahooUrl){
-  const enc=encodeURIComponent(yahooUrl);
-  return[
-    `https://corsproxy.io/?url=${enc}`,
-    `https://api.allorigins.win/raw?url=${enc}`,
-    `https://api.codetabs.com/v1/proxy?quest=${enc}`,
-  ];
-}
-
-async function fetchLivePrice(code){
-  const sfx=OTC_SET.has(code)?'.TWO':'.TW';
-  const yahooUrl=`https://query1.finance.yahoo.com/v8/finance/chart/${code}${sfx}?interval=1d&range=1d`;
-  for(const url of buildProxyUrls(yahooUrl)){
-    try{
-      const res=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(6000)});
-      if(!res.ok)continue;
-      const data=await res.json();
-      const meta=data?.chart?.result?.[0]?.meta;
-      if(!meta||!meta.regularMarketPrice)continue;
-      const p=meta.regularMarketPrice;
-      const prev=meta.chartPreviousClose||meta.previousClose||p;
-      const pct=(p-prev)/prev*100;
-      const up=p>prev;
-      // 台灣股市慣例：漲紅跌綠
-      return{p,pct:pct.toFixed(2),sign:up?'▲':'▼',clr:up?'#C0392B':'#27AE60'};
-    }catch{}
-  }
-  return null;
-}
-
+// ── 即時股價（同域 Cloudflare Worker /api/multi）────────
 let _liveUpdateTimer=null;
 async function updateLivePrices(){
   const codes=Object.keys(STOCKS);
-  // 先顯示 loading 狀態
-  document.querySelectorAll('.live-status').forEach(el=>el.textContent='更新中…');
-  const results=await Promise.allSettled(codes.map(c=>fetchLivePrice(c)));
-  let ok=0;
-  results.forEach((r,i)=>{
-    if(r.status==='fulfilled'&&r.value){
-      const{p,pct,sign,clr}=r.value;
-      const code=codes[i];
-      STOCKS[code]._livePrice=p;
-      STOCKS[code]._livePct=`${sign}${Math.abs(Number(pct)).toFixed(2)}%`;
-      STOCKS[code]._liveClr=clr;
-      STOCKS[code].cur=`${Math.round(p)}元`;
+  const statusEl=document.getElementById('live-time');
+  if(statusEl)statusEl.textContent='更新中…';
+  try{
+    const res=await fetch(`/api/multi?stocks=${codes.join(',')}`,{cache:'no-store',signal:AbortSignal.timeout(10000)});
+    const json=await res.json();
+    if(!json.ok||!json.data)throw new Error('no data');
+    let ok=0;
+    for(const q of json.data){
+      const code=q.code;
+      if(!STOCKS[code])continue;
+      const up=q.changePct>=0;
+      STOCKS[code]._livePrice=q.price;
+      STOCKS[code]._livePct=`${up?'▲':'▼'}${Math.abs(q.changePct).toFixed(2)}%`;
+      STOCKS[code]._liveClr=up?'#C0392B':'#27AE60'; // 台灣漲紅跌綠
+      STOCKS[code].cur=`${Math.round(q.price)}元`;
       ok++;
     }
-  });
-  render();
-  // 顯示更新時間
-  const now=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
-  const statusEl=document.getElementById('live-time');
-  if(statusEl)statusEl.textContent=ok>0?`即時 ${now} (${ok}/${codes.length})`:'股價更新失敗';
-  // 盤中自動每 3 分鐘更新
+    render();
+    const now=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+    if(statusEl)statusEl.textContent=ok>0?`即時 ${now} (${ok}/${codes.length})`:'股價更新失敗';
+  }catch(e){
+    if(statusEl)statusEl.textContent='股價更新失敗';
+  }
+  // 每 3 分鐘自動更新
   if(_liveUpdateTimer)clearTimeout(_liveUpdateTimer);
   _liveUpdateTimer=setTimeout(updateLivePrices,3*60*1000);
 }
